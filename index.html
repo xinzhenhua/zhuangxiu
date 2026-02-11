@@ -69,7 +69,7 @@
             transform: scale(1.05);
         }
 
-        /* 仪表盘 - 移动端2列完美适配 */
+        /* 仪表盘 */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -102,9 +102,123 @@
         }
         .dashboard-card .profit { color: #00d4aa; }
         .dashboard-card .loss { color: #ff6b6b; }
+        .dashboard-card .warning { color: #ffd93d; }
         .dashboard-card .subtext {
             font-size: 12px;
             color: #8a8a8a;
+        }
+
+        /* 应收账款模块 */
+        .receivable-section {
+            background: #161616;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #ffd93d40;
+            box-shadow: 0 8px 20px rgba(255,217,61,0.1);
+        }
+        .receivable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .receivable-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffd93d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .receivable-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .receivable-card {
+            background: #1e1e1e;
+            border-radius: 16px;
+            padding: 16px;
+            border-left: 4px solid;
+        }
+        .receivable-card.overdue {
+            border-left-color: #ff6b6b;
+        }
+        .receivable-card.upcoming {
+            border-left-color: #ffd93d;
+        }
+        .receivable-card h4 {
+            font-size: 13px;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+        .receivable-card .amount {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .receivable-card .amount.overdue { color: #ff6b6b; }
+        .receivable-card .amount.upcoming { color: #ffd93d; }
+        .receivable-card .count {
+            font-size: 12px;
+            color: #8a8a8a;
+        }
+        .receivable-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: #1a1a1a;
+        }
+        .receivable-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .receivable-table th {
+            color: #b0b0b0;
+            font-weight: 400;
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #333;
+            background: #1a1a1a;
+            position: sticky;
+            top: 0;
+        }
+        .receivable-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .receivable-table tr:hover {
+            background: #252525;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-overdue {
+            background: #ff6b6b20;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .status-upcoming {
+            background: #ffd93d20;
+            color: #ffd93d;
+            border: 1px solid #ffd93d;
+        }
+        .status-normal {
+            background: #00d4aa20;
+            color: #00d4aa;
+            border: 1px solid #00d4aa;
+        }
+        .status-paid {
+            background: #4dabf720;
+            color: #4dabf7;
+            border: 1px solid #4dabf7;
         }
 
         /* 双图表布局 */
@@ -255,7 +369,7 @@
             transform: scale(1.1);
         }
 
-        /* 模态框 —— 黑胶质感 */
+        /* 模态框 */
         .modal {
             display: none;
             position: fixed;
@@ -332,7 +446,7 @@
             background: #00b894;
         }
 
-        /* 合同收款节点样式 */
+        /* 合同收款节点 */
         .milestone-section {
             margin-top: 20px;
             border-top: 1px solid #3a3a3a;
@@ -412,7 +526,7 @@
             font-weight: 600;
         }
 
-        /* 语音输入卡片 */
+        /* 语音输入 */
         .voice-hero {
             background: linear-gradient(145deg, #1e2a2a, #141818);
             border-radius: 20px;
@@ -463,7 +577,7 @@
             min-height: 24px;
         }
 
-        /* 费用标签 */
+        /* 费用类型标签 */
         .category-tags {
             display: flex;
             flex-wrap: wrap;
@@ -480,11 +594,32 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .category-tag:hover {
+            background: #3a3a3a;
+            transform: translateY(-1px);
         }
         .category-tag.active {
             background: #00d4aa;
             color: #0a0a0a;
             font-weight: 600;
+            border: 1px solid #00d4aa;
+            box-shadow: 0 0 10px rgba(0,212,170,0.3);
+        }
+        .category-tag .remove-tag {
+            font-size: 14px;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+        .category-tag:hover .remove-tag {
+            background: rgba(255,255,255,0.2);
         }
         .custom-category-input {
             display: flex;
@@ -498,6 +633,10 @@
             padding: 0 20px;
             color: white;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-add-category:hover {
+            background: #4a4a4a;
         }
 
         /* 语音确认框 */
@@ -554,7 +693,7 @@
             </div>
         </div>
 
-        <!-- ========== 仪表盘 · 移动端双列 ========= -->
+        <!-- ========== 仪表盘 ========= -->
         <div class="dashboard">
             <div class="dashboard-card"><h3>📦 总项目</h3><div class="value" id="totalProjects">0</div><div class="subtext">进行中</div></div>
             <div class="dashboard-card"><h3>💰 总收入</h3><div class="value profit" id="totalIncome">¥0</div><div class="subtext">累计</div></div>
@@ -562,7 +701,51 @@
             <div class="dashboard-card"><h3>📊 毛利润</h3><div class="value profit" id="totalProfit">¥0</div><div class="subtext">收入-支出</div></div>
         </div>
 
-        <!-- ========== 双图：利润柱状图 + 成本饼图（带数据标签）========= -->
+        <!-- ========== 应收账款模块 ========= -->
+        <div class="receivable-section" id="receivableSection">
+            <div class="receivable-header">
+                <h2><i class="fas fa-file-invoice-dollar"></i> 应收账款提醒</h2>
+                <span style="color:#ffd93d; font-size:14px;" id="receivableRefreshTime">实时更新</span>
+            </div>
+            
+            <div class="receivable-stats">
+                <div class="receivable-card">
+                    <h4>📋 待收总额</h4>
+                    <div class="amount warning" id="totalReceivable">¥0</div>
+                    <div class="count" id="totalReceivableCount">0个项目</div>
+                </div>
+                <div class="receivable-card overdue">
+                    <h4>⚠️ 逾期金额</h4>
+                    <div class="amount overdue" id="overdueAmount">¥0</div>
+                    <div class="count" id="overdueCount">0笔逾期</div>
+                </div>
+                <div class="receivable-card upcoming">
+                    <h4>📅 即将到期</h4>
+                    <div class="amount upcoming" id="upcomingAmount">¥0</div>
+                    <div class="count" id="upcomingCount">7天内到期</div>
+                </div>
+            </div>
+            
+            <div class="receivable-table-container">
+                <table class="receivable-table">
+                    <thead>
+                        <tr>
+                            <th>项目名称</th>
+                            <th>收款日期</th>
+                            <th>应收金额</th>
+                            <th>已收金额</th>
+                            <th>待收金额</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receivableTableBody">
+                        <tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== 双图 ========= -->
         <div class="charts-container">
             <div class="chart-box">
                 <h3><i class="fas fa-chart-bar" style="color:#00d4aa;"></i> 项目利润对比</h3>
@@ -588,7 +771,7 @@
                 </div>
             </div>
 
-            <!-- 综合报表（预算=合同总额） -->
+            <!-- 综合报表 -->
             <table class="data-table" id="summaryTable">
                 <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
                 <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
@@ -609,7 +792,7 @@
         <button class="fab-transaction" id="addTransactionBtn"><i class="fas fa-yen-sign"></i></button>
     </div>
 
-    <!-- ========== 模态框：项目管理（预算=合同总额）========= -->
+    <!-- ========== 模态框：项目管理 ========= -->
     <div class="modal" id="projectModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="projectModalTitle">➕ 新建项目</h2><button class="btn-close" id="closeProjectModal">&times;</button></div>
@@ -618,18 +801,15 @@
                 <div class="form-group"><label>🏗️ 项目名称</label><input type="text" id="projectName" class="form-control" placeholder="如：阳光花园12-302" required></div>
                 <div class="form-group"><label>💰 合同总额 / 预算 (元)</label><input type="number" id="projectBudget" class="form-control" placeholder="150000" min="0" step="0.01" required></div>
                 
-                <!-- ========== 合同收款节点（自动校验总和）========= -->
                 <div class="milestone-section">
                     <div class="milestone-header">
-                        <h4><i class="fas fa-file-signature" style="margin-right:8px;"></i> 收款计划</h4>
+                        <h4><i class="fas fa-file-signature"></i> 收款计划</h4>
                         <button type="button" class="btn-add-milestone" id="addMilestoneBtn">
                             <i class="fas fa-plus"></i> 添加节点
                         </button>
                     </div>
-                    <div id="milestoneList" class="milestone-list">
-                        <!-- 动态添加收款节点 -->
-                    </div>
-                    <div id="milestoneTotal" class="milestone-total">
+                    <div id="milestoneList" class="milestone-list"></div>
+                    <div class="milestone-total">
                         <span>合计金额</span>
                         <span id="totalAmountDisplay">¥0.00</span>
                     </div>
@@ -651,13 +831,13 @@
             <form id="milestoneForm">
                 <div class="form-group"><label>📅 收款日期</label><input type="date" id="milestoneDate" class="form-control" required></div>
                 <div class="form-group"><label>💰 收款金额 (元)</label><input type="number" id="milestoneAmount" class="form-control" placeholder="50000" min="0" step="0.01" required></div>
-                <div class="form-group"><label>📝 备注（如：首付款、进度款）</label><input type="text" id="milestoneNote" class="form-control" placeholder="选填"></div>
+                <div class="form-group"><label>📝 备注</label><input type="text" id="milestoneNote" class="form-control" placeholder="如：首付款、进度款"></div>
                 <button type="submit" class="btn-submit">添加节点</button>
             </form>
         </div>
     </div>
 
-    <!-- ========== 模态框：收支记录 · 百炼AI智能语义匹配 ========= -->
+    <!-- ========== 模态框：收支记录 ========= -->
     <div class="modal" id="transactionModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="transactionModalTitle">💰 收支记录</h2><button class="btn-close" id="closeTransactionModal">&times;</button></div>
@@ -665,8 +845,8 @@
             <div class="voice-hero">
                 <button class="voice-btn" id="voiceInputBtn"><i class="fas fa-microphone"></i></button>
                 <div class="voice-info">
-                    <h4><i class="fas fa-brain" style="margin-right:6px;"></i> 百炼AI智能语义匹配</h4>
-                    <p>日期、项目、类型、金额，AI全自动识别</p>
+                    <h4><i class="fas fa-brain"></i> 百炼AI智能语义匹配</h4>
+                    <p>点击麦克风语音输入，或手动选择下方标签</p>
                 </div>
             </div>
             <div class="voice-status" id="voiceStatus">✨ 示例：“阳光花园 材料费 三千二 25年3月5号”</div>
@@ -676,7 +856,7 @@
                 <div class="form-group"><label>📅 日期</label><input type="date" id="transactionDate" class="form-control" required></div>
                 <div class="form-group"><label>🏗️ 项目</label><select id="transactionProject" class="form-control" required><option value="">请选择</option></select></div>
                 <div class="form-group">
-                    <label>🏷️ 费用类型</label>
+                    <label>🏷️ 费用类型 <span style="color:#00d4aa; font-size:12px;">（点击标签手动选择）</span></label>
                     <div class="category-tags" id="categoryTags"></div>
                     <div class="custom-category-input">
                         <input type="text" id="customCategory" class="form-control" placeholder="自定义类型">
@@ -706,13 +886,22 @@
         // ================= 注册Chart.js数据标签插件 =================
         Chart.register(ChartDataLabels);
         
-        // ================= 阿里云百炼大模型 · 智能语义匹配核心 =================
+        // ================= 阿里云百炼大模型 =================
         const BAILIAN_API_KEY = 'sk-cbfb73b5ae5b41608922e86705340311';
         const BAILIAN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
         
-        // ========== 智能日期解析函数 ==========
+        // ========== ✅ 修复1：获取当天日期函数 ==========
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // ========== 智能日期解析 ==========
         function parseNaturalDate(dateText) {
-            if (!dateText) return new Date().toISOString().split('T')[0];
+            if (!dateText) return getTodayDate();
             
             const today = new Date();
             const currentYear = today.getFullYear();
@@ -729,41 +918,15 @@
                 return `${year}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
             }
             
-            const monthDayMatch = dateText.match(/(\d{1,2})月(\d{1,2})[号日]?/);
-            if (monthDayMatch) {
-                const month = parseInt(monthDayMatch[1]);
-                const day = parseInt(monthDayMatch[2]);
-                return `${currentYear}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
-            }
-            
-            if (dateText.includes('这个月')) {
-                const dayMatch = dateText.match(/(\d{1,2})[号日]/);
-                if (dayMatch) {
-                    const day = parseInt(dayMatch[1]);
-                    return `${currentYear}-${currentMonth.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
-                }
-            }
-            
-            if (dateText.includes('上个月')) {
-                const dayMatch = dateText.match(/(\d{1,2})[号日]/);
-                if (dayMatch) {
-                    let lastMonth = currentMonth - 1;
-                    let year = currentYear;
-                    if (lastMonth === 0) { lastMonth = 12; year -= 1; }
-                    const day = parseInt(dayMatch[1]);
-                    return `${year}-${lastMonth.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
-                }
-            }
-            
             if (dateText.includes('昨天')) {
                 const date = new Date(today); date.setDate(today.getDate() - 1); return date.toISOString().split('T')[0];
             }
-            if (dateText.includes('今天')) return today.toISOString().split('T')[0];
+            if (dateText.includes('今天')) return getTodayDate();
             if (dateText.includes('明天')) {
                 const date = new Date(today); date.setDate(today.getDate() + 1); return date.toISOString().split('T')[0];
             }
             
-            return today.toISOString().split('T')[0];
+            return getTodayDate();
         }
 
         // ========== 中文数字转阿拉伯数字 ==========
@@ -804,28 +967,32 @@
             save: (key, data) => localStorage.setItem(key, JSON.stringify(data))
         };
 
-        // ========== 全局状态（预算=合同总额）==========
+        // ========== 全局状态 ==========
         const AppState = {
             projects: Storage.load('projects') || [],
             transactions: Storage.load('transactions') || [],
             expenseTypes: Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'],
 
-            // 项目操作 - 预算就是合同总额
+            // ✅ 修复：项目操作 - 完全替换旧数据 + 强制触发更新
             addProject(id, name, budget, milestones) {
-                // 自动校验：如果收款节点总额不等于预算，发出警告但继续保存
                 const proj = { 
                     id: id || Date.now(), 
                     name, 
-                    budget: parseFloat(budget), // 预算 = 合同总额
+                    budget: parseFloat(budget),
                     milestones: milestones || [], 
-                    createdAt: new Date().toISOString() 
+                    createdAt: id ? this.projects.find(p => p.id === id)?.createdAt || new Date().toISOString() : new Date().toISOString()
                 };
+                
                 if (id) { 
-                    const idx = this.projects.findIndex(p => p.id === id); 
-                    if(idx>=0) this.projects[idx] = proj; 
+                    // 编辑模式：完全替换旧项目
+                    const index = this.projects.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        this.projects[index] = proj;
+                    }
                 } else {
                     this.projects.push(proj);
                 }
+                
                 Storage.save('projects', this.projects);
                 return proj;
             },
@@ -837,15 +1004,26 @@
                 Storage.save('transactions', this.transactions);
             },
             
-            // 交易操作
+            // ✅ 修复：交易操作 - 完全替换旧数据 + 强制触发更新
             addTransaction(id, date, projectId, type, amount) {
-                const trans = { id: id || Date.now(), date, projectId: parseInt(projectId), type, amount: parseFloat(amount) };
+                const trans = { 
+                    id: id || Date.now(), 
+                    date, 
+                    projectId: parseInt(projectId), 
+                    type, 
+                    amount: parseFloat(amount) 
+                };
+                
                 if (id) { 
-                    const idx = this.transactions.findIndex(t => t.id === id); 
-                    if(idx>=0) this.transactions[idx] = trans; 
+                    // 编辑模式：完全替换旧交易
+                    const index = this.transactions.findIndex(t => t.id === id);
+                    if (index !== -1) {
+                        this.transactions[index] = trans;
+                    }
                 } else {
                     this.transactions.push(trans);
                 }
+                
                 Storage.save('transactions', this.transactions);
                 return trans;
             },
@@ -869,7 +1047,7 @@
                 } else alert('至少保留一个费用类型');
             },
             
-            // 统计（预算=合同总额）
+            // 项目统计
             getProjectStats(pid) {
                 const p = this.projects.find(p => p.id === pid); 
                 if(!p) return null;
@@ -878,9 +1056,7 @@
                 const income = ts.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
                 const expense = ts.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
                 
-                // 合同总额 = 预算
                 const contractTotal = p.budget || 0;
-                // 待收金额 = 合同总额 - 已收金额
                 const pendingIncome = Math.max(0, contractTotal - income);
                 
                 return { 
@@ -914,6 +1090,131 @@
                     map[t.type] = (map[t.type]||0) + t.amount; 
                 });
                 return Object.keys(map).map(k=>({type:k, amount:map[k]})).sort((a,b)=>b.amount-a.amount);
+            },
+
+            // 应收账款智能累计逻辑
+            getReceivableAnalysis() {
+                const today = new Date();
+                const sevenDaysLater = new Date(today);
+                sevenDaysLater.setDate(today.getDate() + 7);
+                
+                let totalReceivable = 0;
+                let overdueAmount = 0;
+                let upcomingAmount = 0;
+                let overdueCount = 0;
+                let upcomingCount = 0;
+                let receivableItems = [];
+                
+                this.projects.forEach(project => {
+                    const stats = this.getProjectStats(project.id);
+                    if (!stats) return;
+                    
+                    const pendingIncome = stats.pendingIncome;
+                    if (pendingIncome <= 0) return;
+                    
+                    totalReceivable += pendingIncome;
+                    
+                    if (!project.milestones || project.milestones.length === 0) {
+                        receivableItems.push({
+                            projectId: project.id,
+                            projectName: project.name,
+                            dueDate: project.createdAt.split('T')[0],
+                            originalAmount: project.budget,
+                            receivedAmount: stats.income,
+                            pendingAmount: pendingIncome,
+                            note: '合同总额',
+                            status: new Date(project.createdAt) < today ? 'overdue' : 'normal'
+                        });
+                        if (new Date(project.createdAt) < today) {
+                            overdueAmount += pendingIncome;
+                            overdueCount++;
+                        }
+                        return;
+                    }
+                    
+                    const sortedMilestones = [...project.milestones].sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    const projectIncomes = this.transactions
+                        .filter(t => t.projectId === project.id && t.type === '收入')
+                        .sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    let accumulatedIncome = 0;
+                    let incomeIndex = 0;
+                    
+                    sortedMilestones.forEach((milestone, index) => {
+                        const milestoneDate = new Date(milestone.date);
+                        const milestoneAmount = milestone.amount;
+                        
+                        let receivedBeforeMilestone = 0;
+                        while (incomeIndex < projectIncomes.length) {
+                            const income = projectIncomes[incomeIndex];
+                            const incomeDate = new Date(income.date);
+                            
+                            const nextMilestoneDate = index < sortedMilestones.length - 1 
+                                ? new Date(sortedMilestones[index + 1].date) 
+                                : null;
+                            
+                            if (!nextMilestoneDate || incomeDate < nextMilestoneDate) {
+                                receivedBeforeMilestone += income.amount;
+                                incomeIndex++;
+                            } else {
+                                break;
+                            }
+                        }
+                        
+                        const receivedForMilestone = Math.min(receivedBeforeMilestone, milestoneAmount);
+                        const pendingForMilestone = milestoneAmount - receivedForMilestone;
+                        
+                        if (pendingForMilestone > 0) {
+                            let status = 'normal';
+                            
+                            if (milestoneDate < today && receivedBeforeMilestone < milestoneAmount) {
+                                status = 'overdue';
+                                overdueAmount += pendingForMilestone;
+                                overdueCount++;
+                            } else if (milestoneDate <= sevenDaysLater && milestoneDate >= today) {
+                                status = 'upcoming';
+                                upcomingAmount += pendingForMilestone;
+                                upcomingCount++;
+                            }
+                            
+                            receivableItems.push({
+                                projectId: project.id,
+                                projectName: project.name,
+                                dueDate: milestone.date,
+                                originalAmount: milestoneAmount,
+                                receivedAmount: receivedForMilestone,
+                                pendingAmount: pendingForMilestone,
+                                note: milestone.note || '',
+                                status
+                            });
+                        } else {
+                            receivableItems.push({
+                                projectId: project.id,
+                                projectName: project.name,
+                                dueDate: milestone.date,
+                                originalAmount: milestoneAmount,
+                                receivedAmount: milestoneAmount,
+                                pendingAmount: 0,
+                                note: milestone.note || '',
+                                status: 'paid'
+                            });
+                        }
+                        
+                        accumulatedIncome = receivedBeforeMilestone;
+                    });
+                });
+                
+                receivableItems.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                
+                return {
+                    totalReceivable,
+                    overdueAmount,
+                    upcomingAmount,
+                    overdueCount,
+                    upcomingCount,
+                    items: receivableItems
+                };
             }
         };
 
@@ -923,6 +1224,15 @@
             totalIncome: document.getElementById('totalIncome'),
             totalExpense: document.getElementById('totalExpense'), 
             totalProfit: document.getElementById('totalProfit'),
+            
+            totalReceivable: document.getElementById('totalReceivable'),
+            totalReceivableCount: document.getElementById('totalReceivableCount'),
+            overdueAmount: document.getElementById('overdueAmount'),
+            overdueCount: document.getElementById('overdueCount'),
+            upcomingAmount: document.getElementById('upcomingAmount'),
+            upcomingCount: document.getElementById('upcomingCount'),
+            receivableTableBody: document.getElementById('receivableTableBody'),
+            
             summaryTable: document.getElementById('summaryTable'), 
             summaryBody: document.getElementById('summaryTableBody'),
             projectsTable: document.getElementById('projectsTable'), 
@@ -950,7 +1260,6 @@
             projectBudget: document.getElementById('projectBudget'),
             projectMilestones: document.getElementById('projectMilestones'),
             milestoneList: document.getElementById('milestoneList'),
-            milestoneTotal: document.getElementById('milestoneTotal'),
             totalAmountDisplay: document.getElementById('totalAmountDisplay'),
             milestoneWarning: document.getElementById('milestoneWarning'),
             projectModalTitle: document.getElementById('projectModalTitle'), 
@@ -985,7 +1294,7 @@
         const formatMoney = (v) => '¥' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         const formatNumber = (v) => v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-        // ========== Excel导出功能 ==========
+        // ========== Excel导出 ==========
         function exportToExcel() {
             let data = [], sheetName = '', headers = [];
             
@@ -1026,7 +1335,7 @@
             XLSX.writeFile(wb, `装修记账_${sheetName}_${new Date().toISOString().split('T')[0]}.xlsx`);
         }
 
-        // ========== 阿里云百炼 · 智能语义匹配 ==========
+        // ========== 百炼AI语音 ==========
         const BailianAI = {
             isListening: false, recognition: null,
 
@@ -1039,9 +1348,21 @@
                 this.recognition = new SpeechRecognition();
                 this.recognition.lang = 'zh-CN'; this.recognition.continuous = false; this.recognition.interimResults = false;
                 
-                this.recognition.onstart = () => { this.isListening = true; DOM.voiceInputBtn.classList.add('listening'); DOM.voiceStatus.innerHTML = '🎤 聆听中… 请说出记账内容'; };
-                this.recognition.onend = () => { this.isListening = false; DOM.voiceInputBtn.classList.remove('listening'); if (!window.__voiceProcessing) DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; };
-                this.recognition.onerror = (e) => { DOM.voiceStatus.innerHTML = '❌ 语音识别错误: ' + e.error; this.isListening = false; DOM.voiceInputBtn.classList.remove('listening'); };
+                this.recognition.onstart = () => { 
+                    this.isListening = true; 
+                    DOM.voiceInputBtn.classList.add('listening'); 
+                    DOM.voiceStatus.innerHTML = '🎤 聆听中… 请说出记账内容'; 
+                };
+                this.recognition.onend = () => { 
+                    this.isListening = false; 
+                    DOM.voiceInputBtn.classList.remove('listening'); 
+                    if (!window.__voiceProcessing) DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; 
+                };
+                this.recognition.onerror = (e) => { 
+                    DOM.voiceStatus.innerHTML = '❌ 语音识别错误: ' + e.error; 
+                    this.isListening = false; 
+                    DOM.voiceInputBtn.classList.remove('listening'); 
+                };
                 this.recognition.onresult = (e) => {
                     const text = e.results[0][0].transcript;
                     DOM.voiceStatus.innerHTML = `📝 识别文字: "${text}" → AI正在理解你的意思...`;
@@ -1052,11 +1373,15 @@
             start() { if (this.recognition && !this.isListening) this.recognition.start(); },
 
             async callBailianLLM(transcript) {
-                if (!AppState.projects.length) { alert('请先添加项目，再进行语音记账'); DOM.voiceStatus.innerHTML = '⚠️ 尚未创建项目'; return; }
+                if (!AppState.projects.length) { 
+                    alert('请先添加项目，再进行语音记账'); 
+                    DOM.voiceStatus.innerHTML = '⚠️ 尚未创建项目'; 
+                    return; 
+                }
 
                 const projectList = AppState.projects.map(p => p.name).join('、');
                 const expenseTypeList = ['收入', ...AppState.expenseTypes].join('、');
-                const today = new Date().toISOString().split('T')[0];
+                const today = getTodayDate();
 
                 const prompt = `你是一个装修项目记账AI，专门处理语音识别后的文字。
 
@@ -1067,7 +1392,7 @@
 今天日期：${today}
 
 任务：
-1. 日期解析：识别口语化日期（25年3月5号、昨天、今天、这个月5号等），输出YYYY-MM-DD
+1. 日期解析：识别口语化日期（25年3月5号、昨天、今天等），输出YYYY-MM-DD
 2. 项目匹配：根据发音相似度匹配项目名称
 3. 类型匹配：根据发音相似度匹配费用类型
 4. 金额提取：支持中文数字（三千二=3200）
@@ -1077,8 +1402,22 @@
                 try {
                     DOM.voiceStatus.innerHTML = '🤖 百炼AI智能匹配中...';
                     const response = await fetch(BAILIAN_BASE_URL, {
-                        method: 'POST', headers: { 'Authorization': `Bearer ${BAILIAN_API_KEY}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ model: 'qwen-plus', messages: [{ role: 'system', content: '你是记账AI，输出JSON' }, { role: 'user', content: prompt }], temperature: 0.1 })
+                        method: 'POST', 
+                        headers: { 
+                            'Authorization': `Bearer ${BAILIAN_API_KEY}`, 
+                            'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify({ 
+                            model: 'qwen-plus', 
+                            messages: [{ 
+                                role: 'system', 
+                                content: '你是记账AI，只输出JSON格式' 
+                            }, { 
+                                role: 'user', 
+                                content: prompt 
+                            }], 
+                            temperature: 0.1 
+                        })
                     });
                     
                     if (!response.ok) throw new Error(`API错误 ${response.status}`);
@@ -1105,11 +1444,13 @@
                     }
                     
                     const voiceResult = {
-                        transcript, date: parsedDate || today,
-                        project: matchedProject, type: result.type || '其他费用',
-                        amount: amount || 0, confidence: 'high',
-                        reason: `日期: ${parsedDate}, 项目: ${matchedProject?.name}, 类型: ${result.type}`,
-                        originalDate: result.date, originalProject: result.project, originalType: result.type
+                        transcript, 
+                        date: parsedDate || today,
+                        project: matchedProject, 
+                        type: result.type || '其他费用',
+                        amount: amount || 0, 
+                        confidence: 'high',
+                        reason: `日期: ${parsedDate}, 项目: ${matchedProject?.name}, 类型: ${result.type}`
                     };
                     this.showConfirm(voiceResult);
                     DOM.voiceStatus.innerHTML = `✅ AI智能匹配完成`;
@@ -1136,7 +1477,15 @@
                     if (transcript.includes('万') && amount < 10000) amount *= 10000;
                 }
                 
-                this.showConfirm({ transcript, date, project: matchedProject, type, amount: amount || 0, confidence: 'medium', reason: '本地智能匹配' });
+                this.showConfirm({ 
+                    transcript, 
+                    date, 
+                    project: matchedProject, 
+                    type, 
+                    amount: amount || 0, 
+                    confidence: 'medium', 
+                    reason: '本地智能匹配' 
+                });
             },
 
             showConfirm(result) {
@@ -1156,7 +1505,7 @@
             }
         };
 
-        // ========== 合同收款节点管理（自动校验合同总额）==========
+        // ========== 收款节点管理 ==========
         let currentMilestones = [];
 
         function calculateMilestoneTotal() {
@@ -1167,7 +1516,6 @@
             const total = calculateMilestoneTotal();
             DOM.totalAmountDisplay.textContent = formatMoney(total);
             
-            // 校验与合同总额是否一致
             const budget = parseFloat(DOM.projectBudget.value) || 0;
             if (budget > 0 && Math.abs(total - budget) > 0.01) {
                 DOM.milestoneWarning.style.display = 'block';
@@ -1200,7 +1548,6 @@
                 DOM.milestoneList.appendChild(div);
             });
             
-            // 绑定删除事件
             document.querySelectorAll('.btn-remove-milestone').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = parseInt(e.target.getAttribute('data-index'));
@@ -1213,8 +1560,169 @@
             updateMilestoneTotalDisplay();
         }
 
-        // ========== 页面UI更新函数（预算=合同总额）==========
+        // ========== 费用类型标签 - 手动选择功能 ==========
+        function renderCategoryTags() {
+            DOM.categoryTags.innerHTML = '';
+            
+            const incomeTag = document.createElement('span');
+            incomeTag.className = 'category-tag active'; 
+            incomeTag.setAttribute('data-type', '收入'); 
+            incomeTag.textContent = '收入';
+            incomeTag.addEventListener('click', (e) => {
+                e.preventDefault();
+                setActiveCategory('收入');
+            });
+            DOM.categoryTags.appendChild(incomeTag);
+            
+            AppState.expenseTypes.forEach(type => {
+                const tag = document.createElement('span'); 
+                tag.className = 'category-tag'; 
+                tag.setAttribute('data-type', type); 
+                tag.innerHTML = `${type} <span class="remove-tag" data-type="${type}">&times;</span>`;
+                
+                tag.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('remove-tag')) {
+                        e.stopPropagation();
+                        return;
+                    }
+                    setActiveCategory(type);
+                });
+                
+                const removeSpan = tag.querySelector('.remove-tag');
+                removeSpan.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (AppState.expenseTypes.length > 1) { 
+                        AppState.deleteExpenseType(type); 
+                        renderCategoryTags(); 
+                    } else {
+                        alert('至少保留一个费用类型'); 
+                    }
+                });
+                
+                DOM.categoryTags.appendChild(tag);
+            });
+            
+            setActiveCategory('收入');
+        }
+        
+        function setActiveCategory(type) {
+            document.querySelectorAll('.category-tag').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            const activeTag = document.querySelector(`.category-tag[data-type="${type}"]`);
+            if (activeTag) {
+                activeTag.classList.add('active');
+            }
+            
+            DOM.transactionType.value = type;
+        }
+
+        // 项目下拉框
+        function fillProjectSelect() {
+            DOM.transactionProject.innerHTML = '<option value="">请选择项目</option>' + 
+                AppState.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        }
+
+        // 表格切换
+        function bindToggles() {
+            DOM.summaryToggle.onclick = ()=>{
+                DOM.summaryTable.style.display = 'table'; 
+                DOM.projectsTable.style.display = 'none'; 
+                DOM.transactionsTable.style.display = 'none';
+                DOM.summaryToggle.classList.add('active'); 
+                DOM.projectsToggle.classList.remove('active'); 
+                DOM.transactionsToggle.classList.remove('active');
+                DOM.tableTitle.innerText = '📋 综合报表';
+            };
+            DOM.projectsToggle.onclick = ()=>{
+                DOM.summaryTable.style.display = 'none'; 
+                DOM.projectsTable.style.display = 'table'; 
+                DOM.transactionsTable.style.display = 'none';
+                DOM.projectsToggle.classList.add('active'); 
+                DOM.summaryToggle.classList.remove('active'); 
+                DOM.transactionsToggle.classList.remove('active');
+                DOM.tableTitle.innerText = '📁 项目列表';
+            };
+            DOM.transactionsToggle.onclick = ()=>{
+                DOM.summaryTable.style.display = 'none'; 
+                DOM.projectsTable.style.display = 'none'; 
+                DOM.transactionsTable.style.display = 'table';
+                DOM.transactionsToggle.classList.add('active'); 
+                DOM.summaryToggle.classList.remove('active'); 
+                DOM.projectsToggle.classList.remove('active');
+                DOM.tableTitle.innerText = '💸 收支记录';
+            };
+        }
+
+        // ========== 更新应收账款模块 ==========
+        function updateReceivableSection() {
+            const analysis = AppState.getReceivableAnalysis();
+            
+            DOM.totalReceivable.textContent = formatMoney(analysis.totalReceivable);
+            DOM.totalReceivableCount.textContent = `${analysis.items.filter(i => i.pendingAmount > 0).length}笔待收`;
+            DOM.overdueAmount.textContent = formatMoney(analysis.overdueAmount);
+            DOM.overdueCount.textContent = `${analysis.overdueCount}笔逾期`;
+            DOM.upcomingAmount.textContent = formatMoney(analysis.upcomingAmount);
+            DOM.upcomingCount.textContent = `${analysis.upcomingCount}笔7天内到期`;
+            
+            if (analysis.items.length === 0) {
+                DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>';
+                return;
+            }
+            
+            DOM.receivableTableBody.innerHTML = analysis.items.map(item => {
+                let statusClass = '';
+                let statusText = '';
+                
+                if (item.status === 'overdue') {
+                    statusClass = 'status-overdue';
+                    statusText = '逾期';
+                } else if (item.status === 'upcoming') {
+                    statusClass = 'status-upcoming';
+                    statusText = '即将到期';
+                } else if (item.status === 'paid') {
+                    statusClass = 'status-paid';
+                    statusText = '已结清';
+                } else {
+                    statusClass = 'status-normal';
+                    statusText = '正常';
+                }
+                
+                const amountDisplay = item.pendingAmount > 0 ? formatMoney(item.pendingAmount) : '已结清';
+                const amountClass = item.status === 'overdue' ? 'overdue' : (item.status === 'upcoming' ? 'upcoming' : '');
+                
+                return `<tr>
+                    <td>${item.projectName}</td>
+                    <td>${item.dueDate}</td>
+                    <td>${formatMoney(item.originalAmount)}</td>
+                    <td>${formatMoney(item.receivedAmount)}</td>
+                    <td class="${amountClass}">${amountDisplay}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ========== ✅ 修复2：强制刷新所有UI组件 ==========
         function refreshUI() {
+            console.log('🔄 强制刷新所有UI组件...');
+            
+            // 1. 强制销毁并重建图表
+            if (profitChart) {
+                profitChart.destroy();
+                profitChart = null;
+            }
+            if (costPieChart) {
+                costPieChart.destroy();
+                costPieChart = null;
+            }
+            
+            // 2. 重新从Storage加载最新数据（确保不是缓存）
+            AppState.projects = Storage.load('projects');
+            AppState.transactions = Storage.load('transactions');
+            AppState.expenseTypes = Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'];
+            
+            // 3. 更新仪表盘
             const ov = AppState.getOverallStats();
             DOM.totalProjects.textContent = ov.totalProjects;
             DOM.totalIncome.textContent = formatMoney(ov.totalIncome);
@@ -1222,7 +1730,7 @@
             DOM.totalProfit.textContent = (ov.totalProfit>=0?'':'') + formatMoney(Math.abs(ov.totalProfit));
             DOM.totalProfit.className = 'value ' + (ov.totalProfit>=0?'profit':'loss');
 
-            // 综合报表 - 预算=合同总额
+            // 4. 更新综合报表
             const stats = AppState.getAllStats();
             if (stats.length) {
                 DOM.summaryBody.innerHTML = stats.map(s => `<tr>
@@ -1238,7 +1746,7 @@
                 DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
             }
 
-            // 项目列表 - 显示合同总额、已收、待收
+            // 5. 更新项目列表
             if (AppState.projects.length) {
                 DOM.projectsBody.innerHTML = AppState.projects.map(p => {
                     const stats = AppState.getProjectStats(p.id);
@@ -1261,13 +1769,15 @@
                 DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
             }
 
-            // 收支记录
+            // 6. 更新收支记录
             if (AppState.transactions.length) {
                 const sorted = [...AppState.transactions].sort((a,b)=>b.date.localeCompare(a.date));
                 DOM.transactionsBody.innerHTML = sorted.map(t => {
                     const proj = AppState.projects.find(p=>p.id===t.projectId);
                     return `<tr>
-                        <td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td>
+                        <td>${t.date}</td>
+                        <td>${proj?.name||'未知'}</td>
+                        <td>${t.type}</td>
                         <td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td>
                         <td><div class="action-buttons">
                             <button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button>
@@ -1279,14 +1789,22 @@
                 DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
             }
 
-            updateCharts();
+            // 7. 更新应收账款
+            updateReceivableSection();
+            
+            // 8. 重新创建图表
+            setTimeout(() => {
+                updateCharts();
+            }, 50);
+            
+            // 9. 更新项目下拉框
+            fillProjectSelect();
+            
+            console.log('✅ UI刷新完成');
         }
 
-        // ========== 图表更新（带数据标签）==========
+        // ========== 图表更新 ==========
         function updateCharts() {
-            if (profitChart) profitChart.destroy();
-            if (costPieChart) costPieChart.destroy();
-            
             const ctxBar = document.getElementById('profitChart').getContext('2d');
             const ctxPie = document.getElementById('costPieChart').getContext('2d');
             const stats = AppState.getAllStats();
@@ -1295,17 +1813,28 @@
                 profitChart = new Chart(ctxBar, { 
                     type:'bar', 
                     data:{labels:['无数据'], datasets:[{label:'合同总额',data:[0],backgroundColor:'#444'}]}, 
-                    options: { maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
+                    options: { 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { labels: { color: '#ccc' } }, 
+                            datalabels: { display: false } 
+                        } 
+                    } 
                 });
                 costPieChart = new Chart(ctxPie, { 
                     type:'pie', 
                     data:{labels:['无支出'], datasets:[{data:[1],backgroundColor:['#555']}]}, 
-                    options: { maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
+                    options: { 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { labels: { color: '#ccc' } }, 
+                            datalabels: { display: false } 
+                        } 
+                    } 
                 });
                 return;
             }
             
-            // 利润柱状图 - 显示合同总额、收入、支出、利润
             profitChart = new Chart(ctxBar, {
                 type:'bar', 
                 data: {
@@ -1338,7 +1867,6 @@
                 plugins: [ChartDataLabels]
             });
             
-            // 成本饼图 - 带金额和百分比
             const costData = AppState.getCostTypeAnalysis();
             if (costData.length) {
                 const total = costData.reduce((sum, item) => sum + item.amount, 0);
@@ -1384,14 +1912,22 @@
                 costPieChart = new Chart(ctxPie, { 
                     type:'pie', 
                     data:{labels:['暂无支出'], datasets:[{data:[1],backgroundColor:['#555']}]}, 
-                    options: { maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
+                    options: { 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { labels: { color: '#ccc' } }, 
+                            datalabels: { display: false } 
+                        } 
+                    } 
                 });
             }
         }
 
-        // ========== 全局暴露编辑删除函数 ==========
+        // ========== 全局函数 ==========
         window.editProject = (id) => { 
-            const p = AppState.projects.find(p=>p.id===id); 
+            const p = AppState.projects.find(p => p.id === id); 
+            if (!p) return;
+            
             DOM.projectId.value = p.id; 
             DOM.projectName.value = p.name; 
             DOM.projectBudget.value = p.budget; 
@@ -1403,14 +1939,16 @@
         };
         
         window.deleteProject = (id) => { 
-            if(confirm('删除项目及所有收支？')) { 
+            if (confirm('删除项目及所有收支？')) { 
                 AppState.deleteProject(id); 
                 refreshUI(); 
             } 
         };
         
         window.editTransaction = (id) => {
-            const t = AppState.transactions.find(t=>t.id===id);
+            const t = AppState.transactions.find(t => t.id === id);
+            if (!t) return;
+            
             DOM.transactionId.value = t.id; 
             DOM.transactionDate.value = t.date; 
             DOM.transactionProject.value = t.projectId;
@@ -1422,101 +1960,48 @@
         };
         
         window.deleteTransaction = (id) => { 
-            if(confirm('删除这笔记录？')) { 
+            if (confirm('删除这笔记录？')) { 
                 AppState.deleteTransaction(id); 
                 refreshUI(); 
             } 
         };
 
-        // ========== 费用类型标签 ==========
-        function renderCategoryTags() {
-            DOM.categoryTags.innerHTML = '';
-            const incomeTag = document.createElement('span');
-            incomeTag.className = 'category-tag active'; 
-            incomeTag.setAttribute('data-type','收入'); 
-            incomeTag.textContent = '收入';
-            incomeTag.onclick = () => setActiveCategory('收入');
-            DOM.categoryTags.appendChild(incomeTag);
+        // ========== ✅ 修复3：初始化所有日期为当天 ==========
+        function initDates() {
+            const today = getTodayDate();
+            console.log('📅 设置默认日期为:', today);
             
-            AppState.expenseTypes.forEach(type => {
-                const tag = document.createElement('span'); 
-                tag.className = 'category-tag'; 
-                tag.setAttribute('data-type',type); 
-                tag.innerHTML = `${type} <span style="margin-left:6px; font-size:16px;" data-type="${type}">&times;</span>`;
-                tag.onclick = (e) => { if(!e.target.matches('span')) setActiveCategory(type); };
-                const removeSpan = tag.querySelector('span');
-                removeSpan.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    if(AppState.expenseTypes.length>1) { 
-                        AppState.deleteExpenseType(type); 
-                        renderCategoryTags(); 
-                    } else alert('至少保留一个'); 
-                };
-                DOM.categoryTags.appendChild(tag);
-            });
-            setActiveCategory('收入');
-        }
-        
-        function setActiveCategory(type) {
-            document.querySelectorAll('.category-tag').forEach(t=>t.classList.remove('active'));
-            const active = document.querySelector(`.category-tag[data-type="${type}"]`);
-            if(active) active.classList.add('active');
-            DOM.transactionType.value = type;
-        }
-
-        // ========== 项目下拉框填充 ==========
-        function fillProjectSelect() {
-            DOM.transactionProject.innerHTML = '<option value="">请选择项目</option>' + 
-                AppState.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-        }
-
-        // ========== 表格切换 ==========
-        function bindToggles() {
-            DOM.summaryToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'table'; 
-                DOM.projectsTable.style.display = 'none'; 
-                DOM.transactionsTable.style.display = 'none';
-                DOM.summaryToggle.classList.add('active'); 
-                DOM.projectsToggle.classList.remove('active'); 
-                DOM.transactionsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '📋 综合报表';
-            };
-            DOM.projectsToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'none'; 
-                DOM.projectsTable.style.display = 'table'; 
-                DOM.transactionsTable.style.display = 'none';
-                DOM.projectsToggle.classList.add('active'); 
-                DOM.summaryToggle.classList.remove('active'); 
-                DOM.transactionsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '📁 项目列表';
-            };
-            DOM.transactionsToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'none'; 
-                DOM.projectsTable.style.display = 'none'; 
-                DOM.transactionsTable.style.display = 'table';
-                DOM.transactionsToggle.classList.add('active'); 
-                DOM.summaryToggle.classList.remove('active'); 
-                DOM.projectsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '💸 收支记录';
-            };
+            // 交易日期
+            if (DOM.transactionDate) {
+                DOM.transactionDate.value = today;
+            }
+            
+            // 收款节点日期
+            if (DOM.milestoneDate) {
+                DOM.milestoneDate.value = today;
+            }
         }
 
         // ========== 初始化 ==========
         function initApp() {
-            DOM.transactionDate.valueAsDate = new Date();
-            DOM.milestoneDate.valueAsDate = new Date();
+            console.log('🚀 系统初始化...');
             
+            // 设置所有日期为当天
+            initDates();
+            
+            // 语音初始化
             BailianAI.init();
+            
+            // 费用标签
             renderCategoryTags();
 
-            // 监听合同总额变化，实时校验
+            // 监听合同总额变化
             DOM.projectBudget.addEventListener('input', updateMilestoneTotalDisplay);
 
-            // 项目表单提交
+            // ✅ 项目表单提交 - 完全替换旧数据 + 强制刷新
             DOM.projectForm.onsubmit = (e) => {
                 e.preventDefault();
                 
-                // 可选：是否强制要求收款节点总额等于合同总额？这里只警告，不阻止保存
                 const total = calculateMilestoneTotal();
                 const budget = parseFloat(DOM.projectBudget.value) || 0;
                 if (budget > 0 && Math.abs(total - budget) > 0.01) {
@@ -1531,6 +2016,7 @@
                     DOM.projectBudget.value,
                     currentMilestones
                 );
+                
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
                 DOM.projectId.value = '';
@@ -1538,13 +2024,15 @@
                 renderMilestoneList();
                 DOM.projectModalTitle.textContent = '➕ 新建项目'; 
                 DOM.projectSubmitBtn.textContent = '保存项目';
-                fillProjectSelect(); 
+                
+                // 强制刷新所有UI
                 refreshUI();
             };
 
-            // 交易表单提交
+            // ✅ 交易表单提交 - 完全替换旧数据 + 强制刷新
             DOM.transactionForm.onsubmit = (e) => {
                 e.preventDefault();
+                
                 AppState.addTransaction(
                     DOM.transactionId.value || null, 
                     DOM.transactionDate.value, 
@@ -1552,13 +2040,16 @@
                     DOM.transactionType.value, 
                     DOM.transactionAmount.value
                 );
+                
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
                 DOM.transactionId.value = '';
-                DOM.transactionDate.valueAsDate = new Date(); 
+                initDates(); // 重置为当天
                 setActiveCategory('收入');
                 DOM.transactionModalTitle.textContent = '💰 收支记录'; 
                 DOM.transactionSubmitBtn.textContent = '保存记录';
+                
+                // 强制刷新所有UI
                 refreshUI();
             };
 
@@ -1566,52 +2057,55 @@
             DOM.closeProjectModal.onclick = ()=> { 
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
-                DOM.projectId.value=''; 
+                DOM.projectId.value = ''; 
                 currentMilestones = [];
                 renderMilestoneList();
             };
+            
             DOM.closeTransactionModal.onclick = ()=> { 
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
-                DOM.transactionDate.valueAsDate=new Date(); 
+                initDates(); // 重置为当天
                 setActiveCategory('收入'); 
             };
+            
             DOM.closeMilestoneModal.onclick = ()=> { 
                 DOM.milestoneModal.classList.remove('active'); 
                 DOM.milestoneForm.reset(); 
-                DOM.milestoneDate.valueAsDate = new Date();
+                initDates(); // 重置为当天
             };
+            
             DOM.closeVoiceConfirm.onclick = ()=> DOM.voiceConfirmModal.classList.remove('active');
             
             window.onclick = (e) => {
-                if(e.target === DOM.projectModal) { 
+                if (e.target === DOM.projectModal) { 
                     DOM.projectModal.classList.remove('active'); 
                     DOM.projectForm.reset(); 
-                    DOM.projectId.value=''; 
+                    DOM.projectId.value = ''; 
                     currentMilestones = [];
                     renderMilestoneList();
                 }
-                if(e.target === DOM.transactionModal) { 
+                if (e.target === DOM.transactionModal) { 
                     DOM.transactionModal.classList.remove('active'); 
                     DOM.transactionForm.reset(); 
-                    DOM.transactionDate.valueAsDate=new Date(); 
+                    initDates(); 
                     setActiveCategory('收入'); 
                 }
-                if(e.target === DOM.milestoneModal) { 
+                if (e.target === DOM.milestoneModal) { 
                     DOM.milestoneModal.classList.remove('active'); 
                     DOM.milestoneForm.reset(); 
-                    DOM.milestoneDate.valueAsDate = new Date();
+                    initDates(); 
                 }
-                if(e.target === DOM.voiceConfirmModal) DOM.voiceConfirmModal.classList.remove('active');
+                if (e.target === DOM.voiceConfirmModal) DOM.voiceConfirmModal.classList.remove('active');
             };
 
             // 添加项目按钮
             DOM.addProjectBtn.onclick = ()=> { 
-                DOM.projectModalTitle.textContent='➕ 新建项目'; 
-                DOM.projectSubmitBtn.textContent='保存项目'; 
-                DOM.projectId.value=''; 
-                DOM.projectName.value=''; 
-                DOM.projectBudget.value=''; 
+                DOM.projectModalTitle.textContent = '➕ 新建项目'; 
+                DOM.projectSubmitBtn.textContent = '保存项目'; 
+                DOM.projectId.value = ''; 
+                DOM.projectName.value = ''; 
+                DOM.projectBudget.value = ''; 
                 currentMilestones = [];
                 renderMilestoneList();
                 DOM.projectModal.classList.add('active'); 
@@ -1620,17 +2114,20 @@
             // 添加交易按钮
             DOM.addTransactionBtn.onclick = ()=> { 
                 fillProjectSelect(); 
-                DOM.transactionModalTitle.textContent='💰 收支记录'; 
-                DOM.transactionSubmitBtn.textContent='保存记录'; 
-                DOM.transactionId.value=''; 
-                DOM.transactionDate.valueAsDate=new Date(); 
+                DOM.transactionModalTitle.textContent = '💰 收支记录'; 
+                DOM.transactionSubmitBtn.textContent = '保存记录'; 
+                DOM.transactionId.value = ''; 
+                initDates(); // 设置为当天
                 setActiveCategory('收入'); 
                 DOM.transactionModal.classList.add('active'); 
             };
             
             // 语音按钮
             DOM.voiceInputBtn.onclick = () => { 
-                if (!AppState.projects.length) { alert('请先添加项目'); return; }
+                if (!AppState.projects.length) { 
+                    alert('请先添加项目，再进行语音记账'); 
+                    return; 
+                }
                 BailianAI.start(); 
             };
 
@@ -1640,18 +2137,24 @@
                 if (window.__voiceResult) {
                     fillProjectSelect();
                     DOM.transactionDate.value = window.__voiceResult.date;
-                    if (window.__voiceResult.project) DOM.transactionProject.value = window.__voiceResult.project.id;
+                    if (window.__voiceResult.project) {
+                        DOM.transactionProject.value = window.__voiceResult.project.id;
+                    }
                     DOM.transactionAmount.value = window.__voiceResult.amount || '';
                     setActiveCategory(window.__voiceResult.type || '其他费用');
                 }
             };
             
             DOM.confirmBtn.onclick = ()=> {
-                if (!window.__voiceResult || !window.__voiceResult.project) { alert('项目无效'); return; }
+                if (!window.__voiceResult || !window.__voiceResult.project) { 
+                    alert('项目无效，请手动选择'); 
+                    return; 
+                }
                 if (!window.__voiceResult.amount || window.__voiceResult.amount <= 0) { 
                     alert('金额无效，请手动输入或重新语音'); 
                     return; 
                 }
+                
                 AppState.addTransaction(
                     null, 
                     window.__voiceResult.date, 
@@ -1659,11 +2162,17 @@
                     window.__voiceResult.type, 
                     window.__voiceResult.amount
                 );
+                
                 DOM.voiceConfirmModal.classList.remove('active');
                 DOM.transactionModal.classList.remove('active');
+                
+                // 强制刷新所有UI
                 refreshUI();
+                
                 DOM.voiceStatus.innerHTML = '✅ 语音记账成功！';
-                setTimeout(()=>{ DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; }, 3000);
+                setTimeout(() => { 
+                    DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; 
+                }, 3000);
             };
 
             // 收款节点管理
@@ -1682,13 +2191,13 @@
                 renderMilestoneList();
                 DOM.milestoneModal.classList.remove('active');
                 DOM.milestoneForm.reset();
-                DOM.milestoneDate.valueAsDate = new Date();
+                initDates(); // 重置为当天
             };
 
-            // 自定义费用
+            // 自定义费用类型
             DOM.addCategoryBtn.onclick = ()=>{ 
                 const val = DOM.customCategory.value.trim();
-                if(val) { 
+                if (val) { 
                     AppState.addExpenseType(val); 
                     renderCategoryTags(); 
                     DOM.customCategory.value = ''; 
@@ -1701,7 +2210,11 @@
 
             bindToggles();
             fillProjectSelect();
+            
+            // 首次刷新UI
             refreshUI();
+            
+            console.log('✅ 系统初始化完成');
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
