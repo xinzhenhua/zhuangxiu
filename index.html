@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>装修记账 · 百炼AI智能语义匹配</title>
+    <title>装修记账 · AI智能语音 · 项目/时间筛选</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -28,7 +28,7 @@
             padding: 16px 16px 100px;
         }
 
-        /* 头部 */
+        /* 头部 - 已彻底移除右上角加号 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -46,39 +46,381 @@
             color: #00d4aa;
             font-weight: 600;
         }
-        .header-actions {
+
+        /* ===== 复合筛选栏：时间 + 项目搜索（极简融合）===== */
+        .filter-section {
             display: flex;
-            gap: 12px;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+            position: relative;
         }
-        .btn-add-project {
-            background-color: #00d4aa;
+
+        .time-filter-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .time-filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 16px;
+            height: 48px;
+            background: #161616;
+            border: 1px solid #2a2a2a;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #e0e0e0;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .time-filter-btn:hover {
+            border-color: #00d4aa;
+            background: #1e1e1e;
+        }
+
+        .time-filter-btn i:first-child {
+            font-size: 15px;
+        }
+
+        .time-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 180px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            z-index: 1001;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            padding: 8px 0;
+        }
+
+        .time-dropdown.active {
+            display: block;
+        }
+
+        .time-dropdown-item {
+            padding: 10px 16px;
+            color: #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-dropdown-item:hover {
+            background: #252525;
+            color: #00d4aa;
+        }
+
+        .time-dropdown-item.active {
+            background: #00d4aa20;
+            color: #00d4aa;
+            border-left: 3px solid #00d4aa;
+        }
+
+        .time-dropdown-divider {
+            height: 1px;
+            background: #2a2a2a;
+            margin: 8px 0;
+        }
+
+        /* 自定义日期范围弹层 */
+        .custom-date-range {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 280px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            z-index: 1002;
+            padding: 16px;
+            display: none;
+        }
+
+        .custom-date-range.active {
+            display: block;
+        }
+
+        .custom-date-range .date-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .custom-date-range input {
+            flex: 1;
+            background: #262626;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 10px 12px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .custom-date-range .apply-btn {
+            width: 100%;
+            background: #00d4aa;
             color: #0a0a0a;
             border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 20px;
+            border-radius: 20px;
+            padding: 10px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+        }
+
+        /* 搜索容器 - 右侧弹性扩展 */
+        .search-container {
+            position: relative;
+            flex: 1;
+            margin-left: 12px;
+            border: 1px solid #2a2a2a;
+            border-radius: 40px;
+            background: #161616;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            height: 48px;
+            box-sizing: border-box;
+        }
+        .search-container:focus-within {
+            border-color: #00d4aa;
+            box-shadow: 0 0 0 2px rgba(0,212,170,0.1);
+        }
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            padding-right: 50px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            border-radius: 40px;
+        }
+        .search-input::placeholder {
+            color: #666;
+            font-weight: 300;
+        }
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00d4aa;
+            font-size: 16px;
+            pointer-events: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,212,170,0.25);
+            width: 24px;
+            height: 24px;
+            background: rgba(0,212,170,0.1);
+            border-radius: 50%;
         }
-        .btn-add-project:hover {
-            transform: scale(1.05);
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            max-height: 280px;
+            overflow-y: auto;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            padding: 8px 0;
+        }
+        .search-dropdown.active {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background: #252525;
+        }
+        .dropdown-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #00d4aa;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        .dropdown-item label {
+            flex: 1;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .project-budget-badge {
+            font-size: 12px;
+            color: #00d4aa;
+            background: rgba(0,212,170,0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .dropdown-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 4px;
+        }
+        .dropdown-action-btn {
+            background: transparent;
+            border: 1px solid #3a3a3a;
+            color: #b0b0b0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .dropdown-action-btn:hover {
+            border-color: #00d4aa;
+            color: #00d4aa;
+            background: rgba(0,212,170,0.05);
+        }
+        .dropdown-empty {
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
         }
 
-        /* 仪表盘 */
+        /* 已选标签区：时间标签 + 项目标签 平级展示 */
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            min-height: 32px;
+        }
+        .selected-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #1e2a2a;
+            border: 1px solid #00d4aa40;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #00d4aa;
+            transition: all 0.2s;
+        }
+        .selected-tag:hover {
+            background: #00d4aa20;
+            border-color: #00d4aa;
+        }
+        .selected-tag .remove-tag {
+            cursor: pointer;
+            font-size: 14px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #ff6b6b;
+        }
+        .selected-tag .remove-tag:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        /* 时间标签 - 区别于项目标签的黄色系 */
+        .time-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #1e2a2a;
+            border: 1px solid #ffd93d40;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #ffd93d;
+        }
+        .time-tag i {
+            font-size: 12px;
+            color: #ffd93d;
+        }
+        .time-tag .remove-tag {
+            cursor: pointer;
+            font-size: 14px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #ff6b6b;
+        }
+        .time-tag .remove-tag:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .time-filter-btn {
+                height: 44px;
+                justify-content: center;
+            }
+            .search-container {
+                margin-left: 0 !important;
+                height: 44px;
+            }
+            .search-input {
+                padding: 10px 16px;
+                padding-right: 45px;
+                font-size: 14px;
+            }
+            .time-dropdown {
+                width: 100%;
+            }
+            .custom-date-range {
+                width: 100%;
+            }
+        }
+
+        /* ===== 仪表盘 · 六卡布局 ===== */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 28px;
         }
-        @media (min-width: 769px) {
+        @media (min-width: 1024px) {
             .dashboard {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         .dashboard-card {
@@ -134,8 +476,18 @@
         .receivable-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .receivable-stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .receivable-card { padding: 12px 16px; }
+            .receivable-card h4 { font-size: 12px; margin-bottom: 4px; }
+            .receivable-card .amount { font-size: 20px; margin-bottom: 2px; }
+            .receivable-card .count { font-size: 11px; }
         }
         .receivable-card {
             background: #1e1e1e;
@@ -143,12 +495,8 @@
             padding: 16px;
             border-left: 4px solid;
         }
-        .receivable-card.overdue {
-            border-left-color: #ff6b6b;
-        }
-        .receivable-card.upcoming {
-            border-left-color: #ffd93d;
-        }
+        .receivable-card.overdue { border-left-color: #ff6b6b; }
+        .receivable-card.upcoming { border-left-color: #ffd93d; }
         .receivable-card h4 {
             font-size: 13px;
             color: #b0b0b0;
@@ -190,9 +538,6 @@
             padding: 14px 12px;
             border-bottom: 1px solid #2a2a2a;
         }
-        .receivable-table tr:hover {
-            background: #252525;
-        }
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -200,26 +545,10 @@
             font-size: 12px;
             font-weight: 500;
         }
-        .status-overdue {
-            background: #ff6b6b20;
-            color: #ff6b6b;
-            border: 1px solid #ff6b6b;
-        }
-        .status-upcoming {
-            background: #ffd93d20;
-            color: #ffd93d;
-            border: 1px solid #ffd93d;
-        }
-        .status-normal {
-            background: #00d4aa20;
-            color: #00d4aa;
-            border: 1px solid #00d4aa;
-        }
-        .status-paid {
-            background: #4dabf720;
-            color: #4dabf7;
-            border: 1px solid #4dabf7;
-        }
+        .status-overdue { background: #ff6b6b20; color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .status-upcoming { background: #ffd93d20; color: #ffd93d; border: 1px solid #ffd93d; }
+        .status-normal { background: #00d4aa20; color: #00d4aa; border: 1px solid #00d4aa; }
+        .status-paid { background: #4dabf720; color: #4dabf7; border: 1px solid #4dabf7; }
 
         /* 双图表布局 */
         .charts-container {
@@ -236,9 +565,14 @@
         .chart-box {
             background: #161616;
             border-radius: 20px;
-            padding: 20px 16px;
-            height: 400px;
+            padding: 16px;
             position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .chart-box { height: 260px; }
         }
         .chart-box h3 {
             font-size: 16px;
@@ -248,6 +582,24 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        /* 右上角毛利润总额标注（黄色） */
+        .profit-corner-label {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #ffd93d;
+            background: rgba(255, 217, 61, 0.1);
+            border: 1px solid #ffd93d;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(255, 217, 61, 0.2);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.5px;
         }
 
         /* 表格区域 */
@@ -344,11 +696,18 @@
         .btn-edit { color: #4dabf7; border-color: #4dabf7; }
         .btn-delete { color: #ff6b6b; border-color: #ff6b6b; }
 
-        /* 固定底部 · 人民币大按钮 */
-        .fab-transaction {
+        /* ===== 极简浮动按钮菜单 ===== */
+        .fab-container {
             position: fixed;
             bottom: 24px;
             right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .fab-transaction {
             width: 70px;
             height: 70px;
             background: #00d4aa;
@@ -363,10 +722,75 @@
             justify-content: center;
             cursor: pointer;
             transition: 0.2s;
-            z-index: 999;
+            z-index: 1000;
         }
+
         .fab-transaction:hover {
             transform: scale(1.1);
+        }
+
+        .fab-menu {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 180px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 8px 0;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .fab-menu.active {
+            display: flex;
+        }
+
+        .fab-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: #e0e0e0;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .fab-menu-item:hover {
+            background: #252525;
+            color: #00d4aa;
+        }
+
+        .fab-menu-item i {
+            width: 20px;
+            color: #00d4aa;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .fab-container {
+                bottom: 20px;
+                right: 20px;
+            }
+            .fab-transaction {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+            .fab-menu {
+                bottom: 70px;
+                width: 160px;
+            }
+            .fab-menu-item {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
         }
 
         /* 模态框 */
@@ -397,10 +821,7 @@
             align-items: center;
             margin-bottom: 24px;
         }
-        .modal-header h2 {
-            font-size: 22px;
-            font-weight: 500;
-        }
+        .modal-header h2 { font-size: 22px; font-weight: 500; }
         .btn-close {
             background: none;
             border: none;
@@ -408,9 +829,7 @@
             font-size: 28px;
             cursor: pointer;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
         .form-group label {
             display: block;
             color: #b0b0b0;
@@ -426,10 +845,7 @@
             color: white;
             font-size: 16px;
         }
-        .form-control:focus {
-            border-color: #00d4aa;
-            outline: none;
-        }
+        .form-control:focus { border-color: #00d4aa; outline: none; }
         .btn-submit {
             background: #00d4aa;
             color: #0a0a0a;
@@ -442,11 +858,9 @@
             margin-top: 10px;
             cursor: pointer;
         }
-        .btn-submit:hover {
-            background: #00b894;
-        }
+        .btn-submit:hover { background: #00b894; }
 
-        /* 合同收款节点 */
+        /* 收款节点 */
         .milestone-section {
             margin-top: 20px;
             border-top: 1px solid #3a3a3a;
@@ -458,10 +872,7 @@
             align-items: center;
             margin-bottom: 16px;
         }
-        .milestone-header h4 {
-            color: #00d4aa;
-            font-size: 16px;
-        }
+        .milestone-header h4 { color: #00d4aa; font-size: 16px; }
         .btn-add-milestone {
             background: transparent;
             color: #00d4aa;
@@ -473,11 +884,12 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
+            transition: 0.2s;
         }
-        .milestone-list {
-            max-height: 300px;
-            overflow-y: auto;
+        .btn-add-milestone:hover {
+            background: rgba(0,212,170,0.1);
         }
+        .milestone-list { max-height: 300px; overflow-y: auto; }
         .milestone-item {
             background: #262626;
             border-radius: 12px;
@@ -487,24 +899,10 @@
             justify-content: space-between;
             align-items: center;
         }
-        .milestone-info {
-            flex: 1;
-        }
-        .milestone-date {
-            color: #00d4aa;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .milestone-amount {
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-        .milestone-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .milestone-info { flex: 1; }
+        .milestone-date { color: #00d4aa; font-size: 14px; font-weight: 600; }
+        .milestone-amount { color: #fff; font-size: 16px; font-weight: 700; margin-top: 4px; }
+        .milestone-actions { display: flex; gap: 8px; }
         .btn-remove-milestone {
             background: transparent;
             color: #ff6b6b;
@@ -513,6 +911,10 @@
             padding: 4px 12px;
             font-size: 12px;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-remove-milestone:hover {
+            background: rgba(255,107,107,0.1);
         }
         .milestone-total {
             margin-top: 12px;
@@ -558,18 +960,9 @@
             0% { box-shadow: 0 0 0 0 #ff6b6b; }
             70% { box-shadow: 0 0 0 14px #ff6b6b00; }
         }
-        .voice-info {
-            flex: 1;
-        }
-        .voice-info h4 {
-            color: #00d4aa;
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
-        .voice-info p {
-            color: #b0b0b0;
-            font-size: 13px;
-        }
+        .voice-info { flex: 1; }
+        .voice-info h4 { color: #00d4aa; font-size: 17px; margin-bottom: 5px; }
+        .voice-info p { color: #b0b0b0; font-size: 13px; }
         .voice-status {
             margin-top: 8px;
             color: #ccc;
@@ -618,9 +1011,7 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
         }
-        .category-tag:hover .remove-tag {
-            background: rgba(255,255,255,0.2);
-        }
+        .category-tag:hover .remove-tag { background: rgba(255,255,255,0.2); }
         .custom-category-input {
             display: flex;
             gap: 8px;
@@ -635,9 +1026,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .btn-add-category:hover {
-            background: #4a4a4a;
-        }
+        .btn-add-category:hover { background: #4a4a4a; }
 
         /* 语音确认框 */
         .confirm-box {
@@ -661,25 +1050,119 @@
             color: #ddd;
             font-size: 13px;
         }
-        .confirm-buttons {
-            display: flex;
-            gap: 16px;
-            margin-top: 28px;
-        }
-        .btn-confirm, .btn-modify {
-            flex: 1;
-            padding: 14px;
-            border-radius: 40px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-confirm { background: #00d4aa; color: #0a0a0a; }
-        .btn-modify { background: #3a3a3a; color: white; }
+       /* 语音确认按钮容器 */
+.confirm-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+/* 修改按钮 - 灰色玻璃 */
+.btn-modify {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 14px 20px;
+    color: #e0e0e0;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-modify:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* 确认并提交按钮 - 青绿色渐变 */
+.btn-confirm {
+    flex: 1;
+    background: linear-gradient(145deg, #00d4aa, #00b894);
+    border: none;
+    border-radius: 40px;
+    padding: 14px 20px;
+    color: #0a0a0a;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+}
+
+.btn-confirm:hover {
+    background: linear-gradient(145deg, #00c49a, #00a87c);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 212, 170, 0.4);
+}
+
+.btn-confirm:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 212, 170, 0.4);
+}
+
+/* 可选：添加 Font Awesome 图标（需确保按钮 HTML 中有 <i> 标签） */
+.btn-modify i, .btn-confirm i {
+    font-size: 16px;
+}
         .empty-state {
             text-align: center;
             padding: 40px 0;
             color: #777;
+        }
+
+        /* ===== 表格滚动防溢出 ===== */
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-scroll table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+        }
+        .table-scroll th,
+        .table-scroll td {
+            padding: 8px 10px;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: normal;
+            word-break: break-word;
+            text-align: left;
+        }
+        .table-scroll th { white-space: nowrap; font-weight: 600; }
+        @media (max-width: 768px) {
+            .table-scroll table { min-width: 640px; }
+            .table-scroll th, .table-scroll td { padding: 6px 8px; font-size: 12px; }
+        }
+
+        /* ===== 饼图容器强制限制 ===== */
+        #costPieChart {
+            max-height: 220px !important;
+            width: auto !important;
+            margin: 0 auto;
+            display: block;
+        }
+        .chart-box canvas {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto !important;
+            height: auto !important;
+        }
+        @media (max-width: 768px) {
+            #costPieChart { max-height: 180px !important; }
         }
     </style>
 </head>
@@ -687,27 +1170,82 @@
     <div class="container">
         <!-- ========== 头部 ========= -->
         <div class="header">
-            <h1>装修<span>记账·百炼AI</span></h1>
-            <div class="header-actions">
-                <button class="btn-add-project" id="addProjectBtn" title="新增项目"><i class="fas fa-plus"></i></button>
+            <h1>装修<span>记账 · PROJECT AI</span></h1>
+            <!-- 右上角加号已彻底删除，更极简 -->
+        </div>
+
+        <!-- ========== 复合筛选栏：时间筛选 + 项目搜索（极简融合）========= -->
+        <div class="filter-section">
+            <div class="time-filter-container">
+                <div class="time-filter-btn" id="timeFilterBtn">
+                    <i class="fas fa-calendar-alt" style="color:#00d4aa;"></i>
+                    <span id="timeFilterLabel">全部时间</span>
+                    <i class="fas fa-chevron-down" style="font-size:12px; margin-left:4px; color:#888;"></i>
+                </div>
+                <div class="time-dropdown" id="timeDropdown">
+                    <div class="time-dropdown-item active" data-value="all">📅 全部时间</div>
+                    <div class="time-dropdown-item" data-value="today">今日</div>
+                    <div class="time-dropdown-item" data-value="yesterday">昨日</div>
+                    <div class="time-dropdown-item" data-value="week">近7天</div>
+                    <div class="time-dropdown-item" data-value="month">近30天</div>
+                    <div class="time-dropdown-item" data-value="quarter">近90天</div>
+                    <div class="time-dropdown-divider"></div>
+                    <div class="time-dropdown-item" data-value="custom">📆 自定义</div>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="projectSearchInput" placeholder="搜索项目...">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="search-dropdown" id="projectSearchDropdown"></div>
             </div>
         </div>
 
-        <!-- ========== 仪表盘 ========= -->
+        <!-- 已选标签区：时间标签 + 项目标签 平级展示 -->
+        <div class="selected-tags" id="selectedTagsArea"></div>
+
+        <!-- ========== 仪表盘 · 六卡 ========= -->
         <div class="dashboard">
-            <div class="dashboard-card"><h3>📦 总项目</h3><div class="value" id="totalProjects">0</div><div class="subtext">进行中</div></div>
-            <div class="dashboard-card"><h3>💰 总收入</h3><div class="value profit" id="totalIncome">¥0</div><div class="subtext">累计</div></div>
-            <div class="dashboard-card"><h3>📉 总支出</h3><div class="value loss" id="totalExpense">¥0</div><div class="subtext">累计</div></div>
-            <div class="dashboard-card"><h3>📊 毛利润</h3><div class="value profit" id="totalProfit">¥0</div><div class="subtext">收入-支出</div></div>
+            <div class="dashboard-card">
+                <h3>📦 总项目</h3>
+                <div class="value" id="totalProjects">0</div>
+                <div class="subtext">进行中</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>📋 合同总额</h3>
+                <div class="value profit" id="totalContract">¥0</div>
+                <div class="subtext">全部项目预算</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>💰 总收入</h3>
+                <div class="value profit" id="totalIncome">¥0</div>
+                <div class="subtext">累计已收</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>📉 总支出</h3>
+                <div class="value loss" id="totalExpense">¥0</div>
+                <div class="subtext">累计支出</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>📊 毛利润总额</h3>
+                <div class="value profit" id="totalGrossProfit">¥0</div>
+                <div class="subtext">合同额-支出</div>
+            </div>
+            <div class="dashboard-card">
+                <h3>✅ 毛利润(已结算)</h3>
+                <div class="value profit" id="totalProfit">¥0</div>
+                <div class="subtext">收入-支出</div>
+            </div>
         </div>
 
         <!-- ========== 应收账款模块 ========= -->
-        <div class="receivable-section" id="receivableSection">
+        <div class="receivable-section">
             <div class="receivable-header">
                 <h2><i class="fas fa-file-invoice-dollar"></i> 应收账款提醒</h2>
-                <span style="color:#ffd93d; font-size:14px;" id="receivableRefreshTime">实时更新</span>
+                <span style="color:#ffd93d; font-size:14px;">实时更新</span>
             </div>
-            
             <div class="receivable-stats">
                 <div class="receivable-card">
                     <h4>📋 待收总额</h4>
@@ -725,29 +1263,30 @@
                     <div class="count" id="upcomingCount">7天内到期</div>
                 </div>
             </div>
-            
             <div class="receivable-table-container">
-                <table class="receivable-table">
-                    <thead>
-                        <tr>
-                            <th>项目名称</th>
-                            <th>收款日期</th>
-                            <th>应收金额</th>
-                            <th>已收金额</th>
-                            <th>待收金额</th>
-                            <th>状态</th>
-                        </tr>
-                    </thead>
-                    <tbody id="receivableTableBody">
-                        <tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-scroll">
+                    <table class="receivable-table data-table">
+                        <thead>
+                            <tr>
+                                <th>项目名称</th>
+                                <th>收款日期</th>
+                                <th>应收金额</th>
+                                <th>已收金额</th>
+                                <th>待收金额</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receivableTableBody">
+                            <tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <!-- ========== 双图 ========= -->
         <div class="charts-container">
-            <div class="chart-box">
+            <div class="chart-box" id="profitChartBox">
                 <h3><i class="fas fa-chart-bar" style="color:#00d4aa;"></i> 项目利润对比</h3>
                 <canvas id="profitChart"></canvas>
             </div>
@@ -770,114 +1309,117 @@
                     <button class="tab-btn" id="transactionsToggle">收支</button>
                 </div>
             </div>
-
-            <!-- 综合报表 -->
-            <table class="data-table" id="summaryTable">
-                <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
-                <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
-            </table>
-            <!-- 项目列表 -->
-            <table class="data-table" id="projectsTable" style="display:none;">
-                <thead><tr><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
-                <tbody id="projectsTableBody"></tbody>
-            </table>
-            <!-- 收支记录 -->
-            <table class="data-table" id="transactionsTable" style="display:none;">
-                <thead><tr><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
-                <tbody id="transactionsTableBody"></tbody>
-            </table>
-        </div>
-
-        <!-- 固定底部 · 人民币大按钮 -->
-        <button class="fab-transaction" id="addTransactionBtn"><i class="fas fa-yen-sign"></i></button>
-    </div>
-
-    <!-- ========== 模态框：项目管理 ========= -->
-    <div class="modal" id="projectModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="projectModalTitle">➕ 新建项目</h2><button class="btn-close" id="closeProjectModal">&times;</button></div>
-            <form id="projectForm">
-                <input type="hidden" id="projectId">
-                <div class="form-group"><label>🏗️ 项目名称</label><input type="text" id="projectName" class="form-control" placeholder="如：阳光花园12-302" required></div>
-                <div class="form-group"><label>💰 合同总额 / 预算 (元)</label><input type="number" id="projectBudget" class="form-control" placeholder="150000" min="0" step="0.01" required></div>
-                
-                <div class="milestone-section">
-                    <div class="milestone-header">
-                        <h4><i class="fas fa-file-signature"></i> 收款计划</h4>
-                        <button type="button" class="btn-add-milestone" id="addMilestoneBtn">
-                            <i class="fas fa-plus"></i> 添加节点
-                        </button>
-                    </div>
-                    <div id="milestoneList" class="milestone-list"></div>
-                    <div class="milestone-total">
-                        <span>合计金额</span>
-                        <span id="totalAmountDisplay">¥0.00</span>
-                    </div>
-                    <div id="milestoneWarning" style="color:#ffd93d; font-size:13px; margin-top:8px; display:none;">
-                        <i class="fas fa-exclamation-triangle"></i> 收款节点总额与合同总额不符
-                    </div>
-                    <input type="hidden" id="projectMilestones" value="[]">
-                </div>
-                
-                <button type="submit" class="btn-submit" id="projectSubmitBtn">保存项目</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ========== 添加收款节点模态框 ========= -->
-    <div class="modal" id="milestoneModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>📅 添加收款节点</h2><button class="btn-close" id="closeMilestoneModal">&times;</button></div>
-            <form id="milestoneForm">
-                <div class="form-group"><label>📅 收款日期</label><input type="date" id="milestoneDate" class="form-control" required></div>
-                <div class="form-group"><label>💰 收款金额 (元)</label><input type="number" id="milestoneAmount" class="form-control" placeholder="50000" min="0" step="0.01" required></div>
-                <div class="form-group"><label>📝 备注</label><input type="text" id="milestoneNote" class="form-control" placeholder="如：首付款、进度款"></div>
-                <button type="submit" class="btn-submit">添加节点</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ========== 模态框：收支记录 ========= -->
-    <div class="modal" id="transactionModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="transactionModalTitle">💰 收支记录</h2><button class="btn-close" id="closeTransactionModal">&times;</button></div>
-            
-            <div class="voice-hero">
-                <button class="voice-btn" id="voiceInputBtn"><i class="fas fa-microphone"></i></button>
-                <div class="voice-info">
-                    <h4><i class="fas fa-brain"></i> 百炼AI智能语义匹配</h4>
-                    <p>点击麦克风语音输入，或手动选择下方标签</p>
-                </div>
+            <div class="table-scroll">
+                <table class="data-table" id="summaryTable">
+                    <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
+                    <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
+                </table>
             </div>
-            <div class="voice-status" id="voiceStatus">✨ 示例：“阳光花园 材料费 三千二 25年3月5号”</div>
-
-            <form id="transactionForm">
-                <input type="hidden" id="transactionId">
-                <div class="form-group"><label>📅 日期</label><input type="date" id="transactionDate" class="form-control" required></div>
-                <div class="form-group"><label>🏗️ 项目</label><select id="transactionProject" class="form-control" required><option value="">请选择</option></select></div>
-                <div class="form-group">
-                    <label>🏷️ 费用类型 <span style="color:#00d4aa; font-size:12px;">（点击标签手动选择）</span></label>
-                    <div class="category-tags" id="categoryTags"></div>
-                    <div class="custom-category-input">
-                        <input type="text" id="customCategory" class="form-control" placeholder="自定义类型">
-                        <button type="button" class="btn-add-category" id="addCategoryBtn">添加</button>
-                    </div>
-                    <input type="hidden" id="transactionType" value="收入">
-                </div>
-                <div class="form-group"><label>💰 金额 (元)</label><input type="number" id="transactionAmount" class="form-control" placeholder="0.00" min="0" step="0.01" required></div>
-                <button type="submit" class="btn-submit" id="transactionSubmitBtn">✅ 保存记录</button>
-            </form>
+            <div class="table-scroll" id="projectsTableWrap" style="display:none;">
+                <table class="data-table" id="projectsTable">
+                    <thead><tr><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
+                    <tbody id="projectsTableBody"></tbody>
+                </table>
+            </div>
+            <div class="table-scroll" id="transactionsTableWrap" style="display:none;">
+                <table class="data-table" id="transactionsTable">
+                    <thead><tr><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
+                    <tbody id="transactionsTableBody"></tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- ========== 语音确认模态框 ========= -->
-    <div class="modal" id="voiceConfirmModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>🎤 AI智能匹配结果</h2><button class="btn-close" id="closeVoiceConfirmModal">&times;</button></div>
-            <div class="confirm-box" id="voiceConfirmContent"></div>
-            <div class="confirm-buttons">
-                <button class="btn-modify" id="modifyVoiceResultBtn">修改</button>
-                <button class="btn-confirm" id="confirmVoiceResultBtn">确认并提交</button>
+        <!-- ========== 极简浮动菜单 ========= -->
+        <div class="fab-container">
+            <button class="fab-transaction" id="fabMainBtn"><i class="fas fa-plus"></i></button>
+            <div class="fab-menu" id="fabMenu">
+                <button class="fab-menu-item" id="fabAddProject">
+                    <i class="fas fa-folder-plus"></i>
+                    <span>新建项目</span>
+                </button>
+                <button class="fab-menu-item" id="fabAddTransaction">
+                    <i class="fas fa-yen-sign"></i>
+                    <span>新增收支</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========== 模态框：项目管理 ========= -->
+        <div class="modal" id="projectModal">
+            <div class="modal-content">
+                <div class="modal-header"><h2 id="projectModalTitle">➕ 新建项目</h2><button class="btn-close" id="closeProjectModal">&times;</button></div>
+                <form id="projectForm">
+                    <input type="hidden" id="projectId">
+                    <div class="form-group"><label>🏗️ 项目名称</label><input type="text" id="projectName" class="form-control" placeholder="如：阳光花园12-302" required></div>
+                    <div class="form-group"><label>💰 合同总额 / 预算 (元)</label><input type="number" id="projectBudget" class="form-control" placeholder="150000" min="0" step="0.01" required></div>
+                    <div class="milestone-section">
+                        <div class="milestone-header">
+                            <h4><i class="fas fa-file-signature"></i> 收款计划</h4>
+                            <button type="button" class="btn-add-milestone" id="addMilestoneBtn"><i class="fas fa-plus"></i> 添加节点</button>
+                        </div>
+                        <div id="milestoneList" class="milestone-list"></div>
+                        <div class="milestone-total"><span>合计金额</span><span id="totalAmountDisplay">¥0.00</span></div>
+                        <div id="milestoneWarning" style="color:#ffd93d; font-size:13px; margin-top:8px; display:none;"><i class="fas fa-exclamation-triangle"></i> 收款节点总额与合同总额不符</div>
+                        <input type="hidden" id="projectMilestones" value="[]">
+                    </div>
+                    <button type="submit" class="btn-submit" id="projectSubmitBtn">保存项目</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== 添加收款节点模态框 ========= -->
+        <div class="modal" id="milestoneModal">
+            <div class="modal-content">
+                <div class="modal-header"><h2>📅 添加收款节点</h2><button class="btn-close" id="closeMilestoneModal">&times;</button></div>
+                <form id="milestoneForm">
+                    <div class="form-group"><label>📅 收款日期</label><input type="date" id="milestoneDate" class="form-control" required></div>
+                    <div class="form-group"><label>💰 收款金额 (元)</label><input type="number" id="milestoneAmount" class="form-control" placeholder="50000" min="0" step="0.01" required></div>
+                    <div class="form-group"><label>📝 备注</label><input type="text" id="milestoneNote" class="form-control" placeholder="如：首付款、进度款"></div>
+                    <button type="submit" class="btn-submit">添加节点</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== 模态框：收支记录 ========= -->
+        <div class="modal" id="transactionModal">
+            <div class="modal-content">
+                <div class="modal-header"><h2 id="transactionModalTitle">💰 收支记录</h2><button class="btn-close" id="closeTransactionModal">&times;</button></div>
+                <div class="voice-hero">
+                    <button class="voice-btn" id="voiceInputBtn"><i class="fas fa-microphone"></i></button>
+                    <div class="voice-info">
+                        <h4><i class="fas fa-brain"></i> AI智能语义匹配</h4>
+                        <p>点击麦克风语音输入，或手动选择下方标签</p>
+                    </div>
+                </div>
+                <div class="voice-status" id="voiceStatus">✨ 点击麦克风开始录音，再次点击结束录音</div>
+                <form id="transactionForm">
+                    <input type="hidden" id="transactionId">
+                    <div class="form-group"><label>📅 日期</label><input type="date" id="transactionDate" class="form-control" required></div>
+                    <div class="form-group"><label>🏗️ 项目</label><select id="transactionProject" class="form-control" required><option value="">请选择</option></select></div>
+                    <div class="form-group">
+                        <label>🏷️ 费用类型 <span style="color:#00d4aa; font-size:12px;">（点击标签手动选择）</span></label>
+                        <div class="category-tags" id="categoryTags"></div>
+                        <div class="custom-category-input">
+                            <input type="text" id="customCategory" class="form-control" placeholder="自定义类型">
+                            <button type="button" class="btn-add-category" id="addCategoryBtn">添加</button>
+                        </div>
+                        <input type="hidden" id="transactionType" value="收入">
+                    </div>
+                    <div class="form-group"><label>💰 金额 (元)</label><input type="number" id="transactionAmount" class="form-control" placeholder="0.00" min="0" step="0.01" required></div>
+                    <button type="submit" class="btn-submit" id="transactionSubmitBtn">✅ 保存记录</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== 语音确认模态框 ========= -->
+        <div class="modal" id="voiceConfirmModal">
+            <div class="modal-content">
+                <div class="modal-header"><h2>🎤 AI智能匹配结果</h2><button class="btn-close" id="closeVoiceConfirmModal">&times;</button></div>
+                <div class="confirm-box" id="voiceConfirmContent"></div>
+                <div class="confirm-buttons">
+                    <button class="btn-modify" id="modifyVoiceResultBtn">修改</button>
+                    <button class="btn-confirm" id="confirmVoiceResultBtn">确认并提交</button>
+                </div>
             </div>
         </div>
     </div>
@@ -890,7 +1432,7 @@
         const BAILIAN_API_KEY = 'sk-cbfb73b5ae5b41608922e86705340311';
         const BAILIAN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
         
-        // ========== ✅ 修复1：获取当天日期函数 ==========
+        // ========== 获取当天日期 ==========
         function getTodayDate() {
             const today = new Date();
             const year = today.getFullYear();
@@ -902,13 +1444,9 @@
         // ========== 智能日期解析 ==========
         function parseNaturalDate(dateText) {
             if (!dateText) return getTodayDate();
-            
             const today = new Date();
             const currentYear = today.getFullYear();
-            const currentMonth = today.getMonth() + 1;
-            
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) return dateText;
-            
             const chineseDateMatch = dateText.match(/(\d{2,4})?年?(\d{1,2})月(\d{1,2})[号日]?/);
             if (chineseDateMatch) {
                 let year = chineseDateMatch[1] ? parseInt(chineseDateMatch[1]) : currentYear;
@@ -917,46 +1455,32 @@
                 const day = parseInt(chineseDateMatch[3]);
                 return `${year}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
             }
-            
-            if (dateText.includes('昨天')) {
-                const date = new Date(today); date.setDate(today.getDate() - 1); return date.toISOString().split('T')[0];
-            }
+            if (dateText.includes('昨天')) { const d = new Date(today); d.setDate(today.getDate()-1); return d.toISOString().split('T')[0]; }
             if (dateText.includes('今天')) return getTodayDate();
-            if (dateText.includes('明天')) {
-                const date = new Date(today); date.setDate(today.getDate() + 1); return date.toISOString().split('T')[0];
-            }
-            
+            if (dateText.includes('明天')) { const d = new Date(today); d.setDate(today.getDate()+1); return d.toISOString().split('T')[0]; }
             return getTodayDate();
         }
 
         // ========== 中文数字转阿拉伯数字 ==========
         function chineseToNumber(chineseStr) {
             if (!chineseStr) return 0;
-            
-            const chineseNum = {
-                '零':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,
-                '十':10,'百':100,'千':1000,'万':10000,'亿':100000000,'两':2,'俩':2
-            };
-            
+            const chineseNum = {'零':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'百':100,'千':1000,'万':10000,'亿':100000000,'两':2,'俩':2};
             const arabicMatch = chineseStr.match(/\d+/g);
-            if (arabicMatch) return parseInt(arabicMatch[arabicMatch.length - 1]);
-            
-            if (chineseStr.includes('千') || chineseStr.includes('百') || chineseStr.includes('十')) {
-                let result = 0, current = 0;
-                for (let i = 0; i < chineseStr.length; i++) {
+            if (arabicMatch) return parseInt(arabicMatch[arabicMatch.length-1]);
+            if (chineseStr.includes('千')||chineseStr.includes('百')||chineseStr.includes('十')) {
+                let result=0, current=0;
+                for(let i=0;i<chineseStr.length;i++) {
                     const char = chineseStr[i];
-                    if (chineseNum[char] !== undefined) {
-                        if (chineseNum[char] >= 10) {
-                            if (current === 0) current = 1;
+                    if(chineseNum[char]!==undefined) {
+                        if(chineseNum[char]>=10) {
+                            if(current===0) current=1;
                             result += current * chineseNum[char];
-                            current = 0;
-                        } else {
-                            current = chineseNum[char];
-                        }
+                            current=0;
+                        } else { current = chineseNum[char]; }
                     }
                 }
-                if (current > 0) result += current;
-                return result || 0;
+                if(current>0) result+=current;
+                return result||0;
             }
             return 0;
         }
@@ -973,92 +1497,78 @@
             transactions: Storage.load('transactions') || [],
             expenseTypes: Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'],
 
-            // ✅ 修复：项目操作 - 完全替换旧数据 + 强制触发更新
             addProject(id, name, budget, milestones) {
+                if (id) {
+                    const targetId = Number(id);
+                    this.transactions = this.transactions.filter(t => Number(t.projectId) !== targetId);
+                    this.projects = this.projects.filter(p => Number(p.id) !== targetId);
+                    console.log(`🗑️ 已删除项目ID=${targetId} 及其所有收支记录`);
+                }
+                const newId = id ? Number(id) : Date.now();
                 const proj = { 
-                    id: id || Date.now(), 
+                    id: newId, 
                     name, 
                     budget: parseFloat(budget),
                     milestones: milestones || [], 
-                    createdAt: id ? this.projects.find(p => p.id === id)?.createdAt || new Date().toISOString() : new Date().toISOString()
+                    createdAt: new Date().toISOString() 
                 };
-                
-                if (id) { 
-                    // 编辑模式：完全替换旧项目
-                    const index = this.projects.findIndex(p => p.id === id);
-                    if (index !== -1) {
-                        this.projects[index] = proj;
-                    }
-                } else {
-                    this.projects.push(proj);
-                }
-                
+                this.projects.push(proj);
                 Storage.save('projects', this.projects);
+                Storage.save('transactions', this.transactions);
+                console.log(`✅ 已添加新项目 ID=${newId}`, proj);
                 return proj;
             },
-            
             deleteProject(id) {
-                this.transactions = this.transactions.filter(t => t.projectId !== id);
-                this.projects = this.projects.filter(p => p.id !== id);
+                const targetId = Number(id);
+                this.transactions = this.transactions.filter(t => Number(t.projectId) !== targetId);
+                this.projects = this.projects.filter(p => Number(p.id) !== targetId);
                 Storage.save('projects', this.projects); 
                 Storage.save('transactions', this.transactions);
             },
-            
-            // ✅ 修复：交易操作 - 完全替换旧数据 + 强制触发更新
             addTransaction(id, date, projectId, type, amount) {
+                if (id) {
+                    const targetId = Number(id);
+                    this.transactions = this.transactions.filter(t => Number(t.id) !== targetId);
+                    console.log(`🗑️ 已删除交易 ID=${targetId}`);
+                }
+                const newId = id ? Number(id) : Date.now();
                 const trans = { 
-                    id: id || Date.now(), 
+                    id: newId, 
                     date, 
-                    projectId: parseInt(projectId), 
+                    projectId: Number(projectId), 
                     type, 
                     amount: parseFloat(amount) 
                 };
-                
-                if (id) { 
-                    // 编辑模式：完全替换旧交易
-                    const index = this.transactions.findIndex(t => t.id === id);
-                    if (index !== -1) {
-                        this.transactions[index] = trans;
-                    }
-                } else {
-                    this.transactions.push(trans);
-                }
-                
+                this.transactions.push(trans);
                 Storage.save('transactions', this.transactions);
+                console.log(`✅ 已添加新交易 ID=${newId}`, trans);
                 return trans;
             },
-            
             deleteTransaction(id) {
-                this.transactions = this.transactions.filter(t => t.id !== id);
+                const targetId = Number(id);
+                this.transactions = this.transactions.filter(t => Number(t.id) !== targetId);
                 Storage.save('transactions', this.transactions);
             },
-            
             addExpenseType(type) { 
                 if(!this.expenseTypes.includes(type) && type.trim()){ 
                     this.expenseTypes.push(type); 
                     Storage.save('expenseTypes', this.expenseTypes); 
                 } 
             },
-            
             deleteExpenseType(type) { 
                 if(this.expenseTypes.length > 1) { 
                     this.expenseTypes = this.expenseTypes.filter(t => t !== type); 
                     Storage.save('expenseTypes', this.expenseTypes); 
                 } else alert('至少保留一个费用类型');
             },
-            
-            // 项目统计
             getProjectStats(pid) {
-                const p = this.projects.find(p => p.id === pid); 
+                const p = this.projects.find(p => Number(p.id) === Number(pid)); 
                 if(!p) return null;
-                
-                const ts = this.transactions.filter(t => t.projectId === pid);
+                const ts = this.transactions.filter(t => Number(t.projectId) === Number(pid));
                 const income = ts.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
                 const expense = ts.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
-                
                 const contractTotal = p.budget || 0;
                 const pendingIncome = Math.max(0, contractTotal - income);
-                
                 return { 
                     ...p, 
                     contractTotal,
@@ -1069,21 +1579,17 @@
                     profitMargin: contractTotal > 0 ? ((income - expense) / contractTotal * 100) : 0 
                 };
             },
-            
-            getAllStats() { 
-                return this.projects.map(p => this.getProjectStats(p.id)); 
-            },
-            
+            getAllStats() { return this.projects.map(p => this.getProjectStats(p.id)); },
             getOverallStats() {
                 const all = this.getAllStats();
                 return {
                     totalProjects: this.projects.length,
+                    totalContract: all.reduce((s,st)=>s+(st.contractTotal||0),0),
                     totalIncome: all.reduce((s,st)=>s+st.income,0),
                     totalExpense: all.reduce((s,st)=>s+st.expense,0),
                     totalProfit: all.reduce((s,st)=>s+st.profit,0)
                 };
             },
-            
             getCostTypeAnalysis() {
                 const map = {};
                 this.transactions.filter(t => t.type !== '收入').forEach(t => { 
@@ -1091,93 +1597,62 @@
                 });
                 return Object.keys(map).map(k=>({type:k, amount:map[k]})).sort((a,b)=>b.amount-a.amount);
             },
-
-            // 应收账款智能累计逻辑
             getReceivableAnalysis() {
                 const today = new Date();
                 const sevenDaysLater = new Date(today);
                 sevenDaysLater.setDate(today.getDate() + 7);
-                
-                let totalReceivable = 0;
-                let overdueAmount = 0;
-                let upcomingAmount = 0;
-                let overdueCount = 0;
-                let upcomingCount = 0;
-                let receivableItems = [];
-                
+                let totalReceivable = 0, overdueAmount = 0, upcomingAmount = 0, overdueCount = 0, upcomingCount = 0, receivableItems = [];
                 this.projects.forEach(project => {
                     const stats = this.getProjectStats(project.id);
                     if (!stats) return;
-                    
                     const pendingIncome = stats.pendingIncome;
                     if (pendingIncome <= 0) return;
-                    
                     totalReceivable += pendingIncome;
-                    
                     if (!project.milestones || project.milestones.length === 0) {
-                        receivableItems.push({
-                            projectId: project.id,
-                            projectName: project.name,
-                            dueDate: project.createdAt.split('T')[0],
-                            originalAmount: project.budget,
-                            receivedAmount: stats.income,
-                            pendingAmount: pendingIncome,
-                            note: '合同总额',
-                            status: new Date(project.createdAt) < today ? 'overdue' : 'normal'
+                        receivableItems.push({ 
+                            projectId: project.id, 
+                            projectName: project.name, 
+                            dueDate: project.createdAt.split('T')[0], 
+                            originalAmount: project.budget, 
+                            receivedAmount: stats.income, 
+                            pendingAmount: pendingIncome, 
+                            note: '合同总额', 
+                            status: new Date(project.createdAt) < today ? 'overdue' : 'normal' 
                         });
-                        if (new Date(project.createdAt) < today) {
-                            overdueAmount += pendingIncome;
-                            overdueCount++;
-                        }
+                        if (new Date(project.createdAt) < today) { overdueAmount += pendingIncome; overdueCount++; }
                         return;
                     }
-                    
                     const sortedMilestones = [...project.milestones].sort((a, b) => new Date(a.date) - new Date(b.date));
-                    
                     const projectIncomes = this.transactions
-                        .filter(t => t.projectId === project.id && t.type === '收入')
+                        .filter(t => Number(t.projectId) === Number(project.id) && t.type === '收入')
                         .sort((a, b) => new Date(a.date) - new Date(b.date));
-                    
-                    let accumulatedIncome = 0;
                     let incomeIndex = 0;
-                    
                     sortedMilestones.forEach((milestone, index) => {
                         const milestoneDate = new Date(milestone.date);
                         const milestoneAmount = milestone.amount;
-                        
                         let receivedBeforeMilestone = 0;
                         while (incomeIndex < projectIncomes.length) {
                             const income = projectIncomes[incomeIndex];
                             const incomeDate = new Date(income.date);
-                            
-                            const nextMilestoneDate = index < sortedMilestones.length - 1 
-                                ? new Date(sortedMilestones[index + 1].date) 
-                                : null;
-                            
-                            if (!nextMilestoneDate || incomeDate < nextMilestoneDate) {
-                                receivedBeforeMilestone += income.amount;
-                                incomeIndex++;
-                            } else {
-                                break;
-                            }
+                            const nextMilestoneDate = index < sortedMilestones.length - 1 ? new Date(sortedMilestones[index + 1].date) : null;
+                            if (!nextMilestoneDate || incomeDate < nextMilestoneDate) { 
+                                receivedBeforeMilestone += income.amount; 
+                                incomeIndex++; 
+                            } else break;
                         }
-                        
                         const receivedForMilestone = Math.min(receivedBeforeMilestone, milestoneAmount);
                         const pendingForMilestone = milestoneAmount - receivedForMilestone;
-                        
                         if (pendingForMilestone > 0) {
                             let status = 'normal';
-                            
-                            if (milestoneDate < today && receivedBeforeMilestone < milestoneAmount) {
-                                status = 'overdue';
-                                overdueAmount += pendingForMilestone;
-                                overdueCount++;
-                            } else if (milestoneDate <= sevenDaysLater && milestoneDate >= today) {
-                                status = 'upcoming';
-                                upcomingAmount += pendingForMilestone;
-                                upcomingCount++;
+                            if (milestoneDate < today && receivedBeforeMilestone < milestoneAmount) { 
+                                status = 'overdue'; 
+                                overdueAmount += pendingForMilestone; 
+                                overdueCount++; 
+                            } else if (milestoneDate <= sevenDaysLater && milestoneDate >= today) { 
+                                status = 'upcoming'; 
+                                upcomingAmount += pendingForMilestone; 
+                                upcomingCount++; 
                             }
-                            
                             receivableItems.push({
                                 projectId: project.id,
                                 projectName: project.name,
@@ -1200,31 +1675,21 @@
                                 status: 'paid'
                             });
                         }
-                        
-                        accumulatedIncome = receivedBeforeMilestone;
                     });
                 });
-                
                 receivableItems.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-                
-                return {
-                    totalReceivable,
-                    overdueAmount,
-                    upcomingAmount,
-                    overdueCount,
-                    upcomingCount,
-                    items: receivableItems
-                };
+                return { totalReceivable, overdueAmount, upcomingAmount, overdueCount, upcomingCount, items: receivableItems };
             }
         };
 
         // ========== DOM 绑定 ==========
         const DOM = {
-            totalProjects: document.getElementById('totalProjects'), 
+            totalProjects: document.getElementById('totalProjects'),
+            totalContract: document.getElementById('totalContract'),
             totalIncome: document.getElementById('totalIncome'),
-            totalExpense: document.getElementById('totalExpense'), 
+            totalExpense: document.getElementById('totalExpense'),
+            totalGrossProfit: document.getElementById('totalGrossProfit'),
             totalProfit: document.getElementById('totalProfit'),
-            
             totalReceivable: document.getElementById('totalReceivable'),
             totalReceivableCount: document.getElementById('totalReceivableCount'),
             overdueAmount: document.getElementById('overdueAmount'),
@@ -1232,422 +1697,175 @@
             upcomingAmount: document.getElementById('upcomingAmount'),
             upcomingCount: document.getElementById('upcomingCount'),
             receivableTableBody: document.getElementById('receivableTableBody'),
-            
-            summaryTable: document.getElementById('summaryTable'), 
             summaryBody: document.getElementById('summaryTableBody'),
-            projectsTable: document.getElementById('projectsTable'), 
             projectsBody: document.getElementById('projectsTableBody'),
-            transactionsTable: document.getElementById('transactionsTable'), 
             transactionsBody: document.getElementById('transactionsTableBody'),
-            tableTitle: document.getElementById('tableTitle'), 
+            tableTitle: document.getElementById('tableTitle'),
             summaryToggle: document.getElementById('summaryToggle'),
-            projectsToggle: document.getElementById('projectsToggle'), 
+            projectsToggle: document.getElementById('projectsToggle'),
             transactionsToggle: document.getElementById('transactionsToggle'),
-            addProjectBtn: document.getElementById('addProjectBtn'), 
-            addTransactionBtn: document.getElementById('addTransactionBtn'),
             exportBtn: document.getElementById('exportBtn'),
-            projectModal: document.getElementById('projectModal'), 
+            projectModal: document.getElementById('projectModal'),
             transactionModal: document.getElementById('transactionModal'),
             milestoneModal: document.getElementById('milestoneModal'),
             voiceConfirmModal: document.getElementById('voiceConfirmModal'),
-            closeProjectModal: document.getElementById('closeProjectModal'), 
+            closeProjectModal: document.getElementById('closeProjectModal'),
             closeTransactionModal: document.getElementById('closeTransactionModal'),
             closeMilestoneModal: document.getElementById('closeMilestoneModal'),
             closeVoiceConfirm: document.getElementById('closeVoiceConfirmModal'),
-            projectForm: document.getElementById('projectForm'), 
+            projectForm: document.getElementById('projectForm'),
             projectId: document.getElementById('projectId'),
-            projectName: document.getElementById('projectName'), 
+            projectName: document.getElementById('projectName'),
             projectBudget: document.getElementById('projectBudget'),
-            projectMilestones: document.getElementById('projectMilestones'),
             milestoneList: document.getElementById('milestoneList'),
             totalAmountDisplay: document.getElementById('totalAmountDisplay'),
             milestoneWarning: document.getElementById('milestoneWarning'),
-            projectModalTitle: document.getElementById('projectModalTitle'), 
+            projectModalTitle: document.getElementById('projectModalTitle'),
             projectSubmitBtn: document.getElementById('projectSubmitBtn'),
             addMilestoneBtn: document.getElementById('addMilestoneBtn'),
             milestoneForm: document.getElementById('milestoneForm'),
             milestoneDate: document.getElementById('milestoneDate'),
             milestoneAmount: document.getElementById('milestoneAmount'),
             milestoneNote: document.getElementById('milestoneNote'),
-            transactionForm: document.getElementById('transactionForm'), 
+            transactionForm: document.getElementById('transactionForm'),
             transactionId: document.getElementById('transactionId'),
-            transactionDate: document.getElementById('transactionDate'), 
+            transactionDate: document.getElementById('transactionDate'),
             transactionProject: document.getElementById('transactionProject'),
-            transactionAmount: document.getElementById('transactionAmount'), 
+            transactionAmount: document.getElementById('transactionAmount'),
             transactionType: document.getElementById('transactionType'),
-            transactionModalTitle: document.getElementById('transactionModalTitle'), 
+            transactionModalTitle: document.getElementById('transactionModalTitle'),
             transactionSubmitBtn: document.getElementById('transactionSubmitBtn'),
-            categoryTags: document.getElementById('categoryTags'), 
+            categoryTags: document.getElementById('categoryTags'),
             customCategory: document.getElementById('customCategory'),
-            addCategoryBtn: document.getElementById('addCategoryBtn'), 
+            addCategoryBtn: document.getElementById('addCategoryBtn'),
             voiceInputBtn: document.getElementById('voiceInputBtn'),
-            voiceStatus: document.getElementById('voiceStatus'), 
+            voiceStatus: document.getElementById('voiceStatus'),
             voiceConfirmContent: document.getElementById('voiceConfirmContent'),
-            modifyBtn: document.getElementById('modifyVoiceResultBtn'), 
-            confirmBtn: document.getElementById('confirmVoiceResultBtn')
+            modifyBtn: document.getElementById('modifyVoiceResultBtn'),
+            confirmBtn: document.getElementById('confirmVoiceResultBtn'),
+            profitChartBox: document.getElementById('profitChartBox'),
+            // 筛选相关DOM
+            projectSearchInput: document.getElementById('projectSearchInput'),
+            projectSearchDropdown: document.getElementById('projectSearchDropdown'),
+            selectedTagsArea: document.getElementById('selectedTagsArea'),
+            timeFilterBtn: document.getElementById('timeFilterBtn'),
+            timeDropdown: document.getElementById('timeDropdown'),
+            timeFilterLabel: document.getElementById('timeFilterLabel')
         };
 
-        // ========== 图表实例 ==========
-        let profitChart, costPieChart;
+        let profitChart, costPieChart, currentMilestones = [];
 
         // ========== 工具函数 ==========
         const formatMoney = (v) => '¥' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         const formatNumber = (v) => v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-        // ========== Excel导出 ==========
-        function exportToExcel() {
-            let data = [], sheetName = '', headers = [];
-            
-            if (DOM.summaryTable.style.display !== 'none') {
-                sheetName = '综合报表';
-                headers = ['项目名称', '合同总额(元)', '已收(元)', '待收(元)', '支出(元)', '毛利润(元)', '毛利率(%)'];
-                const stats = AppState.getAllStats();
-                data = stats.map(s => [
-                    s.name, s.contractTotal || 0, s.income, s.pendingIncome || 0, s.expense, s.profit, s.profitMargin.toFixed(1)
-                ]);
-            } else if (DOM.projectsTable.style.display !== 'none') {
-                sheetName = '项目列表';
-                headers = ['项目名称', '合同总额(元)', '收款节点', '已收(元)', '待收(元)', '创建时间'];
-                data = AppState.projects.map(p => {
-                    const stats = AppState.getProjectStats(p.id);
-                    return [
-                        p.name, p.budget || 0,
-                        p.milestones ? p.milestones.length : 0,
-                        stats?.income || 0,
-                        stats?.pendingIncome || 0,
-                        new Date(p.createdAt).toLocaleDateString('zh-CN')
-                    ];
-                });
-            } else {
-                sheetName = '收支记录';
-                headers = ['日期', '项目名称', '费用类型', '金额(元)'];
-                const sorted = [...AppState.transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                data = sorted.map(t => {
-                    const proj = AppState.projects.find(p=>p.id===t.projectId);
-                    return [t.date, proj?.name || '未知项目', t.type, t.type === '收入' ? t.amount : -t.amount];
-                });
-            }
-            
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
-            ws['!cols'] = headers.map(() => ({ wch: 15 }));
-            XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            XLSX.writeFile(wb, `装修记账_${sheetName}_${new Date().toISOString().split('T')[0]}.xlsx`);
-        }
-
-        // ========== 百炼AI语音 ==========
-        const BailianAI = {
-            isListening: false, recognition: null,
-
-            init() {
-                if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-                    DOM.voiceStatus.innerHTML = '❌ 浏览器不支持语音，请用Chrome/Edge';
-                    DOM.voiceInputBtn.disabled = true; return false;
-                }
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                this.recognition = new SpeechRecognition();
-                this.recognition.lang = 'zh-CN'; this.recognition.continuous = false; this.recognition.interimResults = false;
-                
-                this.recognition.onstart = () => { 
-                    this.isListening = true; 
-                    DOM.voiceInputBtn.classList.add('listening'); 
-                    DOM.voiceStatus.innerHTML = '🎤 聆听中… 请说出记账内容'; 
-                };
-                this.recognition.onend = () => { 
-                    this.isListening = false; 
-                    DOM.voiceInputBtn.classList.remove('listening'); 
-                    if (!window.__voiceProcessing) DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; 
-                };
-                this.recognition.onerror = (e) => { 
-                    DOM.voiceStatus.innerHTML = '❌ 语音识别错误: ' + e.error; 
-                    this.isListening = false; 
-                    DOM.voiceInputBtn.classList.remove('listening'); 
-                };
-                this.recognition.onresult = (e) => {
-                    const text = e.results[0][0].transcript;
-                    DOM.voiceStatus.innerHTML = `📝 识别文字: "${text}" → AI正在理解你的意思...`;
-                    this.callBailianLLM(text);
-                };
-                return true;
-            },
-            start() { if (this.recognition && !this.isListening) this.recognition.start(); },
-
-            async callBailianLLM(transcript) {
-                if (!AppState.projects.length) { 
-                    alert('请先添加项目，再进行语音记账'); 
-                    DOM.voiceStatus.innerHTML = '⚠️ 尚未创建项目'; 
-                    return; 
-                }
-
-                const projectList = AppState.projects.map(p => p.name).join('、');
-                const expenseTypeList = ['收入', ...AppState.expenseTypes].join('、');
-                const today = getTodayDate();
-
-                const prompt = `你是一个装修项目记账AI，专门处理语音识别后的文字。
-
-用户说："""${transcript}"""
-
-项目列表：[${projectList}]
-费用类型列表：[${expenseTypeList}]
-今天日期：${today}
-
-任务：
-1. 日期解析：识别口语化日期（25年3月5号、昨天、今天等），输出YYYY-MM-DD
-2. 项目匹配：根据发音相似度匹配项目名称
-3. 类型匹配：根据发音相似度匹配费用类型
-4. 金额提取：支持中文数字（三千二=3200）
-
-只输出JSON：{"date":"日期","project":"项目名","type":"类型","amount":数字}`;
-
-                try {
-                    DOM.voiceStatus.innerHTML = '🤖 百炼AI智能匹配中...';
-                    const response = await fetch(BAILIAN_BASE_URL, {
-                        method: 'POST', 
-                        headers: { 
-                            'Authorization': `Bearer ${BAILIAN_API_KEY}`, 
-                            'Content-Type': 'application/json' 
-                        },
-                        body: JSON.stringify({ 
-                            model: 'qwen-plus', 
-                            messages: [{ 
-                                role: 'system', 
-                                content: '你是记账AI，只输出JSON格式' 
-                            }, { 
-                                role: 'user', 
-                                content: prompt 
-                            }], 
-                            temperature: 0.1 
-                        })
-                    });
-                    
-                    if (!response.ok) throw new Error(`API错误 ${response.status}`);
-                    const data = await response.json();
-                    let aiText = data.choices?.[0]?.message?.content;
-                    if (!aiText) throw new Error('无法解析AI返回');
-
-                    const jsonMatch = aiText.match(/\{.*\}/s);
-                    if (!jsonMatch) throw new Error('AI未返回合法JSON');
-                    const result = JSON.parse(jsonMatch[0]);
-                    
-                    let parsedDate = result.date || parseNaturalDate(transcript);
-                    let matchedProject = result.project ? AppState.projects.find(p => p.name === result.project) : null;
-                    if (!matchedProject && AppState.projects.length) matchedProject = AppState.projects[0];
-                    
-                    let amount = result.amount;
-                    if (typeof amount === 'string') amount = chineseToNumber(amount);
-                    if (!amount) amount = chineseToNumber(transcript);
-                    if (!amount) {
-                        const nums = transcript.match(/\d+/g);
-                        if (nums) amount = parseInt(nums[nums.length-1]);
-                        if (transcript.includes('千') && amount < 1000) amount *= 1000;
-                        if (transcript.includes('万') && amount < 10000) amount *= 10000;
-                    }
-                    
-                    const voiceResult = {
-                        transcript, 
-                        date: parsedDate || today,
-                        project: matchedProject, 
-                        type: result.type || '其他费用',
-                        amount: amount || 0, 
-                        confidence: 'high',
-                        reason: `日期: ${parsedDate}, 项目: ${matchedProject?.name}, 类型: ${result.type}`
-                    };
-                    this.showConfirm(voiceResult);
-                    DOM.voiceStatus.innerHTML = `✅ AI智能匹配完成`;
-                } catch (err) {
-                    console.error('百炼API调用失败:', err);
-                    DOM.voiceStatus.innerHTML = '⚠️ 百炼API调用失败，使用本地智能匹配...';
-                    this.smartLocalMatch(transcript);
-                }
-            },
-
-            smartLocalMatch(transcript) {
-                const date = parseNaturalDate(transcript);
-                let matchedProject = AppState.projects.find(p => transcript.includes(p.name)) || AppState.projects[0] || null;
-                let type = '其他费用';
-                if (transcript.includes('收入')||transcript.includes('收款')) type='收入';
-                else if (transcript.includes('材料')) type='材料费';
-                else if (transcript.includes('人工')) type='人工费';
-                
-                let amount = chineseToNumber(transcript);
-                if (!amount) {
-                    const nums = transcript.match(/\d+/g);
-                    if (nums) amount = parseInt(nums[nums.length-1]);
-                    if (transcript.includes('千') && amount < 1000) amount *= 1000;
-                    if (transcript.includes('万') && amount < 10000) amount *= 10000;
-                }
-                
-                this.showConfirm({ 
-                    transcript, 
-                    date, 
-                    project: matchedProject, 
-                    type, 
-                    amount: amount || 0, 
-                    confidence: 'medium', 
-                    reason: '本地智能匹配' 
-                });
-            },
-
-            showConfirm(result) {
-                window.__voiceResult = result;
-                let projectName = result.project ? result.project.name : '⚠️ 未匹配项目';
-                let amountDisplay = result.amount ? '¥' + formatNumber(result.amount) : '未识别';
-                
-                DOM.voiceConfirmContent.innerHTML = `
-                    <div class="voice-result-item"><span>🗣️ 你说的</span><span style="color:#00d4aa;">"${result.transcript}"</span></div>
-                    <div class="voice-match-hint"><i class="fas fa-robot" style="color:#00d4aa;"></i> ${result.reason || 'AI语义匹配'}</div>
-                    <div class="voice-result-item"><span>📅 识别日期</span><span style="color:#00d4aa;">${result.date}</span></div>
-                    <div class="voice-result-item"><span>🏗️ 匹配项目</span><span style="color:#00d4aa;">${projectName}</span></div>
-                    <div class="voice-result-item"><span>🏷️ 匹配类型</span><span style="color:#00d4aa;">${result.type}</span></div>
-                    <div class="voice-result-item"><span>💰 识别金额</span><span style="color:${result.amount?'#00d4aa':'#ff6b6b'};">${amountDisplay}</span></div>
-                `;
-                DOM.voiceConfirmModal.classList.add('active');
-            }
-        };
-
         // ========== 收款节点管理 ==========
-        let currentMilestones = [];
-
-        function calculateMilestoneTotal() {
-            return currentMilestones.reduce((sum, m) => sum + m.amount, 0);
+        function calculateMilestoneTotal() { 
+            return currentMilestones.reduce((sum,m)=>sum+m.amount,0); 
         }
-
         function updateMilestoneTotalDisplay() {
             const total = calculateMilestoneTotal();
             DOM.totalAmountDisplay.textContent = formatMoney(total);
-            
-            const budget = parseFloat(DOM.projectBudget.value) || 0;
-            if (budget > 0 && Math.abs(total - budget) > 0.01) {
+            const budget = parseFloat(DOM.projectBudget.value)||0;
+            if(budget>0 && Math.abs(total-budget)>0.01) {
                 DOM.milestoneWarning.style.display = 'block';
                 DOM.milestoneWarning.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 收款节点总额 ${formatMoney(total)} 与合同总额 ${formatMoney(budget)} 不符`;
-            } else {
-                DOM.milestoneWarning.style.display = 'none';
-            }
+            } else DOM.milestoneWarning.style.display = 'none';
         }
-
         function renderMilestoneList() {
             DOM.milestoneList.innerHTML = '';
-            if (currentMilestones.length === 0) {
+            if(currentMilestones.length===0) {
                 DOM.milestoneList.innerHTML = '<div style="color:#777; text-align:center; padding:20px;"><i class="fas fa-file-signature"></i><br>暂无收款节点，点击"添加节点"设置</div>';
-                updateMilestoneTotalDisplay();
+                updateMilestoneTotalDisplay(); 
                 return;
             }
-            
-            currentMilestones.sort((a,b) => a.date.localeCompare(b.date)).forEach((milestone, index) => {
-                const div = document.createElement('div');
-                div.className = 'milestone-item';
-                div.innerHTML = `
-                    <div class="milestone-info">
-                        <div class="milestone-date">📅 ${milestone.date} ${milestone.note ? `· ${milestone.note}` : ''}</div>
-                        <div class="milestone-amount">💰 ${formatMoney(milestone.amount)}</div>
-                    </div>
-                    <div class="milestone-actions">
-                        <button class="btn-remove-milestone" data-index="${index}">删除</button>
-                    </div>
-                `;
+            currentMilestones.sort((a,b)=>a.date.localeCompare(b.date)).forEach((ms,i)=>{
+                const div = document.createElement('div'); 
+                div.className='milestone-item';
+                div.innerHTML = `<div class="milestone-info"><div class="milestone-date">📅 ${ms.date} ${ms.note?`· ${ms.note}`:''}</div><div class="milestone-amount">💰 ${formatMoney(ms.amount)}</div></div><div class="milestone-actions"><button class="btn-remove-milestone" data-index="${i}">删除</button></div>`;
                 DOM.milestoneList.appendChild(div);
             });
-            
-            document.querySelectorAll('.btn-remove-milestone').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.getAttribute('data-index'));
-                    currentMilestones.splice(index, 1);
-                    renderMilestoneList();
+            document.querySelectorAll('.btn-remove-milestone').forEach(btn=>{
+                btn.addEventListener('click',(e)=>{
+                    const idx = parseInt(e.target.getAttribute('data-index'));
+                    currentMilestones.splice(idx,1);
+                    renderMilestoneList(); 
                     updateMilestoneTotalDisplay();
                 });
             });
-            
             updateMilestoneTotalDisplay();
         }
 
-        // ========== 费用类型标签 - 手动选择功能 ==========
+        // ========== 费用类型标签 ==========
         function renderCategoryTags() {
             DOM.categoryTags.innerHTML = '';
-            
-            const incomeTag = document.createElement('span');
-            incomeTag.className = 'category-tag active'; 
-            incomeTag.setAttribute('data-type', '收入'); 
-            incomeTag.textContent = '收入';
-            incomeTag.addEventListener('click', (e) => {
-                e.preventDefault();
-                setActiveCategory('收入');
-            });
+            const incomeTag = document.createElement('span'); 
+            incomeTag.className='category-tag active'; 
+            incomeTag.setAttribute('data-type','收入'); 
+            incomeTag.textContent='收入';
+            incomeTag.addEventListener('click',(e)=>{ e.preventDefault(); setActiveCategory('收入'); });
             DOM.categoryTags.appendChild(incomeTag);
-            
-            AppState.expenseTypes.forEach(type => {
+            AppState.expenseTypes.forEach(type=>{
                 const tag = document.createElement('span'); 
-                tag.className = 'category-tag'; 
-                tag.setAttribute('data-type', type); 
+                tag.className='category-tag'; 
+                tag.setAttribute('data-type',type); 
                 tag.innerHTML = `${type} <span class="remove-tag" data-type="${type}">&times;</span>`;
-                
-                tag.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('remove-tag')) {
-                        e.stopPropagation();
-                        return;
-                    }
-                    setActiveCategory(type);
-                });
-                
+                tag.addEventListener('click',(e)=>{ if(e.target.classList.contains('remove-tag')) return; setActiveCategory(type); });
                 const removeSpan = tag.querySelector('.remove-tag');
-                removeSpan.addEventListener('click', (e) => {
+                removeSpan.addEventListener('click',(e)=>{
                     e.stopPropagation();
-                    if (AppState.expenseTypes.length > 1) { 
+                    if(AppState.expenseTypes.length>1){ 
                         AppState.deleteExpenseType(type); 
                         renderCategoryTags(); 
-                    } else {
-                        alert('至少保留一个费用类型'); 
-                    }
+                    } else alert('至少保留一个费用类型');
                 });
-                
                 DOM.categoryTags.appendChild(tag);
             });
-            
             setActiveCategory('收入');
         }
-        
         function setActiveCategory(type) {
-            document.querySelectorAll('.category-tag').forEach(t => {
-                t.classList.remove('active');
-            });
-            
+            document.querySelectorAll('.category-tag').forEach(t=>t.classList.remove('active'));
             const activeTag = document.querySelector(`.category-tag[data-type="${type}"]`);
-            if (activeTag) {
-                activeTag.classList.add('active');
-            }
-            
+            if(activeTag) activeTag.classList.add('active');
             DOM.transactionType.value = type;
         }
 
-        // 项目下拉框
+        // ========== 项目下拉框 ==========
         function fillProjectSelect() {
             DOM.transactionProject.innerHTML = '<option value="">请选择项目</option>' + 
-                AppState.projects.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                AppState.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
         }
 
-        // 表格切换
+        // ========== 表格切换 ==========
         function bindToggles() {
             DOM.summaryToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'table'; 
-                DOM.projectsTable.style.display = 'none'; 
-                DOM.transactionsTable.style.display = 'none';
+                document.getElementById('summaryTable').style.display = 'table';
+                document.getElementById('projectsTable').style.display = 'none';
+                document.getElementById('transactionsTable').style.display = 'none';
+                document.getElementById('projectsTableWrap').style.display = 'none';
+                document.getElementById('transactionsTableWrap').style.display = 'none';
                 DOM.summaryToggle.classList.add('active'); 
                 DOM.projectsToggle.classList.remove('active'); 
                 DOM.transactionsToggle.classList.remove('active');
                 DOM.tableTitle.innerText = '📋 综合报表';
             };
             DOM.projectsToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'none'; 
-                DOM.projectsTable.style.display = 'table'; 
-                DOM.transactionsTable.style.display = 'none';
+                document.getElementById('summaryTable').style.display = 'none';
+                document.getElementById('projectsTable').style.display = 'table';
+                document.getElementById('transactionsTable').style.display = 'none';
+                document.getElementById('projectsTableWrap').style.display = 'block';
+                document.getElementById('transactionsTableWrap').style.display = 'none';
                 DOM.projectsToggle.classList.add('active'); 
                 DOM.summaryToggle.classList.remove('active'); 
                 DOM.transactionsToggle.classList.remove('active');
                 DOM.tableTitle.innerText = '📁 项目列表';
             };
             DOM.transactionsToggle.onclick = ()=>{
-                DOM.summaryTable.style.display = 'none'; 
-                DOM.projectsTable.style.display = 'none'; 
-                DOM.transactionsTable.style.display = 'table';
+                document.getElementById('summaryTable').style.display = 'none';
+                document.getElementById('projectsTable').style.display = 'none';
+                document.getElementById('transactionsTable').style.display = 'table';
+                document.getElementById('projectsTableWrap').style.display = 'none';
+                document.getElementById('transactionsTableWrap').style.display = 'block';
                 DOM.transactionsToggle.classList.add('active'); 
                 DOM.summaryToggle.classList.remove('active'); 
                 DOM.projectsToggle.classList.remove('active');
@@ -1655,182 +1873,116 @@
             };
         }
 
-        // ========== 更新应收账款模块 ==========
+        // ========== 更新应收账款 ==========
         function updateReceivableSection() {
             const analysis = AppState.getReceivableAnalysis();
-            
             DOM.totalReceivable.textContent = formatMoney(analysis.totalReceivable);
-            DOM.totalReceivableCount.textContent = `${analysis.items.filter(i => i.pendingAmount > 0).length}笔待收`;
+            DOM.totalReceivableCount.textContent = `${analysis.items.filter(i=>i.pendingAmount>0).length}笔待收`;
             DOM.overdueAmount.textContent = formatMoney(analysis.overdueAmount);
             DOM.overdueCount.textContent = `${analysis.overdueCount}笔逾期`;
             DOM.upcomingAmount.textContent = formatMoney(analysis.upcomingAmount);
             DOM.upcomingCount.textContent = `${analysis.upcomingCount}笔7天内到期`;
-            
-            if (analysis.items.length === 0) {
+            if(analysis.items.length===0) {
                 DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>';
                 return;
             }
-            
-            DOM.receivableTableBody.innerHTML = analysis.items.map(item => {
-                let statusClass = '';
-                let statusText = '';
-                
-                if (item.status === 'overdue') {
-                    statusClass = 'status-overdue';
-                    statusText = '逾期';
-                } else if (item.status === 'upcoming') {
-                    statusClass = 'status-upcoming';
-                    statusText = '即将到期';
-                } else if (item.status === 'paid') {
-                    statusClass = 'status-paid';
-                    statusText = '已结清';
-                } else {
-                    statusClass = 'status-normal';
-                    statusText = '正常';
-                }
-                
-                const amountDisplay = item.pendingAmount > 0 ? formatMoney(item.pendingAmount) : '已结清';
-                const amountClass = item.status === 'overdue' ? 'overdue' : (item.status === 'upcoming' ? 'upcoming' : '');
-                
-                return `<tr>
-                    <td>${item.projectName}</td>
-                    <td>${item.dueDate}</td>
-                    <td>${formatMoney(item.originalAmount)}</td>
-                    <td>${formatMoney(item.receivedAmount)}</td>
-                    <td class="${amountClass}">${amountDisplay}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                </tr>`;
+            DOM.receivableTableBody.innerHTML = analysis.items.map(item=>{
+                let statusClass='', statusText='';
+                if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
+                else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
+                else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
+                else { statusClass='status-normal'; statusText='正常'; }
+                const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
+                return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
             }).join('');
         }
 
-        // ========== ✅ 修复2：强制刷新所有UI组件 ==========
+        // ========== 刷新所有UI ==========
         function refreshUI() {
-            console.log('🔄 强制刷新所有UI组件...');
-            
-            // 1. 强制销毁并重建图表
-            if (profitChart) {
-                profitChart.destroy();
-                profitChart = null;
-            }
-            if (costPieChart) {
-                costPieChart.destroy();
-                costPieChart = null;
-            }
-            
-            // 2. 重新从Storage加载最新数据（确保不是缓存）
-            AppState.projects = Storage.load('projects');
-            AppState.transactions = Storage.load('transactions');
-            AppState.expenseTypes = Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'];
-            
-            // 3. 更新仪表盘
+            console.log('🔄 刷新UI...');
+            if(profitChart) { profitChart.destroy(); profitChart=null; }
+            if(costPieChart) { costPieChart.destroy(); costPieChart=null; }
             const ov = AppState.getOverallStats();
             DOM.totalProjects.textContent = ov.totalProjects;
+            DOM.totalContract.textContent = formatMoney(ov.totalContract);
             DOM.totalIncome.textContent = formatMoney(ov.totalIncome);
             DOM.totalExpense.textContent = formatMoney(ov.totalExpense);
-            DOM.totalProfit.textContent = (ov.totalProfit>=0?'':'') + formatMoney(Math.abs(ov.totalProfit));
+            const grossProfit = ov.totalContract - ov.totalExpense;
+            DOM.totalGrossProfit.textContent = formatMoney(grossProfit);
+            DOM.totalGrossProfit.className = 'value ' + (grossProfit>=0?'profit':'loss');
+            DOM.totalProfit.textContent = formatMoney(ov.totalProfit);
             DOM.totalProfit.className = 'value ' + (ov.totalProfit>=0?'profit':'loss');
-
-            // 4. 更新综合报表
             const stats = AppState.getAllStats();
-            if (stats.length) {
-                DOM.summaryBody.innerHTML = stats.map(s => `<tr>
-                    <td>${s.name}</td>
-                    <td>${formatMoney(s.contractTotal || 0)}</td>
-                    <td>${formatMoney(s.income)}</td>
-                    <td class="${(s.pendingIncome || 0) > 0 ? 'warning-cell' : 'profit-cell'}">${formatMoney(s.pendingIncome || 0)}</td>
-                    <td>${formatMoney(s.expense)}</td>
-                    <td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td>
-                    <td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td>
-                </tr>`).join('');
-            } else { 
-                DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
-            }
-
-            // 5. 更新项目列表
-            if (AppState.projects.length) {
-                DOM.projectsBody.innerHTML = AppState.projects.map(p => {
-                    const stats = AppState.getProjectStats(p.id);
-                    const milestoneCount = p.milestones ? p.milestones.length : 0;
-                    
-                    return `<tr>
-                        <td>${p.name}</td>
-                        <td>${formatMoney(p.budget || 0)}</td>
-                        <td>${milestoneCount}个节点</td>
-                        <td>${formatMoney(stats?.income || 0)}</td>
-                        <td class="${(stats?.pendingIncome || 0) > 0 ? 'warning-cell' : 'profit-cell'}">${formatMoney(stats?.pendingIncome || 0)}</td>
-                        <td>${new Date(p.createdAt).toLocaleDateString()}</td>
-                        <td><div class="action-buttons">
-                            <button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button>
-                            <button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button>
-                        </div></td>
-                    </tr>`;
+            if(stats.length) {
+                DOM.summaryBody.innerHTML = stats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
+            } else { DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; }
+            if(AppState.projects.length) {
+                DOM.projectsBody.innerHTML = AppState.projects.map(p=>{ 
+                    const s = AppState.getProjectStats(p.id); 
+                    return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
                 }).join('');
-            } else { 
-                DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
-            }
-
-            // 6. 更新收支记录
-            if (AppState.transactions.length) {
+            } else { DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; }
+            if(AppState.transactions.length) {
                 const sorted = [...AppState.transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                DOM.transactionsBody.innerHTML = sorted.map(t => {
-                    const proj = AppState.projects.find(p=>p.id===t.projectId);
-                    return `<tr>
-                        <td>${t.date}</td>
-                        <td>${proj?.name||'未知'}</td>
-                        <td>${t.type}</td>
-                        <td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td>
-                        <td><div class="action-buttons">
-                            <button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button>
-                            <button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button>
-                        </div></td>
-                    </tr>`;
+                DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
+                    const proj = AppState.projects.find(p=>p.id===t.projectId); 
+                    return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
                 }).join('');
-            } else { 
-                DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
-            }
-
-            // 7. 更新应收账款
+            } else { DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; }
             updateReceivableSection();
-            
-            // 8. 重新创建图表
-            setTimeout(() => {
-                updateCharts();
-            }, 50);
-            
-            // 9. 更新项目下拉框
+            setTimeout(()=>{ updateCharts(); addProfitCornerLabel(); }, 50);
             fillProjectSelect();
-            
-            console.log('✅ UI刷新完成');
         }
 
         // ========== 图表更新 ==========
         function updateCharts() {
             const ctxBar = document.getElementById('profitChart').getContext('2d');
             const ctxPie = document.getElementById('costPieChart').getContext('2d');
-            const stats = AppState.getAllStats();
             
-            if (!stats.length) {
+            let stats = AppState.getAllStats();
+            if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+                const selectedIds = Array.from(FilterState.selectedProjectIds);
+                stats = stats.filter(s => selectedIds.includes(s.id));
+            }
+            
+            if (typeof FilterState !== 'undefined' && FilterState.timeRange && 
+                FilterState.timeRange.type !== 'all' && 
+                FilterState.timeRange.startDate && 
+                FilterState.timeRange.endDate) {
+                const start = new Date(FilterState.timeRange.startDate);
+                const end = new Date(FilterState.timeRange.endDate);
+                end.setHours(23, 59, 59, 999);
+                
+                stats = stats.map(stat => {
+                    const timeFilteredTransactions = AppState.transactions.filter(t => 
+                        Number(t.projectId) === stat.id &&
+                        new Date(t.date) >= start &&
+                        new Date(t.date) <= end
+                    );
+                    const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                    const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                    const profit = income - expense;
+                    return {
+                        ...stat,
+                        income,
+                        expense,
+                        profit,
+                        profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
+                        pendingIncome: Math.max(0, stat.contractTotal - income)
+                    };
+                });
+            }
+            
+            if(!stats.length) {
                 profitChart = new Chart(ctxBar, { 
                     type:'bar', 
-                    data:{labels:['无数据'], datasets:[{label:'合同总额',data:[0],backgroundColor:'#444'}]}, 
-                    options: { 
-                        maintainAspectRatio: false, 
-                        plugins: { 
-                            legend: { labels: { color: '#ccc' } }, 
-                            datalabels: { display: false } 
-                        } 
-                    } 
+                    data:{ labels:['无数据'], datasets:[{ label:'合同总额', data:[0], backgroundColor:'#444' }] }, 
+                    options:{ maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
                 });
                 costPieChart = new Chart(ctxPie, { 
                     type:'pie', 
-                    data:{labels:['无支出'], datasets:[{data:[1],backgroundColor:['#555']}]}, 
-                    options: { 
-                        maintainAspectRatio: false, 
-                        plugins: { 
-                            legend: { labels: { color: '#ccc' } }, 
-                            datalabels: { display: false } 
-                        } 
-                    } 
+                    data:{ labels:['无支出'], datasets:[{ data:[1], backgroundColor:['#555'] }] }, 
+                    options:{ maintainAspectRatio:true, aspectRatio:1.5, responsive:true, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
                 });
                 return;
             }
@@ -1843,11 +1995,14 @@
                         { label:'合同总额', data: stats.map(s=>s.contractTotal), backgroundColor:'#6c757d' },
                         { label:'已收', data: stats.map(s=>s.income), backgroundColor:'#00d4aa' },
                         { label:'支出', data: stats.map(s=>s.expense), backgroundColor:'#ff6b6b' },
-                        { label:'利润', data: stats.map(s=>s.profit), type:'line', borderColor:'#ffd93d', backgroundColor:'transparent', tension:0.2 }
+                        { label:'利润', data: stats.map(s=>s.profit), type:'line', borderColor:'#ffd93d', backgroundColor:'transparent', tension:0.2,
+                          datalabels: { display: false },  
+                          point: { radius: 3, backgroundColor:'#ffd93d' } }
                     ]
                 }, 
                 options: { 
                     maintainAspectRatio: false, 
+                    layout: { padding: { top: 25, bottom: 20 } },
                     plugins: { 
                         legend: { labels: { color: '#ccc' } },
                         datalabels: {
@@ -1860,74 +2015,158 @@
                         }
                     }, 
                     scales: { 
-                        y: { ticks: { callback: v => '¥' + v }, grid: { color: '#333' } }, 
-                        x: { ticks: { color: '#ccc' } } 
+                        y: { ticks: { callback: v=>'¥'+v }, grid: { color:'#333' } }, 
+                        x: { 
+                            ticks: { 
+                                color: '#ccc',
+                                maxRotation: 0,
+                                minRotation: 0,
+                                autoSkip: true,
+                                autoSkipPadding: 15,
+                                maxTicksLimit: 8,
+                                callback: function(val, index) {
+                                    const fullName = this.getLabelForValue(val);
+                                    if (!fullName) return '';
+                                    const isMobile = window.innerWidth <= 768;
+                                    const maxLength = isMobile ? 6 : 8;
+                                    if (fullName.length <= maxLength) return fullName;
+                                    const prefix = fullName.slice(0, 3);
+                                    const suffix = fullName.slice(-3);
+                                    return `${prefix}*${suffix}`;
+                                }
+                            },
+                            grid: { display: false }
+                        } 
                     } 
                 },
                 plugins: [ChartDataLabels]
             });
             
-            const costData = AppState.getCostTypeAnalysis();
-            if (costData.length) {
-                const total = costData.reduce((sum, item) => sum + item.amount, 0);
+            // 饼图数据源：应用项目和时间筛选
+            let filteredTransactions = [...AppState.transactions];
+            if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+                const selectedIds = Array.from(FilterState.selectedProjectIds);
+                filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectId));
+            }
+            if (typeof FilterState !== 'undefined' && FilterState.timeRange && 
+                FilterState.timeRange.type !== 'all' && 
+                FilterState.timeRange.startDate && 
+                FilterState.timeRange.endDate) {
+                const start = new Date(FilterState.timeRange.startDate);
+                const end = new Date(FilterState.timeRange.endDate);
+                end.setHours(23, 59, 59, 999);
+                filteredTransactions = filteredTransactions.filter(t => {
+                    const tDate = new Date(t.date);
+                    return tDate >= start && tDate <= end;
+                });
+            }
+            
+            const costMap = {};
+            filteredTransactions.filter(t => t.type !== '收入').forEach(t => {
+                costMap[t.type] = (costMap[t.type] || 0) + t.amount;
+            });
+            const costData = Object.keys(costMap).map(k => ({type: k, amount: costMap[k]})).sort((a,b) => b.amount - a.amount);
+            
+            if(costData.length) {
+                const total = costData.reduce((s,i)=>s+i.amount,0);
                 costPieChart = new Chart(ctxPie, {
-                    type: 'pie', 
+                    type:'pie',
                     data: {
-                        labels: costData.map(c => c.type),
-                        datasets: [{
-                            data: costData.map(c => c.amount),
-                            backgroundColor: ['#00d4aa','#ff6b6b','#ffd93d','#4dabf7','#9b5de5','#f15bb5'],
-                            borderWidth: 0
+                        labels: costData.map(c=>c.type),
+                        datasets: [{ 
+                            data: costData.map(c=>c.amount), 
+                            backgroundColor: ['#00d4aa','#ff6b6b','#ffd93d','#4dabf7','#9b5de5','#f15bb5'], 
+                            borderWidth: 0, spacing: 0, offset: 0
                         }]
-                    }, 
-                    options: { 
-                        maintainAspectRatio: false, 
-                        plugins: { 
+                    },
+                    options: {
+                        maintainAspectRatio: true,
+                        aspectRatio: 0.8,
+                        responsive: true,
+                        cutout: '0%',
+                        radius: '95%',
+                        layout: { padding: { top: 1, bottom: 1, left: 1, right: 1 } },
+                        plugins: {
                             tooltip: { 
                                 callbacks: { 
-                                    label: (ctx) => `${ctx.label}: ${formatMoney(ctx.raw)} (${((ctx.raw/total)*100).toFixed(1)}%)` 
+                                    label: (ctx)=>`${ctx.label}: ${formatMoney(ctx.raw)} (${((ctx.raw/total)*100).toFixed(1)}%)` 
                                 } 
                             },
                             legend: { 
-                                labels: { color: '#ccc' },
-                                position: 'bottom'
+                                labels: { 
+                                    color:'#ccc', font: { size: 10 }, 
+                                    boxWidth: 8, boxHeight: 8, padding: 6
+                                }, 
+                                position: 'bottom', align: 'center', maxHeight: 70, fullSize: false 
                             },
                             datalabels: {
-                                display: true,
-                                color: '#fff',
-                                backgroundColor: 'rgba(0,0,0,0.6)',
+                                display: true, 
+                                color: '#fff', 
+                                backgroundColor: 'rgba(0,0,0,0.7)', 
                                 borderRadius: 4,
-                                padding: { top: 4, bottom: 4, left: 8, right: 8 },
-                                formatter: (value, context) => {
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${context.chart.data.labels[context.dataIndex]}\n${formatMoney(value)} (${percentage}%)`;
+                                padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                                formatter: (v,ctx)=> { 
+                                    const p = ((v/total)*100).toFixed(1); 
+                                    return `${p}%`; 
                                 },
-                                font: { size: 11, weight: 'bold' }
+                                font: { size: 10, weight: 'bold' },
+                                align: 'center',
+                                offset: 5
                             }
-                        } 
+                        }
                     },
                     plugins: [ChartDataLabels]
                 });
             } else {
                 costPieChart = new Chart(ctxPie, { 
                     type:'pie', 
-                    data:{labels:['暂无支出'], datasets:[{data:[1],backgroundColor:['#555']}]}, 
-                    options: { 
-                        maintainAspectRatio: false, 
-                        plugins: { 
-                            legend: { labels: { color: '#ccc' } }, 
-                            datalabels: { display: false } 
-                        } 
-                    } 
+                    data:{ labels:['暂无支出'], datasets:[{ data:[1], backgroundColor:['#555'] }] }, 
+                    options:{ maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins:{ legend:{ labels:{ color:'#ccc' } }, datalabels:{ display:false } } } 
                 });
             }
         }
 
+        // ========== 右上角毛利润总额标注 ==========
+        function addProfitCornerLabel() {
+            const oldLabel = document.querySelector('.profit-corner-label');
+            if(oldLabel) oldLabel.remove();
+            let totalContract = 0, totalExpense = 0;
+            if (typeof FilterState !== 'undefined') {
+                let stats = AppState.getAllStats();
+                const selectedIds = Array.from(FilterState.selectedProjectIds);
+                if (selectedIds.length > 0) stats = stats.filter(s => selectedIds.includes(s.id));
+                if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && 
+                    FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
+                    const start = new Date(FilterState.timeRange.startDate);
+                    const end = new Date(FilterState.timeRange.endDate);
+                    end.setHours(23, 59, 59, 999);
+                    stats = stats.map(stat => {
+                        const transactions = AppState.transactions.filter(t => 
+                            Number(t.projectId) === stat.id && 
+                            new Date(t.date) >= start && 
+                            new Date(t.date) <= end
+                        );
+                        const expense = transactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                        return { ...stat, expense };
+                    });
+                }
+                totalContract = stats.reduce((s,st)=>s+(st.contractTotal||0),0);
+                totalExpense = stats.reduce((s,st)=>s+st.expense,0);
+            } else {
+                const ov = AppState.getOverallStats();
+                totalContract = ov.totalContract;
+                totalExpense = ov.totalExpense;
+            }
+            const grossProfit = totalContract - totalExpense;
+            const label = document.createElement('div');
+            label.className = 'profit-corner-label';
+            label.innerHTML = `毛利润：${formatMoney(grossProfit)}`;
+            if(DOM.profitChartBox) DOM.profitChartBox.appendChild(label);
+        }
+
         // ========== 全局函数 ==========
         window.editProject = (id) => { 
-            const p = AppState.projects.find(p => p.id === id); 
-            if (!p) return;
-            
+            const p = AppState.projects.find(p=>p.id===id); if(!p) return;
             DOM.projectId.value = p.id; 
             DOM.projectName.value = p.name; 
             DOM.projectBudget.value = p.budget; 
@@ -1937,18 +2176,18 @@
             DOM.projectSubmitBtn.textContent = '更新项目';
             DOM.projectModal.classList.add('active');
         };
-        
         window.deleteProject = (id) => { 
-            if (confirm('删除项目及所有收支？')) { 
+            if(confirm('删除项目及所有收支？')){ 
                 AppState.deleteProject(id); 
                 refreshUI(); 
+                if (typeof FilterState !== 'undefined') { 
+                    FilterState.renderSelectedTags(); 
+                    FilterState.applyFilter(); 
+                } 
             } 
         };
-        
         window.editTransaction = (id) => {
-            const t = AppState.transactions.find(t => t.id === id);
-            if (!t) return;
-            
+            const t = AppState.transactions.find(t=>t.id===id); if(!t) return;
             DOM.transactionId.value = t.id; 
             DOM.transactionDate.value = t.date; 
             DOM.transactionProject.value = t.projectId;
@@ -1958,263 +2197,917 @@
             DOM.transactionSubmitBtn.textContent = '更新记录';
             DOM.transactionModal.classList.add('active');
         };
-        
         window.deleteTransaction = (id) => { 
-            if (confirm('删除这笔记录？')) { 
+            if(confirm('删除这笔记录？')){ 
                 AppState.deleteTransaction(id); 
                 refreshUI(); 
+                if (typeof FilterState !== 'undefined') FilterState.applyFilter(); 
             } 
         };
 
-        // ========== ✅ 修复3：初始化所有日期为当天 ==========
+        // ========== 初始化日期 ==========
         function initDates() {
             const today = getTodayDate();
-            console.log('📅 设置默认日期为:', today);
-            
-            // 交易日期
-            if (DOM.transactionDate) {
-                DOM.transactionDate.value = today;
-            }
-            
-            // 收款节点日期
-            if (DOM.milestoneDate) {
-                DOM.milestoneDate.value = today;
-            }
+            if(DOM.transactionDate) DOM.transactionDate.value = today;
+            if(DOM.milestoneDate) DOM.milestoneDate.value = today;
         }
 
-        // ========== 初始化 ==========
-        function initApp() {
-            console.log('🚀 系统初始化...');
-            
-            // 设置所有日期为当天
-            initDates();
-            
-            // 语音初始化
-            BailianAI.init();
-            
-            // 费用标签
-            renderCategoryTags();
+        // ========== 百炼AI语音 ==========
+        const BailianAI = {
+            isListening: false, recognition: null,
+            init() {
+                if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                    DOM.voiceStatus.innerHTML = '❌ 浏览器不支持语音，请用Chrome/Edge';
+                    DOM.voiceInputBtn.disabled = true; 
+                    return false;
+                }
+                this.bindClickEvents();
+                return true;
+            },
+            bindClickEvents() {
+                const btn = DOM.voiceInputBtn;
+                btn.onclick = null;
+                btn.onclick = (e) => {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    if (!AppState.projects.length) { alert('请先添加项目'); return; }
+                    if (this.isListening) { this.stopAndRecognize(); } else { this.startRecording(); }
+                };
+            },
+            startRecording() {
+                if (this.isListening) return;
+                window.__currentTranscript = '';
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+                this.recognition.lang = 'zh-CN'; 
+                this.recognition.continuous = true; 
+                this.recognition.interimResults = true; 
+                this.recognition.maxAlternatives = 1;
+                this.recognition.onstart = () => { 
+                    this.isListening = true; 
+                    DOM.voiceInputBtn.classList.add('listening'); 
+                    DOM.voiceStatus.innerHTML = '🎤 录音中… 再次点击结束'; 
+                    DOM.voiceStatus.style.color = '#ff6b6b'; 
+                };
+                this.recognition.onend = () => { 
+                    this.isListening = false; 
+                    DOM.voiceInputBtn.classList.remove('listening'); 
+                    DOM.voiceStatus.style.color = '#ccc'; 
+                    DOM.voiceStatus.innerHTML = '✨ 点击麦克风开始录音'; 
+                };
+                this.recognition.onresult = (e) => {
+                    let transcript = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) 
+                        transcript += e.results[i][0].transcript;
+                    DOM.voiceStatus.innerHTML = `🎤 ${transcript}`;
+                    window.__currentTranscript = transcript;
+                };
+                this.recognition.onerror = (e) => { 
+                    DOM.voiceStatus.innerHTML = '❌ 语音识别错误: ' + e.error; 
+                    this.isListening = false; 
+                    DOM.voiceInputBtn.classList.remove('listening'); 
+                    DOM.voiceStatus.style.color = '#ccc'; 
+                };
+                try { this.recognition.start(); } 
+                catch (e) { DOM.voiceStatus.innerHTML = '❌ 启动录音失败，请重试'; }
+            },
+            stopAndRecognize() {
+                if (this.recognition && this.isListening) {
+                    this.recognition.stop();
+                    setTimeout(() => {
+                        const finalText = window.__currentTranscript || '';
+                        if (finalText.trim()) {
+                            DOM.voiceStatus.innerHTML = `📝 识别完成: "${finalText}" → AI处理中...`;
+                            window.__voiceProcessing = true;
+                            this.callBailianLLM(finalText).catch(() => {
+                                this.enhancedLocalMatch(finalText);
+                            }).finally(() => { window.__voiceProcessing = false; });
+                        } else {
+                            DOM.voiceStatus.innerHTML = '✨ 未检测到语音，请重试';
+                            setTimeout(() => { DOM.voiceStatus.innerHTML = '✨ 点击麦克风开始录音'; }, 2000);
+                        }
+                        window.__currentTranscript = '';
+                    }, 100);
+                }
+            },
+            async callBailianLLM(transcript) {
+                if (!AppState.projects.length) { 
+                    alert('请先添加项目'); 
+                    DOM.voiceStatus.innerHTML = '⚠️ 尚未创建项目'; 
+                    return; 
+                }
+                const projectList = AppState.projects.map(p => p.name).join('、');
+                const expenseTypeList = ['收入', ...AppState.expenseTypes].join('、');
+                const today = getTodayDate();
+                const prompt = `你是一个装修项目记账AI，专门处理中文语音识别后的文字。\n用户说："""${transcript}"""\n项目名称列表：[${projectList}]\n费用类型列表：[${expenseTypeList}]\n今天日期：${today}\n【必须严格遵守】\n1. 日期解析：支持各种口语化日期，如"25年3月5号"→2025-03-05，输出YYYY-MM-DD\n2. 项目匹配：根据语义和发音相似度匹配项目名称，必须从项目列表中选择最接近的\n3. 类型匹配：根据语义匹配费用类型，必须从费用类型列表中选择\n4. 金额提取：必须正确转换中文大写/数字，如"两万"=20000，"三千二"=3200\n只输出JSON：{"date":"日期","project":"项目名","type":"类型","amount":数字}`;
+                try {
+                    DOM.voiceStatus.innerHTML = '🤖 百炼AI智能匹配中...';
+                    const response = await fetch(BAILIAN_BASE_URL, { 
+                        method: 'POST', 
+                        headers: { 
+                            'Authorization': `Bearer ${BAILIAN_API_KEY}`, 
+                            'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify({ 
+                            model: 'qwen-plus', 
+                            messages: [{ 
+                                role: 'system', 
+                                content: '你是专业的记账AI，只输出纯净JSON' 
+                            }, { 
+                                role: 'user', 
+                                content: prompt 
+                            }], 
+                            temperature: 0.1, 
+                            max_tokens: 200 
+                        }) 
+                    });
+                    if (!response.ok) throw new Error(`API错误 ${response.status}`);
+                    const data = await response.json();
+                    let aiText = data.choices?.[0]?.message?.content;
+                    if (!aiText) throw new Error('无法解析AI返回');
+                    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+                    if (!jsonMatch) throw new Error('AI未返回合法JSON');
+                    const result = JSON.parse(jsonMatch[0]);
+                    let parsedDate = result.date || parseNaturalDate(transcript);
+                    let matchedProject = null;
+                    if (result.project) {
+                        matchedProject = AppState.projects.find(p => p.name === result.project);
+                        if (!matchedProject) 
+                            matchedProject = AppState.projects.find(p => p.name.includes(result.project) || result.project.includes(p.name));
+                    }
+                    if (!matchedProject && AppState.projects.length) matchedProject = AppState.projects[0];
+                    let amount = 0;
+                    if (result.amount !== undefined) {
+                        if (typeof result.amount === 'number') amount = result.amount;
+                        else if (typeof result.amount === 'string') amount = chineseToNumber(result.amount);
+                    }
+                    if (!amount || amount <= 0) amount = this.extractAmount(transcript);
+                    const voiceResult = { 
+                        transcript, 
+                        date: parsedDate || today,
+                        project: matchedProject, 
+                        type: result.type || this.extractType(transcript),
+                        amount: amount || 0, 
+                        confidence: 'high',
+                        reason: `百炼AI: 日期=${parsedDate}, 项目=${matchedProject?.name}, 类型=${result.type}, 金额=${amount}`
+                    };
+                    this.showConfirm(voiceResult);
+                    DOM.voiceStatus.innerHTML = `✅ 百炼AI匹配成功`;
+                } catch (err) {
+                    console.error('百炼API调用失败:', err);
+                    DOM.voiceStatus.innerHTML = '⚠️ 百炼API失败，使用增强本地匹配...';
+                    throw err;
+                }
+            },
+            enhancedLocalMatch(transcript) {
+                const date = parseNaturalDate(transcript);
+                let matchedProject = null;
+                if (AppState.projects.length) {
+                    matchedProject = AppState.projects.find(p => transcript.includes(p.name) || p.name.includes(transcript));
+                    if (!matchedProject) { 
+                        const keywords = transcript.replace(/[工地花园小区装修工程项目部]/g, '').trim(); 
+                        matchedProject = AppState.projects.find(p => p.name.includes(keywords) || keywords.includes(p.name)); 
+                    }
+                    if (!matchedProject) matchedProject = AppState.projects[0];
+                }
+                let amount = this.extractAmount(transcript);
+                let type = this.extractType(transcript);
+                this.showConfirm({ 
+                    transcript, 
+                    date, 
+                    project: matchedProject, 
+                    type, 
+                    amount: amount || 0, 
+                    confidence: 'medium', 
+                    reason: `增强本地匹配: 金额=${amount}元, 类型=${type}`
+                });
+            },
+            extractAmount(text) {
+                if (!text) return 0;
+                const nums = text.match(/\d+(\.\d+)?/g);
+                if (nums) {
+                    let num = parseFloat(nums[nums.length-1]);
+                    if (text.includes('万') && num < 10000) num *= 10000;
+                    if (text.includes('千') && num < 1000) num *= 1000;
+                    if (text.includes('百') && num < 100) num *= 100;
+                    if (text.includes('十') && num < 10) num *= 10;
+                    return num;
+                }
+                return chineseToNumber(text);
+            },
+            extractType(text) {
+                text = text.toLowerCase();
+                if (text.includes('收入') || text.includes('收款') || text.includes('进账') || 
+                    text.includes('收到') || text.includes('收钱') || text.includes('回款')) return '收入';
+                const typeMap = { 
+                    '材料': '材料费', '人工': '人工费', '工资': '人工费', '师傅': '人工费', 
+                    '工人': '人工费', '运费': '运输费', '物流': '运输费', '设计': '设计费', 
+                    '图纸': '设计费', '监理': '监理费', '管理': '管理费', '物业': '物业费', 
+                    '押金': '押金', '定金': '定金', '尾款': '尾款', '设备': '设备费', 
+                    '工具': '工具费', '垃圾': '清运费', '拆除': '拆除费', '水电': '水电费', 
+                    '其他': '其他费用' 
+                };
+                for (let [key, value] of Object.entries(typeMap)) { 
+                    if (text.includes(key)) return value; 
+                }
+                return '其他费用';
+            },
+            showConfirm(result) {
+                window.__voiceResult = result;
+                let projectName = result.project ? result.project.name : '⚠️ 未匹配项目';
+                let amountDisplay = result.amount ? '¥' + formatNumber(result.amount) : '未识别';
+                DOM.voiceConfirmContent.innerHTML = `
+                    <div class="voice-result-item"><span>🗣️ 你说的</span><span style="color:#00d4aa;">"${result.transcript}"</span></div>
+                    <div class="voice-match-hint"><i class="fas fa-robot" style="color:#00d4aa;"></i> ${result.reason || 'AI语义匹配'}</div>
+                    <div class="voice-result-item"><span>📅 识别日期</span><span style="color:#00d4aa;">${result.date}</span></div>
+                    <div class="voice-result-item"><span>🏗️ 匹配项目</span><span style="color:#00d4aa;">${projectName}</span></div>
+                    <div class="voice-result-item"><span>🏷️ 匹配类型</span><span style="color:#00d4aa;">${result.type}</span></div>
+                    <div class="voice-result-item"><span>💰 识别金额</span><span style="color:${result.amount?'#00d4aa':'#ff6b6b'};">${amountDisplay}</span></div>
+                `;
+                DOM.voiceConfirmModal.classList.add('active');
+            }
+        };
 
-            // 监听合同总额变化
-            DOM.projectBudget.addEventListener('input', updateMilestoneTotalDisplay);
+        // ========== 项目+时间 筛选核心模块 FilterState ==========
+        const FilterState = {
+            selectedProjectIds: new Set(),
+            timeRange: { type: 'all', startDate: null, endDate: null, label: '全部时间' },
 
-            // ✅ 项目表单提交 - 完全替换旧数据 + 强制刷新
-            DOM.projectForm.onsubmit = (e) => {
-                e.preventDefault();
-                
-                const total = calculateMilestoneTotal();
-                const budget = parseFloat(DOM.projectBudget.value) || 0;
-                if (budget > 0 && Math.abs(total - budget) > 0.01) {
-                    if (!confirm(`收款节点总额 ${formatMoney(total)} 与合同总额 ${formatMoney(budget)} 不符，是否继续保存？`)) {
+            init() {
+                this.loadFromStorage();
+                this.loadTimeFromStorage();
+                this.bindEvents();
+                this.bindTimeEvents();
+                this.renderDropdown();
+                this.renderSelectedTags();
+                this.updateTimeLabel();
+                this.applyFilter();
+            },
+
+            // 项目筛选
+            loadFromStorage() {
+                const saved = localStorage.getItem('selectedProjectIds');
+                if (saved) { try { const ids = JSON.parse(saved); this.selectedProjectIds = new Set(ids); } catch (e) {} }
+            },
+            saveToStorage() {
+                localStorage.setItem('selectedProjectIds', JSON.stringify(Array.from(this.selectedProjectIds)));
+            },
+            bindEvents() {
+                const searchInput = DOM.projectSearchInput;
+                const dropdown = DOM.projectSearchDropdown;
+                if (!searchInput || !dropdown) return;
+                searchInput.addEventListener('focus', () => { this.renderDropdown(searchInput.value.trim()); dropdown.classList.add('active'); });
+                document.addEventListener('click', (e) => { 
+                    if (!e.target.closest('.search-container') && !e.target.closest('.time-filter-container')) 
+                        dropdown.classList.remove('active'); 
+                });
+                searchInput.addEventListener('input', () => { this.renderDropdown(searchInput.value.trim()); });
+                searchInput.addEventListener('keypress', (e) => { 
+                    if (e.key === 'Enter') { 
+                        const kw = searchInput.value.trim(); 
+                        if (kw) { 
+                            const filtered = this.getFilteredProjects(kw); 
+                            if (filtered.length > 0) { 
+                                this.toggleProject(filtered[0].id); 
+                                this.renderDropdown(''); 
+                                searchInput.value = ''; 
+                                dropdown.classList.remove('active'); 
+                            } 
+                        } 
+                    } 
+                });
+            },
+            getFilteredProjects(keyword = '') {
+                let projects = [...AppState.projects];
+                if (keyword) { const lower = keyword.toLowerCase(); projects = projects.filter(p => p.name.toLowerCase().includes(lower)); }
+                return projects;
+            },
+            renderDropdown(keyword = '') {
+                const dropdown = DOM.projectSearchDropdown;
+                if (!dropdown) return;
+                const projects = this.getFilteredProjects(keyword);
+                if (projects.length === 0) { dropdown.innerHTML = '<div class="dropdown-empty">🔍 未找到相关项目</div>'; return; }
+                let html = `<div class="dropdown-actions"><button class="dropdown-action-btn" id="selectAllBtn">全选</button><button class="dropdown-action-btn" id="clearAllBtn">清除</button></div>`;
+                projects.forEach(p => {
+                    const isChecked = this.selectedProjectIds.has(p.id);
+                    html += `<div class="dropdown-item" data-project-id="${p.id}">
+                        <input type="checkbox" id="project_${p.id}" ${isChecked ? 'checked' : ''} data-project-id="${p.id}">
+                        <label for="project_${p.id}"><span>${p.name}</span><span class="project-budget-badge">${formatMoney(p.budget || 0)}</span></label>
+                    </div>`;
+                });
+                dropdown.innerHTML = html;
+                dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
+                    cb.addEventListener('change', (e) => { 
+                        e.stopPropagation(); 
+                        const pid = parseInt(e.target.dataset.projectId); 
+                        this.toggleProject(pid, e.target.checked); 
+                    }); 
+                });
+                dropdown.querySelectorAll('.dropdown-item').forEach(item => { 
+                    item.addEventListener('click', (e) => { 
+                        if (e.target.type !== 'checkbox') { 
+                            const cb = item.querySelector('input[type="checkbox"]'); 
+                            cb.checked = !cb.checked; 
+                            const pid = parseInt(item.dataset.projectId); 
+                            this.toggleProject(pid, cb.checked); 
+                        } 
+                    }); 
+                });
+                const selectAllBtn = document.getElementById('selectAllBtn'); 
+                if (selectAllBtn) { 
+                    selectAllBtn.addEventListener('click', (e) => { 
+                        e.stopPropagation(); 
+                        projects.forEach(p => this.selectedProjectIds.add(p.id)); 
+                        this.saveToStorage(); 
+                        this.renderDropdown(keyword); 
+                        this.renderSelectedTags(); 
+                        this.applyFilter(); 
+                    }); 
+                }
+                const clearAllBtn = document.getElementById('clearAllBtn'); 
+                if (clearAllBtn) { 
+                    clearAllBtn.addEventListener('click', (e) => { 
+                        e.stopPropagation(); 
+                        this.selectedProjectIds.clear(); 
+                        this.saveToStorage(); 
+                        this.renderDropdown(keyword); 
+                        this.renderSelectedTags(); 
+                        this.applyFilter(); 
+                    }); 
+                }
+            },
+            toggleProject(projectId, checked) {
+                if (checked === undefined) {
+                    if (this.selectedProjectIds.has(projectId)) this.selectedProjectIds.delete(projectId);
+                    else this.selectedProjectIds.add(projectId);
+                } else { 
+                    if (checked) this.selectedProjectIds.add(projectId); 
+                    else this.selectedProjectIds.delete(projectId); 
+                }
+                this.saveToStorage();
+                this.renderSelectedTags();
+                this.applyFilter();
+            },
+            renderSelectedTags() {
+                const container = DOM.selectedTagsArea;
+                if (!container) return;
+                container.innerHTML = '';
+                if (this.timeRange && this.timeRange.type !== 'all') {
+                    const timeTag = document.createElement('span');
+                    timeTag.id = 'timeRangeTag';
+                    timeTag.className = 'time-tag';
+                    timeTag.innerHTML = `<i class="fas fa-calendar-alt"></i><span>${this.timeRange.label}</span><span class="remove-tag" onclick="FilterState.clearTimeRange()">&times;</span>`;
+                    container.appendChild(timeTag);
+                }
+                this.selectedProjectIds.forEach(id => {
+                    const p = AppState.projects.find(p => p.id === id);
+                    if (p) {
+                        const tag = document.createElement('span');
+                        tag.className = 'selected-tag';
+                        tag.dataset.projectId = id;
+                        tag.innerHTML = `<span>${p.name}</span><span class="remove-tag" onclick="FilterState.toggleProject(${id}, false)">&times;</span>`;
+                        container.appendChild(tag);
+                    }
+                });
+            },
+
+            // 时间筛选
+            bindTimeEvents() {
+                const timeBtn = DOM.timeFilterBtn;
+                const timeDropdown = DOM.timeDropdown;
+                if (!timeBtn || !timeDropdown) return;
+                timeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    timeDropdown.classList.toggle('active');
+                    this.hideCustomDateRange();
+                });
+                timeDropdown.querySelectorAll('.time-dropdown-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const value = item.dataset.value;
+                        timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        if (value === 'custom') {
+                            this.showCustomDateRange();
+                        } else {
+                            this.setTimeRange(value);
+                            timeDropdown.classList.remove('active');
+                        }
+                    });
+                });
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.time-filter-container')) {
+                        if (timeDropdown) timeDropdown.classList.remove('active');
+                        this.hideCustomDateRange();
+                    }
+                });
+            },
+            setTimeRange(type, startDate = null, endDate = null) {
+                const today = new Date();
+                const end = new Date(today);
+                end.setHours(23, 59, 59, 999);
+                let start = new Date(today);
+                start.setHours(0, 0, 0, 0);
+                switch(type) {
+                    case 'today': break;
+                    case 'yesterday': start.setDate(today.getDate() - 1); end.setDate(today.getDate() - 1); break;
+                    case 'week': start.setDate(today.getDate() - 6); break;
+                    case 'month': start.setDate(today.getDate() - 29); break;
+                    case 'quarter': start.setDate(today.getDate() - 89); break;
+                    case 'all':
+                    default:
+                        this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
+                        this.saveTimeToStorage();
+                        this.updateTimeLabel();
+                        this.renderSelectedTags();
+                        this.applyFilter();
                         return;
+                }
+                if (type !== 'all' && type !== 'custom') {
+                    this.timeRange = {
+                        type,
+                        startDate: start.toISOString().split('T')[0],
+                        endDate: end.toISOString().split('T')[0],
+                        label: this.getTimeLabel(type)
+                    };
+                }
+                this.saveTimeToStorage();
+                this.updateTimeLabel();
+                this.renderSelectedTags();
+                this.applyFilter();
+            },
+            getTimeLabel(type) {
+                const map = { 'today': '今日', 'yesterday': '昨日', 'week': '近7天', 'month': '近30天', 'quarter': '近90天' };
+                return map[type] || type;
+            },
+            updateTimeLabel() {
+                if (DOM.timeFilterLabel) DOM.timeFilterLabel.textContent = this.timeRange.label;
+            },
+            clearTimeRange() {
+                this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
+                this.updateTimeLabel();
+                this.renderSelectedTags();
+                const dropdown = DOM.timeDropdown;
+                if (dropdown) {
+                    dropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                    const allItem = dropdown.querySelector('[data-value="all"]');
+                    if (allItem) allItem.classList.add('active');
+                }
+                this.saveTimeToStorage();
+                this.applyFilter();
+            },
+            showCustomDateRange() {
+                this.hideCustomDateRange();
+                const container = document.querySelector('.time-filter-container');
+                if (!container) return;
+                const div = document.createElement('div');
+                div.className = 'custom-date-range active';
+                div.id = 'customDateRange';
+                div.innerHTML = `<div class="date-input"><input type="date" id="customStartDate" value="${this.timeRange.startDate || ''}"><span style="color:#888;">至</span><input type="date" id="customEndDate" value="${this.timeRange.endDate || ''}"></div><button class="apply-btn" id="applyCustomDate">应用</button>`;
+                container.appendChild(div);
+                document.getElementById('applyCustomDate').addEventListener('click', () => {
+                    const start = document.getElementById('customStartDate').value;
+                    const end = document.getElementById('customEndDate').value;
+                    if (start && end) {
+                        this.timeRange = { type: 'custom', startDate: start, endDate: end, label: `${start.slice(5)}~${end.slice(5)}` };
+                        this.updateTimeLabel();
+                        this.renderSelectedTags();
+                        this.saveTimeToStorage();
+                        this.applyFilter();
+                        this.hideCustomDateRange();
+                        if (DOM.timeDropdown) DOM.timeDropdown.classList.remove('active');
+                    }
+                });
+            },
+            hideCustomDateRange() {
+                const el = document.getElementById('customDateRange');
+                if (el) el.remove();
+            },
+            saveTimeToStorage() {
+                localStorage.setItem('timeFilter', JSON.stringify(this.timeRange));
+            },
+            loadTimeFromStorage() {
+                const saved = localStorage.getItem('timeFilter');
+                if (saved) {
+                    try {
+                        const tr = JSON.parse(saved);
+                        if (tr && tr.type) {
+                            this.timeRange = tr;
+                            setTimeout(() => {
+                                if (DOM.timeDropdown) {
+                                    DOM.timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                                    const activeItem = DOM.timeDropdown.querySelector(`[data-value="${tr.type}"]`);
+                                    if (activeItem) activeItem.classList.add('active');
+                                }
+                                this.updateTimeLabel();
+                            }, 50);
+                        }
+                    } catch (e) {}
+                }
+            },
+
+            // 核心筛选应用
+            applyFilter() {
+                const selectedIds = Array.from(this.selectedProjectIds);
+                let startDate = null, endDate = null;
+                if (this.timeRange && this.timeRange.type !== 'all' && this.timeRange.startDate && this.timeRange.endDate) {
+                    startDate = new Date(this.timeRange.startDate);
+                    endDate = new Date(this.timeRange.endDate);
+                    endDate.setHours(23, 59, 59, 999);
+                }
+
+                let allStats = AppState.getAllStats();
+                if (selectedIds.length > 0) allStats = allStats.filter(s => selectedIds.includes(s.id));
+                
+                if (startDate && endDate) {
+                    allStats = allStats.map(stat => {
+                        const timeFilteredTransactions = AppState.transactions.filter(t => 
+                            Number(t.projectId) === stat.id &&
+                            new Date(t.date) >= startDate &&
+                            new Date(t.date) <= endDate
+                        );
+                        const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                        const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                        const profit = income - expense;
+                        return {
+                            ...stat,
+                            income,
+                            expense,
+                            profit,
+                            profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
+                            pendingIncome: Math.max(0, stat.contractTotal - income)
+                        };
+                    });
+                }
+
+                // 仪表盘
+                const totalProjects = allStats.length;
+                const totalContract = allStats.reduce((s,st)=>s+(st.contractTotal||0),0);
+                const totalIncome = allStats.reduce((s,st)=>s+st.income,0);
+                const totalExpense = allStats.reduce((s,st)=>s+st.expense,0);
+                const totalProfit = allStats.reduce((s,st)=>s+st.profit,0);
+                const grossProfit = totalContract - totalExpense;
+                if (DOM.totalProjects) DOM.totalProjects.textContent = totalProjects;
+                if (DOM.totalContract) DOM.totalContract.textContent = formatMoney(totalContract);
+                if (DOM.totalIncome) DOM.totalIncome.textContent = formatMoney(totalIncome);
+                if (DOM.totalExpense) DOM.totalExpense.textContent = formatMoney(totalExpense);
+                if (DOM.totalGrossProfit) { 
+                    DOM.totalGrossProfit.textContent = formatMoney(grossProfit); 
+                    DOM.totalGrossProfit.className = 'value ' + (grossProfit>=0?'profit':'loss'); 
+                }
+                if (DOM.totalProfit) { 
+                    DOM.totalProfit.textContent = formatMoney(totalProfit); 
+                    DOM.totalProfit.className = 'value ' + (totalProfit>=0?'profit':'loss'); 
+                }
+
+                // 综合报表
+                if (DOM.summaryBody) {
+                    if(allStats.length) {
+                        DOM.summaryBody.innerHTML = allStats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
+                    } else { 
+                        DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
                     }
                 }
-                
-                AppState.addProject(
-                    DOM.projectId.value || null, 
-                    DOM.projectName.value, 
-                    DOM.projectBudget.value,
-                    currentMilestones
-                );
-                
+
+                // 项目列表
+                let projects = AppState.projects;
+                if (selectedIds.length > 0) projects = projects.filter(p => selectedIds.includes(p.id));
+                if (DOM.projectsBody) {
+                    if(projects.length) {
+                        DOM.projectsBody.innerHTML = projects.map(p=>{ 
+                            const s = allStats.find(stat => stat.id === p.id) || AppState.getProjectStats(p.id);
+                            return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
+                        }).join('');
+                    } else { 
+                        DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
+                    }
+                }
+
+                // 收支记录
+                let transactions = AppState.transactions;
+                if (selectedIds.length > 0) transactions = transactions.filter(t => selectedIds.includes(t.projectId));
+                if (startDate && endDate) {
+                    transactions = transactions.filter(t => new Date(t.date) >= startDate && new Date(t.date) <= endDate);
+                }
+                if (DOM.transactionsBody) {
+                    if(transactions.length) {
+                        const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+                        DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
+                            const proj = AppState.projects.find(p=>p.id===t.projectId); 
+                            return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
+                        }).join('');
+                    } else { 
+                        DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
+                    }
+                }
+
+                // 应收账款
+                const analysis = AppState.getReceivableAnalysis();
+                let filteredItems = analysis.items;
+                if (selectedIds.length > 0) filteredItems = filteredItems.filter(item => selectedIds.includes(item.projectId));
+                const totalReceivable = filteredItems.reduce((s,i)=>s+i.pendingAmount,0);
+                const overdueAmount = filteredItems.filter(i=>i.status==='overdue').reduce((s,i)=>s+i.pendingAmount,0);
+                const upcomingAmount = filteredItems.filter(i=>i.status==='upcoming').reduce((s,i)=>s+i.pendingAmount,0);
+                const overdueCount = filteredItems.filter(i=>i.status==='overdue').length;
+                const upcomingCount = filteredItems.filter(i=>i.status==='upcoming').length;
+                if (DOM.totalReceivable) DOM.totalReceivable.textContent = formatMoney(totalReceivable);
+                if (DOM.totalReceivableCount) DOM.totalReceivableCount.textContent = `${filteredItems.filter(i=>i.pendingAmount>0).length}笔待收`;
+                if (DOM.overdueAmount) DOM.overdueAmount.textContent = formatMoney(overdueAmount);
+                if (DOM.overdueCount) DOM.overdueCount.textContent = `${overdueCount}笔逾期`;
+                if (DOM.upcomingAmount) DOM.upcomingAmount.textContent = formatMoney(upcomingAmount);
+                if (DOM.upcomingCount) DOM.upcomingCount.textContent = `${upcomingCount}笔7天内到期`;
+                if (DOM.receivableTableBody) {
+                    if(filteredItems.length===0) { 
+                        DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>'; 
+                    } else {
+                        DOM.receivableTableBody.innerHTML = filteredItems.map(item=>{
+                            let statusClass='', statusText='';
+                            if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
+                            else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
+                            else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
+                            else { statusClass='status-normal'; statusText='正常'; }
+                            const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
+                            return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
+                        }).join('');
+                    }
+                }
+
+                // 图表
+                if(profitChart) { profitChart.destroy(); profitChart=null; }
+                if(costPieChart) { costPieChart.destroy(); costPieChart=null; }
+                setTimeout(() => { updateCharts(); addProfitCornerLabel(); }, 50);
+            }
+        };
+        window.FilterState = FilterState;
+
+        // ========== 初始化App ==========
+        function initApp() {
+            initDates();
+            BailianAI.init();
+            renderCategoryTags();
+            DOM.projectBudget.addEventListener('input', updateMilestoneTotalDisplay);
+
+            DOM.projectForm.onsubmit = (e) => {
+                e.preventDefault();
+                const total = calculateMilestoneTotal();
+                const budget = parseFloat(DOM.projectBudget.value)||0;
+                if(budget>0 && Math.abs(total-budget)>0.01 && !confirm(`收款节点总额 ${formatMoney(total)} 与合同总额 ${formatMoney(budget)} 不符，是否继续保存？`)) return;
+                AppState.addProject(DOM.projectId.value||null, DOM.projectName.value, DOM.projectBudget.value, currentMilestones);
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
-                DOM.projectId.value = '';
-                currentMilestones = [];
+                DOM.projectId.value=''; 
+                currentMilestones=[]; 
                 renderMilestoneList();
                 DOM.projectModalTitle.textContent = '➕ 新建项目'; 
                 DOM.projectSubmitBtn.textContent = '保存项目';
-                
-                // 强制刷新所有UI
                 refreshUI();
+                if (typeof FilterState !== 'undefined') { 
+                    FilterState.renderDropdown(); 
+                    FilterState.renderSelectedTags(); 
+                    FilterState.applyFilter(); 
+                }
             };
 
-            // ✅ 交易表单提交 - 完全替换旧数据 + 强制刷新
             DOM.transactionForm.onsubmit = (e) => {
                 e.preventDefault();
-                
-                AppState.addTransaction(
-                    DOM.transactionId.value || null, 
-                    DOM.transactionDate.value, 
-                    DOM.transactionProject.value, 
-                    DOM.transactionType.value, 
-                    DOM.transactionAmount.value
-                );
-                
+                AppState.addTransaction(DOM.transactionId.value||null, DOM.transactionDate.value, DOM.transactionProject.value, DOM.transactionType.value, DOM.transactionAmount.value);
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
-                DOM.transactionId.value = '';
-                initDates(); // 重置为当天
+                DOM.transactionId.value=''; 
+                initDates(); 
                 setActiveCategory('收入');
                 DOM.transactionModalTitle.textContent = '💰 收支记录'; 
                 DOM.transactionSubmitBtn.textContent = '保存记录';
-                
-                // 强制刷新所有UI
                 refreshUI();
+                if (typeof FilterState !== 'undefined') FilterState.applyFilter();
             };
 
-            // 关闭模态框
-            DOM.closeProjectModal.onclick = ()=> { 
+            DOM.closeProjectModal.onclick = ()=>{ 
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
-                DOM.projectId.value = ''; 
-                currentMilestones = [];
-                renderMilestoneList();
+                DOM.projectId.value=''; 
+                currentMilestones=[]; 
+                renderMilestoneList(); 
             };
-            
-            DOM.closeTransactionModal.onclick = ()=> { 
+            DOM.closeTransactionModal.onclick = ()=>{ 
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
-                initDates(); // 重置为当天
+                initDates(); 
                 setActiveCategory('收入'); 
             };
-            
-            DOM.closeMilestoneModal.onclick = ()=> { 
+            DOM.closeMilestoneModal.onclick = ()=>{ 
                 DOM.milestoneModal.classList.remove('active'); 
                 DOM.milestoneForm.reset(); 
-                initDates(); // 重置为当天
+                initDates(); 
             };
-            
             DOM.closeVoiceConfirm.onclick = ()=> DOM.voiceConfirmModal.classList.remove('active');
-            
-            window.onclick = (e) => {
-                if (e.target === DOM.projectModal) { 
+
+// ========== 语音确认按钮事件 ==========
+DOM.modifyBtn.onclick = ()=>{
+    DOM.voiceConfirmModal.classList.remove('active');
+    if(window.__voiceResult) {
+        fillProjectSelect();
+        DOM.transactionDate.value = window.__voiceResult.date;
+        if(window.__voiceResult.project) DOM.transactionProject.value = window.__voiceResult.project.id;
+        DOM.transactionAmount.value = window.__voiceResult.amount||'';
+        setActiveCategory(window.__voiceResult.type||'其他费用');
+    }
+};
+
+DOM.confirmBtn.onclick = ()=>{
+    if(!window.__voiceResult||!window.__voiceResult.project){ alert('项目无效，请手动选择'); return; }
+    if(!window.__voiceResult.amount||window.__voiceResult.amount<=0){ alert('金额无效'); return; }
+    AppState.addTransaction(null, window.__voiceResult.date, window.__voiceResult.project.id, window.__voiceResult.type, window.__voiceResult.amount);
+    DOM.voiceConfirmModal.classList.remove('active');
+    DOM.transactionModal.classList.remove('active');
+    refreshUI();
+    if (typeof FilterState !== 'undefined') FilterState.applyFilter();
+    DOM.voiceStatus.innerHTML = '✅ 语音记账成功！';
+    setTimeout(()=>{ DOM.voiceStatus.innerHTML = '✨ 点击麦克风开始录音'; },3000);
+};
+
+console.log('✅ 语音确认按钮事件已绑定');
+
+            window.onclick = (e)=>{
+                if(e.target===DOM.projectModal) { 
                     DOM.projectModal.classList.remove('active'); 
                     DOM.projectForm.reset(); 
-                    DOM.projectId.value = ''; 
-                    currentMilestones = [];
-                    renderMilestoneList();
+                    DOM.projectId.value=''; 
+                    currentMilestones=[]; 
+                    renderMilestoneList(); 
                 }
-                if (e.target === DOM.transactionModal) { 
+                if(e.target===DOM.transactionModal) { 
                     DOM.transactionModal.classList.remove('active'); 
                     DOM.transactionForm.reset(); 
                     initDates(); 
                     setActiveCategory('收入'); 
                 }
-                if (e.target === DOM.milestoneModal) { 
+                if(e.target===DOM.milestoneModal) { 
                     DOM.milestoneModal.classList.remove('active'); 
                     DOM.milestoneForm.reset(); 
                     initDates(); 
                 }
-                if (e.target === DOM.voiceConfirmModal) DOM.voiceConfirmModal.classList.remove('active');
-            };
-
-            // 添加项目按钮
-            DOM.addProjectBtn.onclick = ()=> { 
-                DOM.projectModalTitle.textContent = '➕ 新建项目'; 
-                DOM.projectSubmitBtn.textContent = '保存项目'; 
-                DOM.projectId.value = ''; 
-                DOM.projectName.value = ''; 
-                DOM.projectBudget.value = ''; 
-                currentMilestones = [];
-                renderMilestoneList();
-                DOM.projectModal.classList.add('active'); 
+                if(e.target===DOM.voiceConfirmModal) DOM.voiceConfirmModal.classList.remove('active');
             };
             
-            // 添加交易按钮
-            DOM.addTransactionBtn.onclick = ()=> { 
-                fillProjectSelect(); 
-                DOM.transactionModalTitle.textContent = '💰 收支记录'; 
-                DOM.transactionSubmitBtn.textContent = '保存记录'; 
-                DOM.transactionId.value = ''; 
-                initDates(); // 设置为当天
-                setActiveCategory('收入'); 
-                DOM.transactionModal.classList.add('active'); 
-            };
-            
-            // 语音按钮
-            DOM.voiceInputBtn.onclick = () => { 
-                if (!AppState.projects.length) { 
-                    alert('请先添加项目，再进行语音记账'); 
-                    return; 
-                }
-                BailianAI.start(); 
-            };
-
-            // 语音确认按钮
-            DOM.modifyBtn.onclick = ()=> { 
-                DOM.voiceConfirmModal.classList.remove('active'); 
-                if (window.__voiceResult) {
-                    fillProjectSelect();
-                    DOM.transactionDate.value = window.__voiceResult.date;
-                    if (window.__voiceResult.project) {
-                        DOM.transactionProject.value = window.__voiceResult.project.id;
-                    }
-                    DOM.transactionAmount.value = window.__voiceResult.amount || '';
-                    setActiveCategory(window.__voiceResult.type || '其他费用');
-                }
-            };
-            
-            DOM.confirmBtn.onclick = ()=> {
-                if (!window.__voiceResult || !window.__voiceResult.project) { 
-                    alert('项目无效，请手动选择'); 
-                    return; 
-                }
-                if (!window.__voiceResult.amount || window.__voiceResult.amount <= 0) { 
-                    alert('金额无效，请手动输入或重新语音'); 
-                    return; 
-                }
-                
-                AppState.addTransaction(
-                    null, 
-                    window.__voiceResult.date, 
-                    window.__voiceResult.project.id, 
-                    window.__voiceResult.type, 
-                    window.__voiceResult.amount
-                );
-                
-                DOM.voiceConfirmModal.classList.remove('active');
-                DOM.transactionModal.classList.remove('active');
-                
-                // 强制刷新所有UI
-                refreshUI();
-                
-                DOM.voiceStatus.innerHTML = '✅ 语音记账成功！';
-                setTimeout(() => { 
-                    DOM.voiceStatus.innerHTML = '✨ 点击麦克风，AI智能语义匹配'; 
-                }, 3000);
-            };
-
-            // 收款节点管理
-            DOM.addMilestoneBtn.onclick = () => {
+            // ✅ 添加节点按钮事件（防抖 + 阻止冒泡，确保无限次添加）
+            DOM.addMilestoneBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 DOM.milestoneModal.classList.add('active');
             };
-            
+
+            // ========== 极简浮动按钮控制 ==========
+            const fabMainBtn = document.getElementById('fabMainBtn');
+            const fabMenu = document.getElementById('fabMenu');
+            const fabAddProject = document.getElementById('fabAddProject');
+            const fabAddTransaction = document.getElementById('fabAddTransaction');
+
+            if (fabMainBtn && fabMenu) {
+                fabMainBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fabMenu.classList.toggle('active');
+                });
+
+                if (fabAddProject) {
+                    fabAddProject.addEventListener('click', () => {
+                        fabMenu.classList.remove('active');
+                        DOM.projectModalTitle.textContent = '➕ 新建项目';
+                        DOM.projectSubmitBtn.textContent = '保存项目';
+                        DOM.projectId.value = '';
+                        DOM.projectName.value = '';
+                        DOM.projectBudget.value = '';
+                        currentMilestones = [];
+                        renderMilestoneList();
+                        DOM.projectModal.classList.add('active');
+                    });
+                }
+
+                if (fabAddTransaction) {
+                    fabAddTransaction.addEventListener('click', () => {
+                        fabMenu.classList.remove('active');
+                        fillProjectSelect();
+                        DOM.transactionModalTitle.textContent = '💰 收支记录';
+                        DOM.transactionSubmitBtn.textContent = '保存记录';
+                        DOM.transactionId.value = '';
+                        initDates();
+                        setActiveCategory('收入');
+                        DOM.transactionModal.classList.add('active');
+                    });
+                }
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.fab-container')) {
+                        fabMenu.classList.remove('active');
+                    }
+                });
+            }
+
+            // ✅ 收款节点表单提交（无限添加，不跳转页面）
             DOM.milestoneForm.onsubmit = (e) => {
                 e.preventDefault();
-                const milestone = {
-                    date: DOM.milestoneDate.value,
-                    amount: parseFloat(DOM.milestoneAmount.value),
-                    note: DOM.milestoneNote.value.trim() || ''
-                };
-                currentMilestones.push(milestone);
-                renderMilestoneList();
-                DOM.milestoneModal.classList.remove('active');
-                DOM.milestoneForm.reset();
-                initDates(); // 重置为当天
+                try {
+                    const milestone = { 
+                        date: DOM.milestoneDate.value, 
+                        amount: parseFloat(DOM.milestoneAmount.value), 
+                        note: DOM.milestoneNote.value.trim() || '' 
+                    };
+                    currentMilestones.push(milestone);
+                    renderMilestoneList();
+                    DOM.milestoneModal.classList.remove('active'); 
+                    DOM.milestoneForm.reset(); 
+                    initDates();
+                } catch (err) {
+                    console.error('添加节点失败:', err);
+                    alert('节点添加失败，请重试');
+                }
             };
 
-            // 自定义费用类型
             DOM.addCategoryBtn.onclick = ()=>{ 
-                const val = DOM.customCategory.value.trim();
-                if (val) { 
+                const val = DOM.customCategory.value.trim(); 
+                if(val){ 
                     AppState.addExpenseType(val); 
                     renderCategoryTags(); 
-                    DOM.customCategory.value = ''; 
+                    DOM.customCategory.value=''; 
                     setActiveCategory(val); 
                 } 
             };
-            
-            // 导出Excel
-            DOM.exportBtn.onclick = exportToExcel;
+
+            DOM.exportBtn.onclick = ()=>{
+                let data=[], sheetName='', headers=[];
+                if(document.getElementById('summaryTable').style.display!=='none') {
+                    sheetName='综合报表'; 
+                    headers=['项目','合同总额','已收','待收','支出','利润','毛利率'];
+                    let stats = AppState.getAllStats();
+                    if (typeof FilterState !== 'undefined') {
+                        const selectedIds = Array.from(FilterState.selectedProjectIds);
+                        if (selectedIds.length > 0) stats = stats.filter(s => selectedIds.includes(s.id));
+                        if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
+                            const start = new Date(FilterState.timeRange.startDate);
+                            const end = new Date(FilterState.timeRange.endDate);
+                            end.setHours(23,59,59,999);
+                            stats = stats.map(stat => {
+                                const transactions = AppState.transactions.filter(t => Number(t.projectId) === stat.id && new Date(t.date) >= start && new Date(t.date) <= end);
+                                const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                                const expense = transactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                                return { ...stat, income, expense, profit: income - expense, profitMargin: stat.contractTotal > 0 ? ((income - expense) / stat.contractTotal * 100) : 0, pendingIncome: Math.max(0, stat.contractTotal - income) };
+                            });
+                        }
+                    }
+                    data = stats.map(s=>[s.name, s.contractTotal||0, s.income, s.pendingIncome||0, s.expense, s.profit, s.profitMargin.toFixed(1)]);
+                } else if(document.getElementById('projectsTable').style.display!=='none') {
+                    sheetName='项目列表'; 
+                    headers=['项目名称','合同总额','收款节点','已收','待收','创建时间'];
+                    let projects = AppState.projects;
+                    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+                        const selectedIds = Array.from(FilterState.selectedProjectIds);
+                        projects = projects.filter(p => selectedIds.includes(p.id));
+                    }
+                    data = projects.map(p=>{ 
+                        let s = AppState.getProjectStats(p.id);
+                        if (typeof FilterState !== 'undefined' && FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
+                            const start = new Date(FilterState.timeRange.startDate);
+                            const end = new Date(FilterState.timeRange.endDate);
+                            end.setHours(23,59,59,999);
+                            const transactions = AppState.transactions.filter(t => Number(t.projectId) === p.id && new Date(t.date) >= start && new Date(t.date) <= end);
+                            const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                            s = { ...s, income, pendingIncome: Math.max(0, (p.budget||0) - income) };
+                        }
+                        return [p.name, p.budget||0, p.milestones?.length||0, s?.income||0, s?.pendingIncome||0, new Date(p.createdAt).toLocaleDateString()];
+                    });
+                } else {
+                    sheetName='收支记录'; 
+                    headers=['日期','项目','类型','金额'];
+                    let transactions = AppState.transactions;
+                    if (typeof FilterState !== 'undefined') {
+                        if (FilterState.selectedProjectIds.size > 0) transactions = transactions.filter(t => FilterState.selectedProjectIds.has(t.projectId));
+                        if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
+                            const start = new Date(FilterState.timeRange.startDate);
+                            const end = new Date(FilterState.timeRange.endDate);
+                            end.setHours(23,59,59,999);
+                            transactions = transactions.filter(t => new Date(t.date) >= start && new Date(t.date) <= end);
+                        }
+                    }
+                    const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+                    data = sorted.map(t=>{ 
+                        const p=AppState.projects.find(p=>p.id===t.projectId); 
+                        return [t.date, p?.name||'未知', t.type, t.type==='收入'?t.amount:-t.amount]; 
+                    });
+                }
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+                ws['!cols'] = headers.map(()=>({wch:15}));
+                XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                XLSX.writeFile(wb, `装修记账_${sheetName}_${new Date().toISOString().split('T')[0]}.xlsx`);
+            };
 
             bindToggles();
             fillProjectSelect();
-            
-            // 首次刷新UI
             refreshUI();
             
-            console.log('✅ 系统初始化完成');
+            if (typeof FilterState !== 'undefined') {
+                setTimeout(() => { FilterState.init(); }, 100);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
