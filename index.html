@@ -49,6 +49,8 @@
 
         /* ===== 复合筛选栏 ===== */
         .filter-section {
+            max-width: 100%;
+            overflow-x: hidden;
             display: flex;
             align-items: center;
             width: 100%;
@@ -331,6 +333,7 @@
             color: #ff6b6b;
         }
 
+
         /* ===== 底部导航 ===== */
         .bottom-nav {
             position: fixed;
@@ -463,6 +466,30 @@
         }
         .receivable-card .amount.overdue { color: #ff6b6b; }
         .receivable-card .amount.upcoming { color: #ffd93d; }
+@media (max-width: 480px) {
+    .time-filter-btn {
+        padding: 0 10px;        /* 缩小水平内边距 */
+        font-size: 12px;        /* 稍小字体 */
+        gap: 4px;               /* 图标与文字间距减小 */
+    }
+    .time-filter-btn i:first-child {
+        font-size: 14px;        /* 图标大小微调 */
+    }
+    .search-input {
+        padding: 8px 10px;      /* 上下内边距略减，左右缩小 */
+        padding-right: 38px;     /* 为右侧图标留出空间，但比原来小 */
+        font-size: 13px;
+    }
+    .search-icon {
+        right: 12px;             /* 图标位置随内边距调整 */
+        width: 22px;
+        height: 22px;
+    }
+    /* 可选：如果时间下拉菜单太宽，也做调整 */
+    .time-dropdown {
+        min-width: 160px;        /* 设置最小宽度，避免过宽 */
+    }
+}
 
         /* 表格容器 */
         .table-container {
@@ -1765,6 +1792,13 @@
                     };
                 });
             }
+// 获取所有 canvas 上下文
+    const ctxBar = DOM.profitChart.getContext('2d');
+    const ctxPie = DOM.costPieChart.getContext('2d');
+    const ctxMargin = DOM.profitMarginChart?.getContext('2d');
+    const ctxAging = DOM.agingChart?.getContext('2d');
+    const ctxCashflow = DOM.cashflowChart?.getContext('2d');
+    const ctxProgress = DOM.progressChart?.getContext('2d');
 
             // 项目利润对比图（柱状图，标签在柱子顶部）
             profitChart = new Chart(DOM.profitChart.getContext('2d'), {
