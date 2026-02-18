@@ -1149,18 +1149,11 @@
         }
 
         /* ===== 饼图容器强制限制 ===== */
-        #costPieChart {
-            max-height: 220px !important;
-            width: auto !important;
-            margin: 0 auto;
-            display: block;
-        }
-        .chart-box canvas {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto !important;
-            height: auto !important;
-        }
+         .chart-box canvas {
+    max-height: none;
+    width: 100%;
+    height: auto !important;
+}
         @media (max-width: 768px) {
             #costPieChart { max-height: 180px !important; }
         }
@@ -1290,8 +1283,24 @@
                 <h3><i class="fas fa-chart-bar" style="color:#00d4aa;"></i> 项目利润对比</h3>
                 <canvas id="profitChart"></canvas>
             </div>
+            <div class="chart-box" id="profitMarginChartBox">
+    <h3><i class="fas fa-chart-line" style="color:#ffd93d;"></i> 项目利润率排行</h3>
+    <canvas id="profitMarginChart"></canvas>
+</div>
+<div class="chart-box" id="agingChartBox">
+    <h3><i class="fas fa-chart-bar" style="color:#ff6b6b;"></i> 应收账款账龄分析</h3>
+    <canvas id="agingChart"></canvas>
+</div>
+<div class="chart-box" id="cashflowChartBox">
+    <h3><i class="fas fa-chart-line" style="color:#00d4aa;"></i> 现金流量</h3>
+    <canvas id="cashflowChart"></canvas>
+</div>
+<div class="chart-box" id="progressChartBox">
+    <h3><i class="fas fa-tasks" style="color:#4dabf7;"></i> 预算执行进度</h3>
+    <canvas id="progressChart"></canvas>
+</div>
             <div class="chart-box">
-                <h3><i class="fas fa-chart-pie" style="color:#ffd93d;"></i> 成本类型占比</h3>
+                <h3><i class="fas fa-chart-pie" style="color:#ffd93d;"></i> 项目成本排行</h3>
                 <canvas id="costPieChart"></canvas>
             </div>
         </div>
@@ -1753,7 +1762,7 @@
             timeFilterLabel: document.getElementById('timeFilterLabel')
         };
 
-        let profitChart, costPieChart, currentMilestones = [];
+        let profitChart, profitMarginChart, costPieChart, agingChart, cashflowChart, progressChart, currentMilestones = [];
 
         // ========== 工具函数 ==========
         const formatMoney = (v) => '¥' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -1934,197 +1943,770 @@
             fillProjectSelect();
         }
 
-        // ========== 图表更新 ==========
-        function updateCharts() {
-            const ctxBar = document.getElementById('profitChart').getContext('2d');
-            const ctxPie = document.getElementById('costPieChart').getContext('2d');
-            
-            let stats = AppState.getAllStats();
-            if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-                const selectedIds = Array.from(FilterState.selectedProjectIds);
-                stats = stats.filter(s => selectedIds.includes(s.id));
+// ========== 图表更新 ==========
+function updateCharts() {
+    const ctxBar = document.getElementById('profitChart').getContext('2d');
+    const ctxPie = document.getElementById('costPieChart').getContext('2d');
+    const ctxMargin = document.getElementById('profitMarginChart')?.getContext('2d');
+    const ctxAging = document.getElementById('agingChart')?.getContext('2d');
+    const ctxCashflow = document.getElementById('cashflowChart')?.getContext('2d');
+    const ctxProgress = document.getElementById('progressChart')?.getContext('2d'); // 新增
+
+    // 获取并筛选统计数据
+    let stats = AppState.getAllStats();
+    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+        const selectedIds = Array.from(FilterState.selectedProjectIds);
+        stats = stats.filter(s => selectedIds.includes(s.id));
+    }
+
+    if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
+        FilterState.timeRange.type !== 'all' &&
+        FilterState.timeRange.startDate &&
+        FilterState.timeRange.endDate) {
+        const start = new Date(FilterState.timeRange.startDate);
+        const end = new Date(FilterState.timeRange.endDate);
+        end.setHours(23, 59, 59, 999);
+
+        stats = stats.map(stat => {
+            const timeFilteredTransactions = AppState.transactions.filter(t =>
+                Number(t.projectId) === stat.id &&
+                new Date(t.date) >= start &&
+                new Date(t.date) <= end
+            );
+            const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+            const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+            const profit = income - expense;
+            return {
+                ...stat,
+                income,
+                expense,
+                profit,
+                profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
+                pendingIncome: Math.max(0, stat.contractTotal - income)
+            };
+        });
+    }
+
+    // 无项目时的占位处理
+    if (!stats.length) {
+        // 销毁所有现有图表
+        if (profitChart) { profitChart.destroy(); profitChart = null; }
+        if (costPieChart) { costPieChart.destroy(); costPieChart = null; }
+        if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; }
+        if (agingChart) { agingChart.destroy(); agingChart = null; }
+        if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
+        if (progressChart) { progressChart.destroy(); progressChart = null; }
+
+        profitChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: { labels: ['无数据'], datasets: [{ label: '合同总额', data: [0], backgroundColor: '#444' }] },
+            options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
+        });
+        costPieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: { labels: ['无支出'], datasets: [{ data: [1], backgroundColor: ['#555'] }] },
+            options: { maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
+        });
+        if (ctxMargin) {
+            profitMarginChart = new Chart(ctxMargin, {
+                type: 'bar',
+                data: { labels: ['无数据'], datasets: [{ label: '利润率', data: [0], backgroundColor: '#444' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+            });
+        }
+        if (ctxAging) {
+            agingChart = new Chart(ctxAging, {
+                type: 'bar',
+                data: { labels: ['无应收账款'], datasets: [{ label: '金额', data: [0], backgroundColor: '#444' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+            });
+        }
+        if (ctxCashflow) {
+            cashflowChart = new Chart(ctxCashflow, {
+                type: 'line',
+                data: { labels: ['无数据'], datasets: [{ label: '收入', data: [0], borderColor: '#00d4aa' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#ccc' } }, datalabels: { display: false } } }
+            });
+        }
+        if (ctxProgress) {
+            progressChart = new Chart(ctxProgress, {
+                type: 'bar',
+                data: { labels: ['无项目'], datasets: [{ label: '进度', data: [0], backgroundColor: '#444' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+            });
+        }
+        return;
+    }
+
+    // ---------- 1. 项目利润对比图（黄色利润柱）----------
+    if (profitChart) { profitChart.destroy(); profitChart = null; } // 销毁旧实例
+    profitChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: stats.map(s => s.name),
+            datasets: [
+                { label: '合同总额', data: stats.map(s => s.contractTotal), backgroundColor: '#6c757d' },
+                { label: '已收', data: stats.map(s => s.income), backgroundColor: '#00d4aa' },
+                { label: '支出', data: stats.map(s => s.expense), backgroundColor: '#ff6b6b' },
+                { label: '利润', data: stats.map(s => s.profit), backgroundColor: '#ffd93d' }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: { padding: { top: 25, bottom: 20 } },
+            plugins: {
+                legend: { labels: { color: '#ccc' } },
+                datalabels: {
+                    display: true,
+                    color: '#fff',
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 4,
+                    formatter: (value) => value ? '¥' + value.toFixed(0) : ''
+                }
+            },
+            scales: {
+                y: { ticks: { callback: v => '¥' + v }, grid: { color: '#333' } },
+                x: {
+                    ticks: {
+                        color: '#ccc',
+                        maxRotation: 0,
+                        minRotation: 0,
+                        autoSkip: true,
+                        autoSkipPadding: 15,
+                        maxTicksLimit: 8,
+                        callback: function (val) {
+                            const fullName = this.getLabelForValue(val);
+                            if (!fullName) return '';
+                            const isMobile = window.innerWidth <= 768;
+                            const maxLength = isMobile ? 6 : 8;
+                            if (fullName.length <= maxLength) return fullName;
+                            const prefix = fullName.slice(0, 3);
+                            const suffix = fullName.slice(-3);
+                            return `${prefix}*${suffix}`;
+                        }
+                    },
+                    grid: { display: false }
+                }
             }
-            
-            if (typeof FilterState !== 'undefined' && FilterState.timeRange && 
-                FilterState.timeRange.type !== 'all' && 
-                FilterState.timeRange.startDate && 
-                FilterState.timeRange.endDate) {
-                const start = new Date(FilterState.timeRange.startDate);
-                const end = new Date(FilterState.timeRange.endDate);
-                end.setHours(23, 59, 59, 999);
-                
-                stats = stats.map(stat => {
-                    const timeFilteredTransactions = AppState.transactions.filter(t => 
-                        Number(t.projectId) === stat.id &&
-                        new Date(t.date) >= start &&
-                        new Date(t.date) <= end
-                    );
-                    const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
-                    const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
-                    const profit = income - expense;
-                    return {
-                        ...stat,
-                        income,
-                        expense,
-                        profit,
-                        profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
-                        pendingIncome: Math.max(0, stat.contractTotal - income)
-                    };
-                });
-            }
-            
-            if(!stats.length) {
-                profitChart = new Chart(ctxBar, { 
-                    type:'bar', 
-                    data:{ labels:['无数据'], datasets:[{ label:'合同总额', data:[0], backgroundColor:'#444' }] }, 
-                    options:{ maintainAspectRatio:false, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
-                });
-                costPieChart = new Chart(ctxPie, { 
-                    type:'pie', 
-                    data:{ labels:['无支出'], datasets:[{ data:[1], backgroundColor:['#555'] }] }, 
-                    options:{ maintainAspectRatio:true, aspectRatio:1.5, responsive:true, plugins:{ legend:{labels:{color:'#ccc'}}, datalabels:{display:false} } } 
-                });
-                return;
-            }
-            
-            profitChart = new Chart(ctxBar, {
-                type:'bar', 
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    // ---------- 2. 成本类型排行图（横向条形图，可滚动）----------
+    let filteredTransactions = [...AppState.transactions];
+    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+        const selectedIds = Array.from(FilterState.selectedProjectIds);
+        filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectId));
+    }
+    if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
+        FilterState.timeRange.type !== 'all' &&
+        FilterState.timeRange.startDate &&
+        FilterState.timeRange.endDate) {
+        const start = new Date(FilterState.timeRange.startDate);
+        const end = new Date(FilterState.timeRange.endDate);
+        end.setHours(23, 59, 59, 999);
+        filteredTransactions = filteredTransactions.filter(t => {
+            const tDate = new Date(t.date);
+            return tDate >= start && tDate <= end;
+        });
+    }
+
+    const costMap = {};
+    filteredTransactions.filter(t => t.type !== '收入').forEach(t => {
+        costMap[t.type] = (costMap[t.type] || 0) + t.amount;
+    });
+    const costData = Object.keys(costMap).map(k => ({ type: k, amount: costMap[k] })).sort((a, b) => b.amount - a.amount);
+
+    const costContainer = ctxPie.canvas.parentElement;
+    if (costContainer) {
+        costContainer.style.overflowY = 'auto';
+        costContainer.style.overflowX = 'hidden';
+        costContainer.style.height = '320px';
+        ctxPie.canvas.style.maxHeight = 'none';
+        ctxPie.canvas.style.height = 'auto';
+    }
+
+    if (costData.length) {
+        const barHeight = 30;
+        const extraHeight = 80;
+        const canvasHeight = costData.length * barHeight + extraHeight;
+        ctxPie.canvas.height = canvasHeight;
+        ctxPie.canvas.style.height = canvasHeight + 'px';
+
+        if (costPieChart) { costPieChart.destroy(); costPieChart = null; } // 销毁旧实例
+        costPieChart = new Chart(ctxPie, {
+            type: 'bar',
+            data: {
+                labels: costData.map(c => c.type),
+                datasets: [{
+                    label: '成本金额',
+                    data: costData.map(c => c.amount),
+                    backgroundColor: '#ff6b6b',
+                    borderColor: '#ff6b6b',
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.9
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                responsive: true,
+                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw ? formatMoney(ctx.raw) : ''}` } },
+                    datalabels: {
+                        display: true,
+                        color: '#fff',
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        borderRadius: 4,
+                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                        formatter: (value) => formatMoney(value),
+                        font: { size: 10, weight: 'bold' },
+                        align: 'end',
+                        anchor: 'end',
+                        offset: 5
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { callback: (v) => '¥' + v, color: '#ccc' },
+                        grid: { color: '#333' }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ccc',
+                            font: { size: 11 },
+                            callback: function (val) {
+                                const label = this.getLabelForValue(val);
+                                if (!label) return '';
+                                const maxLen = 8;
+                                return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
+                            }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    } else {
+        ctxPie.canvas.height = 300;
+        ctxPie.canvas.style.height = '300px';
+        if (costPieChart) { costPieChart.destroy(); costPieChart = null; } // 销毁旧实例
+        costPieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: { labels: ['暂无支出'], datasets: [{ data: [1], backgroundColor: ['#555'] }] },
+            options: { maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
+        });
+    }
+
+    // ---------- 3. 项目利润率排行图（水平条形图，可滚动）----------
+    if (ctxMargin) {
+        const marginContainer = ctxMargin.canvas.parentElement;
+        if (marginContainer) {
+            marginContainer.style.overflowY = 'auto';
+            marginContainer.style.overflowX = 'hidden';
+            marginContainer.style.height = '320px';
+            ctxMargin.canvas.style.maxHeight = 'none';
+            ctxMargin.canvas.style.height = 'auto';
+        }
+
+        const marginStats = stats
+            .map(s => ({ name: s.name, margin: s.profitMargin }))
+            .sort((a, b) => b.margin - a.margin);
+
+        if (marginStats.length) {
+            const barHeight = 30;
+            const extraHeight = 80;
+            const canvasHeight = marginStats.length * barHeight + extraHeight;
+            ctxMargin.canvas.height = canvasHeight;
+            ctxMargin.canvas.style.height = canvasHeight + 'px';
+
+            if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; } // 销毁旧实例
+            profitMarginChart = new Chart(ctxMargin, {
+                type: 'bar',
                 data: {
-                    labels: stats.map(s=>s.name),
-                    datasets: [
-                        { label:'合同总额', data: stats.map(s=>s.contractTotal), backgroundColor:'#6c757d' },
-                        { label:'已收', data: stats.map(s=>s.income), backgroundColor:'#00d4aa' },
-                        { label:'支出', data: stats.map(s=>s.expense), backgroundColor:'#ff6b6b' },
-                        { label:'利润', data: stats.map(s=>s.profit), type:'line', borderColor:'#ffd93d', backgroundColor:'transparent', tension:0.2,
-                          datalabels: { display: false },  
-                          point: { radius: 3, backgroundColor:'#ffd93d' } }
-                    ]
-                }, 
-                options: { 
-                    maintainAspectRatio: false, 
-                    layout: { padding: { top: 25, bottom: 20 } },
-                    plugins: { 
-                        legend: { labels: { color: '#ccc' } },
+                    labels: marginStats.map(s => s.name),
+                    datasets: [{
+                        label: '利润率 (%)',
+                        data: marginStats.map(s => s.margin),
+                        backgroundColor: '#ffd93d',
+                        borderColor: '#ffd93d',
+                        borderWidth: 1,
+                        barPercentage: 0.8,
+                        categoryPercentage: 0.9
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } },
                         datalabels: {
                             display: true,
                             color: '#fff',
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            borderRadius: 4,
+                            padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                            formatter: (value) => value.toFixed(1) + '%',
+                            font: { size: 10, weight: 'bold' },
+                            align: 'end',
                             anchor: 'end',
-                            align: 'top',
-                            offset: 4,
-                            formatter: (value) => value ? '¥' + value.toFixed(0) : ''
+                            offset: 5
                         }
-                    }, 
-                    scales: { 
-                        y: { ticks: { callback: v=>'¥'+v }, grid: { color:'#333' } }, 
-                        x: { 
-                            ticks: { 
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: (v) => v + '%', color: '#ccc' },
+                            grid: { color: '#333' }
+                        },
+                        y: {
+                            ticks: {
                                 color: '#ccc',
-                                maxRotation: 0,
-                                minRotation: 0,
-                                autoSkip: true,
-                                autoSkipPadding: 15,
-                                maxTicksLimit: 8,
-                                callback: function(val, index) {
-                                    const fullName = this.getLabelForValue(val);
-                                    if (!fullName) return '';
-                                    const isMobile = window.innerWidth <= 768;
-                                    const maxLength = isMobile ? 6 : 8;
-                                    if (fullName.length <= maxLength) return fullName;
-                                    const prefix = fullName.slice(0, 3);
-                                    const suffix = fullName.slice(-3);
-                                    return `${prefix}*${suffix}`;
+                                font: { size: 11 },
+                                callback: function (val) {
+                                    const label = this.getLabelForValue(val);
+                                    if (!label) return '';
+                                    const maxLen = 8;
+                                    return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
                                 }
                             },
                             grid: { display: false }
-                        } 
-                    } 
+                        }
+                    }
                 },
                 plugins: [ChartDataLabels]
             });
-            
-            // 饼图数据源：应用项目和时间筛选
-            let filteredTransactions = [...AppState.transactions];
-            if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-                const selectedIds = Array.from(FilterState.selectedProjectIds);
-                filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectId));
-            }
-            if (typeof FilterState !== 'undefined' && FilterState.timeRange && 
-                FilterState.timeRange.type !== 'all' && 
-                FilterState.timeRange.startDate && 
-                FilterState.timeRange.endDate) {
-                const start = new Date(FilterState.timeRange.startDate);
-                const end = new Date(FilterState.timeRange.endDate);
-                end.setHours(23, 59, 59, 999);
-                filteredTransactions = filteredTransactions.filter(t => {
-                    const tDate = new Date(t.date);
-                    return tDate >= start && tDate <= end;
+        } else {
+            ctxMargin.canvas.height = 300;
+            ctxMargin.canvas.style.height = '300px';
+            if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; } // 销毁旧实例
+            profitMarginChart = new Chart(ctxMargin, {
+                type: 'bar',
+                data: { labels: ['无项目'], datasets: [{ label: '利润率', data: [0], backgroundColor: '#444' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+            });
+        }
+    }
+
+    // ---------- 4. 应收账款账龄分析（堆叠柱状图）----------
+    if (ctxAging) {
+        const analysis = AppState.getReceivableAnalysis();
+        const items = analysis.items.filter(item => item.pendingAmount > 0 && item.status !== 'paid');
+
+        if (items.length === 0) {
+            if (agingChart) { agingChart.destroy(); agingChart = null; }
+            agingChart = new Chart(ctxAging, {
+                type: 'bar',
+                data: { labels: ['无应收账款'], datasets: [{ label: '金额', data: [0], backgroundColor: '#444' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+            });
+        } else {
+            const agingRanges = [
+                { label: '未到期', max: 0, min: -Infinity },
+                { label: '逾期1-30天', min: 1, max: 30 },
+                { label: '逾期31-60天', min: 31, max: 60 },
+                { label: '逾期61-90天', min: 61, max: 90 },
+                { label: '逾期90+天', min: 91, max: Infinity }
+            ];
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const projectMap = new Map();
+            items.forEach(item => {
+                const dueDate = new Date(item.dueDate);
+                dueDate.setHours(0, 0, 0, 0);
+                const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+                let rangeIndex = -1;
+                if (daysOverdue <= 0) rangeIndex = 0;
+                else if (daysOverdue <= 30) rangeIndex = 1;
+                else if (daysOverdue <= 60) rangeIndex = 2;
+                else if (daysOverdue <= 90) rangeIndex = 3;
+                else rangeIndex = 4;
+
+                if (!projectMap.has(item.projectId)) {
+                    projectMap.set(item.projectId, { name: item.projectName, amounts: [0, 0, 0, 0, 0] });
+                }
+                const proj = projectMap.get(item.projectId);
+                proj.amounts[rangeIndex] += item.pendingAmount;
+            });
+
+            const projects = Array.from(projectMap.values())
+                .map(p => ({ ...p, total: p.amounts.reduce((sum, a) => sum + a, 0) }))
+                .sort((a, b) => b.total - a.total);
+
+            const topN = 5;
+            const topProjects = projects.slice(0, topN);
+            const otherProjects = projects.slice(topN);
+            const otherAmounts = [0, 0, 0, 0, 0];
+            otherProjects.forEach(p => {
+                for (let i = 0; i < 5; i++) otherAmounts[i] += p.amounts[i];
+            });
+
+            const datasets = [];
+            const colors = ['#00d4aa', '#ff6b6b', '#ffd93d', '#4dabf7', '#9b5de5', '#f15bb5'];
+            topProjects.forEach((p, idx) => {
+                datasets.push({
+                    label: p.name,
+                    data: p.amounts,
+                    backgroundColor: colors[idx % colors.length],
+                    stack: 'aging',
+                    borderWidth: 0
+                });
+            });
+            if (otherProjects.length > 0) {
+                datasets.push({
+                    label: '其他',
+                    data: otherAmounts,
+                    backgroundColor: '#888',
+                    stack: 'aging',
+                    borderWidth: 0
                 });
             }
-            
-            const costMap = {};
-            filteredTransactions.filter(t => t.type !== '收入').forEach(t => {
-                costMap[t.type] = (costMap[t.type] || 0) + t.amount;
-            });
-            const costData = Object.keys(costMap).map(k => ({type: k, amount: costMap[k]})).sort((a,b) => b.amount - a.amount);
-            
-            if(costData.length) {
-                const total = costData.reduce((s,i)=>s+i.amount,0);
-                costPieChart = new Chart(ctxPie, {
-                    type:'pie',
-                    data: {
-                        labels: costData.map(c=>c.type),
-                        datasets: [{ 
-                            data: costData.map(c=>c.amount), 
-                            backgroundColor: ['#00d4aa','#ff6b6b','#ffd93d','#4dabf7','#9b5de5','#f15bb5'], 
-                            borderWidth: 0, spacing: 0, offset: 0
-                        }]
+
+            const agingContainer = ctxAging.canvas.parentElement;
+            if (agingContainer) {
+                agingContainer.style.overflowY = 'auto';
+                agingContainer.style.overflowX = 'auto';
+                agingContainer.style.height = '320px';
+                ctxAging.canvas.style.maxHeight = 'none';
+                ctxAging.canvas.style.height = 'auto';
+            }
+
+            ctxAging.canvas.height = 300;
+            ctxAging.canvas.style.height = '300px';
+
+            if (agingChart) { agingChart.destroy(); agingChart = null; }
+            agingChart = new Chart(ctxAging, {
+                type: 'bar',
+                data: {
+                    labels: agingRanges.map(r => r.label),
+                    datasets: datasets
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { color: '#ccc', font: { size: 10 } }
+                        },
+                        tooltip: {
+                            callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}` }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: '#fff',
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            borderRadius: 4,
+                            padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                            formatter: (value) => value > 0 ? formatMoney(value) : '',
+                            font: { size: 9, weight: 'bold' },
+                            align: 'center',
+                            anchor: 'center'
+                        }
                     },
-                    options: {
-                        maintainAspectRatio: true,
-                        aspectRatio: 0.8,
-                        responsive: true,
-                        cutout: '0%',
-                        radius: '95%',
-                        layout: { padding: { top: 1, bottom: 1, left: 1, right: 1 } },
-                        plugins: {
-                            tooltip: { 
-                                callbacks: { 
-                                    label: (ctx)=>`${ctx.label}: ${formatMoney(ctx.raw)} (${((ctx.raw/total)*100).toFixed(1)}%)` 
-                                } 
-                            },
-                            legend: { 
-                                labels: { 
-                                    color:'#ccc', font: { size: 10 }, 
-                                    boxWidth: 8, boxHeight: 8, padding: 6
-                                }, 
-                                position: 'bottom', align: 'center', maxHeight: 70, fullSize: false 
-                            },
-                            datalabels: {
-                                display: true, 
-                                color: '#fff', 
-                                backgroundColor: 'rgba(0,0,0,0.7)', 
-                                borderRadius: 4,
-                                padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                                formatter: (v,ctx)=> { 
-                                    const p = ((v/total)*100).toFixed(1); 
-                                    return `${p}%`; 
-                                },
-                                font: { size: 10, weight: 'bold' },
-                                align: 'center',
-                                offset: 5
+                    scales: {
+                        x: { stacked: true, ticks: { color: '#ccc' }, grid: { display: false } },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: { callback: (v) => '¥' + v, color: '#ccc' },
+                            grid: { color: '#333' }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+    }
+
+    // ---------- 5. 现金流量图（折线图）----------
+    if (ctxCashflow) {
+        let cashTransactions = [...AppState.transactions];
+        if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+            const selectedIds = Array.from(FilterState.selectedProjectIds);
+            cashTransactions = cashTransactions.filter(t => selectedIds.includes(t.projectId));
+        }
+        if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
+            FilterState.timeRange.type !== 'all' &&
+            FilterState.timeRange.startDate &&
+            FilterState.timeRange.endDate) {
+            const start = new Date(FilterState.timeRange.startDate);
+            const end = new Date(FilterState.timeRange.endDate);
+            end.setHours(23, 59, 59, 999);
+            cashTransactions = cashTransactions.filter(t => {
+                const tDate = new Date(t.date);
+                return tDate >= start && tDate <= end;
+            });
+        }
+
+        if (cashTransactions.length === 0) {
+            if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
+            cashflowChart = new Chart(ctxCashflow, {
+                type: 'line',
+                data: { labels: ['无数据'], datasets: [{ label: '收入', data: [0], borderColor: '#00d4aa', backgroundColor: 'transparent' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#ccc' } }, datalabels: { display: false } } }
+            });
+        } else {
+            let startDate, endDate;
+            if (FilterState.timeRange && FilterState.timeRange.type !== 'all') {
+                startDate = new Date(FilterState.timeRange.startDate);
+                endDate = new Date(FilterState.timeRange.endDate);
+            } else {
+                const dates = cashTransactions.map(t => new Date(t.date));
+                startDate = new Date(Math.min(...dates));
+                endDate = new Date(Math.max(...dates));
+            }
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+
+            const dateArray = [];
+            const currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                dateArray.push(new Date(currentDate));
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            const dailyIncome = {};
+            const dailyExpense = {};
+            dateArray.forEach(d => {
+                const dateStr = d.toISOString().split('T')[0];
+                dailyIncome[dateStr] = 0;
+                dailyExpense[dateStr] = 0;
+            });
+
+            cashTransactions.forEach(t => {
+                const dateStr = t.date;
+                if (dailyIncome.hasOwnProperty(dateStr) || dailyExpense.hasOwnProperty(dateStr)) {
+                    if (t.type === '收入') {
+                        dailyIncome[dateStr] += t.amount;
+                    } else {
+                        dailyExpense[dateStr] += t.amount;
+                    }
+                }
+            });
+
+            const labels = dateArray.map(d => d.toISOString().split('T')[0].slice(5));
+            const incomeData = dateArray.map(d => dailyIncome[d.toISOString().split('T')[0]]);
+            const expenseData = dateArray.map(d => dailyExpense[d.toISOString().split('T')[0]]);
+            const netData = dateArray.map((d, i) => incomeData[i] - expenseData[i]);
+
+            const cashContainer = ctxCashflow.canvas.parentElement;
+            if (cashContainer) {
+                cashContainer.style.overflowX = 'auto';
+                cashContainer.style.overflowY = 'hidden';
+                cashContainer.style.height = '320px';
+                ctxCashflow.canvas.style.maxHeight = 'none';
+                ctxCashflow.canvas.style.height = 'auto';
+            }
+
+            const minWidthPerDay = 30;
+            const canvasWidth = Math.max(800, labels.length * minWidthPerDay);
+            ctxCashflow.canvas.width = canvasWidth;
+            ctxCashflow.canvas.style.width = canvasWidth + 'px';
+
+            if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
+            cashflowChart = new Chart(ctxCashflow, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '收入',
+                            data: incomeData,
+                            borderColor: '#00d4aa',
+                            backgroundColor: 'rgba(0,212,170,0.1)',
+                            tension: 0.2,
+                            fill: true,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#00d4aa'
+                        },
+                        {
+                            label: '支出',
+                            data: expenseData,
+                            borderColor: '#ff6b6b',
+                            backgroundColor: 'rgba(255,107,107,0.1)',
+                            tension: 0.2,
+                            fill: true,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#ff6b6b'
+                        },
+                        {
+                            label: '净现金流',
+                            data: netData,
+                            borderColor: '#ffd93d',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            tension: 0.2,
+                            pointRadius: 2,
+                            pointBackgroundColor: '#ffd93d',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    layout: { padding: { top: 20, bottom: 20, left: 10, right: 10 } },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { color: '#ccc', font: { size: 10 } }
+                        },
+                        tooltip: {
+                            callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}` }
+                        },
+                        datalabels: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#ccc', maxRotation: 45, minRotation: 30, autoSkip: true, maxTicksLimit: 20 },
+                            grid: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: (v) => '¥' + v, color: '#ccc' },
+                            grid: { color: '#333' }
+                        }
+                    }
+                },
+                plugins: []
+            });
+        }
+    }
+
+    // ---------- 6. 预算执行进度图（水平进度条图）----------
+    if (ctxProgress) {
+        const progressContainer = ctxProgress.canvas.parentElement;
+        if (progressContainer) {
+            progressContainer.style.overflowY = 'auto';
+            progressContainer.style.overflowX = 'hidden';
+            progressContainer.style.height = '320px';
+            ctxProgress.canvas.style.maxHeight = 'none';
+            ctxProgress.canvas.style.height = 'auto';
+        }
+
+        // 构建数据：每个项目生成两条记录（收入、支出）
+        const labels = [];
+        const progressData = [];
+        const backgroundColors = [];
+        stats.forEach(s => {
+            const incomePercent = s.contractTotal > 0 ? (s.income / s.contractTotal * 100) : 0;
+            const expensePercent = s.contractTotal > 0 ? (s.expense / s.contractTotal * 100) : 0;
+            // 收入条（绿色）
+            labels.push(s.name + ' (收入)');
+            progressData.push(Math.min(incomePercent, 100));
+            backgroundColors.push('#00d4aa'); // 绿色
+            // 支出条（红色，若超支则颜色加深）
+            labels.push(s.name + ' (支出)');
+            progressData.push(Math.min(expensePercent, 100));
+            // 如果支出进度 > 收入进度，用亮红色；否则用标准红色
+            backgroundColors.push(expensePercent > incomePercent ? '#ff4444' : '#ff6b6b');
+        });
+
+        // 动态计算 canvas 高度
+        const barHeight = 25; // 每个条形高度
+        const extraHeight = 80; // 预留空间
+        const canvasHeight = labels.length * barHeight + extraHeight;
+        ctxProgress.canvas.height = canvasHeight;
+        ctxProgress.canvas.style.height = canvasHeight + 'px';
+
+        if (progressChart) { progressChart.destroy(); progressChart = null; }
+        progressChart = new Chart(ctxProgress, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '执行进度 (%)',
+                    data: progressData,
+                    backgroundColor: backgroundColors,
+                    borderColor: 'transparent',
+                    borderWidth: 0,
+                    barPercentage: 0.7, // 控制条的高度占比
+                    categoryPercentage: 0.8
+                }]
+            },
+            options: {
+                indexAxis: 'y', // 水平条形图
+                maintainAspectRatio: false,
+                responsive: true,
+                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const rawValue = ctx.raw;
+                                const datasetIndex = ctx.datasetIndex;
+                                const dataIndex = ctx.dataIndex;
+                                // 从原始 stats 中获取对应项目的实际金额
+                                const projectIndex = Math.floor(dataIndex / 2);
+                                const isIncome = dataIndex % 2 === 0;
+                                const project = stats[projectIndex];
+                                if (!project) return '';
+                                if (isIncome) {
+                                    return `已收: ${formatMoney(project.income)} / 合同: ${formatMoney(project.contractTotal)} (${rawValue.toFixed(1)}%)`;
+                                } else {
+                                    return `支出: ${formatMoney(project.expense)} / 合同: ${formatMoney(project.contractTotal)} (${rawValue.toFixed(1)}%)`;
+                                }
                             }
                         }
                     },
-                    plugins: [ChartDataLabels]
-                });
-            } else {
-                costPieChart = new Chart(ctxPie, { 
-                    type:'pie', 
-                    data:{ labels:['暂无支出'], datasets:[{ data:[1], backgroundColor:['#555'] }] }, 
-                    options:{ maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins:{ legend:{ labels:{ color:'#ccc' } }, datalabels:{ display:false } } } 
-                });
-            }
-        }
+                    datalabels: {
+                        display: true,
+                        color: '#fff',
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        borderRadius: 4,
+                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
+                        formatter: (value) => value.toFixed(1) + '%',
+                        font: { size: 10, weight: 'bold' },
+                        align: 'end',
+                        anchor: 'end',
+                        offset: 5
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: (v) => v + '%',
+                            color: '#ccc'
+                        },
+                        grid: { color: '#333' }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ccc',
+                            font: { size: 10 },
+                            callback: function (val) {
+                                const label = this.getLabelForValue(val);
+                                if (!label) return '';
+                                const maxLen = 12; // 显示稍长一点
+                                return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
+                            }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+}
 
         // ========== 右上角毛利润总额标注 ==========
         function addProfitCornerLabel() {
