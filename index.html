@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>装修记账 · AI智能语音 · 项目/时间筛选</title>
+    <title>装修记账 · PROJECT AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -22,13 +22,13 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        .container {
+        .app {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 16px 16px 100px;
+            padding: 0 16px 80px;
         }
 
-        /* 头部 - 已彻底移除右上角加号 */
+        /* 头部 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -47,7 +47,7 @@
             font-weight: 600;
         }
 
-        /* ===== 复合筛选栏：时间 + 项目搜索（极简融合）===== */
+        /* ===== 复合筛选栏 ===== */
         .filter-section {
             display: flex;
             align-items: center;
@@ -55,12 +55,10 @@
             margin-bottom: 12px;
             position: relative;
         }
-
         .time-filter-container {
             position: relative;
             flex-shrink: 0;
         }
-
         .time-filter-btn {
             display: flex;
             align-items: center;
@@ -76,16 +74,10 @@
             font-size: 14px;
             white-space: nowrap;
         }
-
         .time-filter-btn:hover {
             border-color: #00d4aa;
             background: #1e1e1e;
         }
-
-        .time-filter-btn i:first-child {
-            font-size: 15px;
-        }
-
         .time-dropdown {
             position: absolute;
             top: calc(100% + 8px);
@@ -99,11 +91,9 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             padding: 8px 0;
         }
-
         .time-dropdown.active {
             display: block;
         }
-
         .time-dropdown-item {
             padding: 10px 16px;
             color: #e0e0e0;
@@ -114,25 +104,20 @@
             align-items: center;
             gap: 8px;
         }
-
         .time-dropdown-item:hover {
             background: #252525;
             color: #00d4aa;
         }
-
         .time-dropdown-item.active {
             background: #00d4aa20;
             color: #00d4aa;
             border-left: 3px solid #00d4aa;
         }
-
         .time-dropdown-divider {
             height: 1px;
             background: #2a2a2a;
             margin: 8px 0;
         }
-
-        /* 自定义日期范围弹层 */
         .custom-date-range {
             position: absolute;
             top: calc(100% + 8px);
@@ -145,18 +130,15 @@
             padding: 16px;
             display: none;
         }
-
         .custom-date-range.active {
             display: block;
         }
-
         .custom-date-range .date-input {
             display: flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 12px;
         }
-
         .custom-date-range input {
             flex: 1;
             background: #262626;
@@ -166,7 +148,6 @@
             color: white;
             font-size: 13px;
         }
-
         .custom-date-range .apply-btn {
             width: 100%;
             background: #00d4aa;
@@ -177,8 +158,6 @@
             font-weight: 600;
             cursor: pointer;
         }
-
-        /* 搜索容器 - 右侧弹性扩展 */
         .search-container {
             position: relative;
             flex: 1;
@@ -190,7 +169,6 @@
             display: flex;
             align-items: center;
             height: 48px;
-            box-sizing: border-box;
         }
         .search-container:focus-within {
             border-color: #00d4aa;
@@ -263,9 +241,6 @@
             height: 18px;
             cursor: pointer;
             accent-color: #00d4aa;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 4px;
         }
         .dropdown-item label {
             flex: 1;
@@ -301,16 +276,9 @@
         .dropdown-action-btn:hover {
             border-color: #00d4aa;
             color: #00d4aa;
-            background: rgba(0,212,170,0.05);
-        }
-        .dropdown-empty {
-            padding: 20px;
-            text-align: center;
-            color: #777;
-            font-size: 14px;
         }
 
-        /* 已选标签区：时间标签 + 项目标签 平级展示 */
+        /* 已选标签区 */
         .selected-tags {
             display: flex;
             flex-wrap: wrap;
@@ -328,15 +296,9 @@
             border-radius: 20px;
             font-size: 13px;
             color: #00d4aa;
-            transition: all 0.2s;
-        }
-        .selected-tag:hover {
-            background: #00d4aa20;
-            border-color: #00d4aa;
         }
         .selected-tag .remove-tag {
             cursor: pointer;
-            font-size: 14px;
             width: 18px;
             height: 18px;
             display: flex;
@@ -346,11 +308,6 @@
             background: rgba(255,255,255,0.1);
             color: #ff6b6b;
         }
-        .selected-tag .remove-tag:hover {
-            background: #ff6b6b;
-            color: #fff;
-        }
-        /* 时间标签 - 区别于项目标签的黄色系 */
         .time-tag {
             display: inline-flex;
             align-items: center;
@@ -362,13 +319,8 @@
             font-size: 13px;
             color: #ffd93d;
         }
-        .time-tag i {
-            font-size: 12px;
-            color: #ffd93d;
-        }
         .time-tag .remove-tag {
             cursor: pointer;
-            font-size: 14px;
             width: 18px;
             height: 18px;
             display: flex;
@@ -378,40 +330,53 @@
             background: rgba(255,255,255,0.1);
             color: #ff6b6b;
         }
-        .time-tag .remove-tag:hover {
-            background: #ff6b6b;
-            color: #fff;
+
+        /* ===== 底部导航 ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #161616;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+        .bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 8px 0;
+        }
+        .bottom-nav-item i {
+            font-size: 22px;
+            margin-bottom: 2px;
+        }
+        .bottom-nav-item.active {
+            color: #00d4aa;
         }
 
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .filter-section {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            .time-filter-btn {
-                height: 44px;
-                justify-content: center;
-            }
-            .search-container {
-                margin-left: 0 !important;
-                height: 44px;
-            }
-            .search-input {
-                padding: 10px 16px;
-                padding-right: 45px;
-                font-size: 14px;
-            }
-            .time-dropdown {
-                width: 100%;
-            }
-            .custom-date-range {
-                width: 100%;
-            }
+        /* ===== 页面容器 ===== */
+        .pages {
+            margin-top: 20px;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
         }
 
-        /* ===== 仪表盘 · 六卡布局 ===== */
+        /* 仪表盘卡片 */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -427,7 +392,6 @@
             background: #161616;
             border-radius: 16px;
             padding: 18px 14px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
         }
         .dashboard-card h3 {
             font-size: 14px;
@@ -440,15 +404,10 @@
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: 4px;
-            word-break: break-word;
         }
         .dashboard-card .profit { color: #00d4aa; }
         .dashboard-card .loss { color: #ff6b6b; }
         .dashboard-card .warning { color: #ffd93d; }
-        .dashboard-card .subtext {
-            font-size: 12px;
-            color: #8a8a8a;
-        }
 
         /* 应收账款模块 */
         .receivable-section {
@@ -457,7 +416,6 @@
             padding: 20px;
             margin-bottom: 30px;
             border: 1px solid #ffd93d40;
-            box-shadow: 0 8px 20px rgba(255,217,61,0.1);
         }
         .receivable-header {
             display: flex;
@@ -484,10 +442,6 @@
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
-            .receivable-card { padding: 12px 16px; }
-            .receivable-card h4 { font-size: 12px; margin-bottom: 4px; }
-            .receivable-card .amount { font-size: 20px; margin-bottom: 2px; }
-            .receivable-card .count { font-size: 11px; }
         }
         .receivable-card {
             background: #1e1e1e;
@@ -509,100 +463,8 @@
         }
         .receivable-card .amount.overdue { color: #ff6b6b; }
         .receivable-card .amount.upcoming { color: #ffd93d; }
-        .receivable-card .count {
-            font-size: 12px;
-            color: #8a8a8a;
-        }
-        .receivable-table-container {
-            max-height: 300px;
-            overflow-y: auto;
-            border-radius: 12px;
-            background: #1a1a1a;
-        }
-        .receivable-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        .receivable-table th {
-            color: #b0b0b0;
-            font-weight: 400;
-            text-align: left;
-            padding: 14px 12px;
-            border-bottom: 1px solid #333;
-            background: #1a1a1a;
-            position: sticky;
-            top: 0;
-        }
-        .receivable-table td {
-            padding: 14px 12px;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-overdue { background: #ff6b6b20; color: #ff6b6b; border: 1px solid #ff6b6b; }
-        .status-upcoming { background: #ffd93d20; color: #ffd93d; border: 1px solid #ffd93d; }
-        .status-normal { background: #00d4aa20; color: #00d4aa; border: 1px solid #00d4aa; }
-        .status-paid { background: #4dabf720; color: #4dabf7; border: 1px solid #4dabf7; }
 
-        /* 双图表布局 */
-        .charts-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        @media (min-width: 1024px) {
-            .charts-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        .chart-box {
-            background: #161616;
-            border-radius: 20px;
-            padding: 16px;
-            position: relative;
-            width: 100%;
-            height: 320px;
-            overflow: hidden;
-        }
-        @media (max-width: 768px) {
-            .chart-box { height: 260px; }
-        }
-        .chart-box h3 {
-            font-size: 16px;
-            color: #ccc;
-            margin-bottom: 12px;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* 右上角毛利润总额标注（黄色） */
-        .profit-corner-label {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            color: #ffd93d;
-            background: rgba(255, 217, 61, 0.1);
-            border: 1px solid #ffd93d;
-            border-radius: 20px;
-            padding: 8px 18px;
-            font-size: 15px;
-            font-weight: 600;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(255, 217, 61, 0.2);
-            backdrop-filter: blur(4px);
-            letter-spacing: 0.5px;
-        }
-
-        /* 表格区域 */
+        /* 表格容器 */
         .table-container {
             background: #161616;
             border-radius: 24px;
@@ -616,11 +478,6 @@
             margin-bottom: 16px;
             flex-wrap: wrap;
             gap: 12px;
-        }
-        .table-title-area {
-            display: flex;
-            align-items: center;
-            gap: 16px;
         }
         .btn-export {
             background: transparent;
@@ -638,28 +495,6 @@
         .btn-export:hover {
             background: #00d4aa;
             color: #0a0a0a;
-        }
-        .table-tabs {
-            display: flex;
-            gap: 8px;
-            background: #252525;
-            padding: 4px;
-            border-radius: 30px;
-        }
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: #aaa;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 14px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .tab-btn.active {
-            background: #00d4aa;
-            color: #0a0a0a;
-            font-weight: 600;
         }
         .data-table {
             width: 100%;
@@ -696,17 +531,54 @@
         .btn-edit { color: #4dabf7; border-color: #4dabf7; }
         .btn-delete { color: #ff6b6b; border-color: #ff6b6b; }
 
-        /* ===== 极简浮动按钮菜单 ===== */
+        /* 状态徽章（修复颜色缺失） */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-overdue { background: #ff6b6b20; color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .status-upcoming { background: #ffd93d20; color: #ffd93d; border: 1px solid #ffd93d; }
+        .status-normal { background: #00d4aa20; color: #00d4aa; border: 1px solid #00d4aa; }
+        .status-paid { background: #4dabf720; color: #4dabf7; border: 1px solid #4dabf7; }
+
+        /* 图表区域 */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        @media (min-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .chart-box {
+            background: #161616;
+            border-radius: 20px;
+            padding: 16px;
+            position: relative;
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .chart-box { height: 260px; }
+        }
+
+        /* 浮动按钮菜单 */
         .fab-container {
             position: fixed;
-            bottom: 24px;
+            bottom: 90px;
             right: 24px;
             z-index: 999;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
         }
-
         .fab-transaction {
             width: 70px;
             height: 70px;
@@ -715,7 +587,6 @@
             border-radius: 50%;
             color: #0a0a0a;
             font-size: 28px;
-            font-weight: bold;
             box-shadow: 0 8px 20px rgba(0,212,170,0.4);
             display: flex;
             align-items: center;
@@ -724,11 +595,6 @@
             transition: 0.2s;
             z-index: 1000;
         }
-
-        .fab-transaction:hover {
-            transform: scale(1.1);
-        }
-
         .fab-menu {
             position: absolute;
             bottom: 80px;
@@ -740,14 +606,10 @@
             padding: 8px 0;
             display: none;
             flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            backdrop-filter: blur(8px);
         }
-
         .fab-menu.active {
             display: flex;
         }
-
         .fab-menu-item {
             display: flex;
             align-items: center;
@@ -758,39 +620,11 @@
             color: #e0e0e0;
             font-size: 15px;
             cursor: pointer;
-            transition: 0.2s;
             text-align: left;
         }
-
         .fab-menu-item:hover {
             background: #252525;
             color: #00d4aa;
-        }
-
-        .fab-menu-item i {
-            width: 20px;
-            color: #00d4aa;
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .fab-container {
-                bottom: 20px;
-                right: 20px;
-            }
-            .fab-transaction {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
-            .fab-menu {
-                bottom: 70px;
-                width: 160px;
-            }
-            .fab-menu-item {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
         }
 
         /* 模态框 */
@@ -813,7 +647,6 @@
             padding: 28px 24px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
         .modal-header {
             display: flex;
@@ -834,7 +667,6 @@
             display: block;
             color: #b0b0b0;
             margin-bottom: 6px;
-            font-size: 15px;
         }
         .form-control {
             width: 100%;
@@ -845,7 +677,6 @@
             color: white;
             font-size: 16px;
         }
-        .form-control:focus { border-color: #00d4aa; outline: none; }
         .btn-submit {
             background: #00d4aa;
             color: #0a0a0a;
@@ -858,7 +689,6 @@
             margin-top: 10px;
             cursor: pointer;
         }
-        .btn-submit:hover { background: #00b894; }
 
         /* 收款节点 */
         .milestone-section {
@@ -884,10 +714,6 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-add-milestone:hover {
-            background: rgba(0,212,170,0.1);
         }
         .milestone-list { max-height: 300px; overflow-y: auto; }
         .milestone-item {
@@ -900,9 +726,8 @@
             align-items: center;
         }
         .milestone-info { flex: 1; }
-        .milestone-date { color: #00d4aa; font-size: 14px; font-weight: 600; }
-        .milestone-amount { color: #fff; font-size: 16px; font-weight: 700; margin-top: 4px; }
-        .milestone-actions { display: flex; gap: 8px; }
+        .milestone-date { color: #00d4aa; font-size: 14px; }
+        .milestone-amount { color: #fff; font-size: 16px; font-weight: 700; }
         .btn-remove-milestone {
             background: transparent;
             color: #ff6b6b;
@@ -911,10 +736,6 @@
             padding: 4px 12px;
             font-size: 12px;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-remove-milestone:hover {
-            background: rgba(255,107,107,0.1);
         }
         .milestone-total {
             margin-top: 12px;
@@ -923,12 +744,11 @@
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             color: #00d4aa;
             font-weight: 600;
         }
 
-        /* 语音输入 */
+        /* 语音模块 */
         .voice-hero {
             background: linear-gradient(145deg, #1e2a2a, #141818);
             border-radius: 20px;
@@ -948,9 +768,7 @@
             font-size: 28px;
             color: #0a0a0a;
             flex-shrink: 0;
-            transition: 0.2s;
             cursor: pointer;
-            box-shadow: 0 0 0 0 rgba(0,212,170,0.5);
         }
         .voice-btn.listening {
             background: #ff6b6b;
@@ -962,7 +780,6 @@
         }
         .voice-info { flex: 1; }
         .voice-info h4 { color: #00d4aa; font-size: 17px; margin-bottom: 5px; }
-        .voice-info p { color: #b0b0b0; font-size: 13px; }
         .voice-status {
             margin-top: 8px;
             color: #ccc;
@@ -987,19 +804,12 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: all 0.2s;
             border: 1px solid transparent;
-        }
-        .category-tag:hover {
-            background: #3a3a3a;
-            transform: translateY(-1px);
         }
         .category-tag.active {
             background: #00d4aa;
             color: #0a0a0a;
             font-weight: 600;
-            border: 1px solid #00d4aa;
-            box-shadow: 0 0 10px rgba(0,212,170,0.3);
         }
         .category-tag .remove-tag {
             font-size: 14px;
@@ -1011,7 +821,6 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
         }
-        .category-tag:hover .remove-tag { background: rgba(255,255,255,0.2); }
         .custom-category-input {
             display: flex;
             gap: 8px;
@@ -1024,9 +833,7 @@
             padding: 0 20px;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .btn-add-category:hover { background: #4a4a4a; }
 
         /* 语音确认框 */
         .confirm-box {
@@ -1050,130 +857,102 @@
             color: #ddd;
             font-size: 13px;
         }
-       /* 语音确认按钮容器 */
-.confirm-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 28px;
-}
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .btn-modify {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+            padding: 14px 20px;
+            color: #e0e0e0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-confirm {
+            flex: 1;
+            background: linear-gradient(145deg, #00d4aa, #00b894);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 20px;
+            color: #0a0a0a;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-/* 修改按钮 - 灰色玻璃 */
-.btn-modify {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 40px;
-    padding: 14px 20px;
-    color: #e0e0e0;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-modify:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
-
-/* 确认并提交按钮 - 青绿色渐变 */
-.btn-confirm {
-    flex: 1;
-    background: linear-gradient(145deg, #00d4aa, #00b894);
-    border: none;
-    border-radius: 40px;
-    padding: 14px 20px;
-    color: #0a0a0a;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
-}
-
-.btn-confirm:hover {
-    background: linear-gradient(145deg, #00c49a, #00a87c);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 212, 170, 0.4);
-}
-
-.btn-confirm:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 8px rgba(0, 212, 170, 0.4);
-}
-
-/* 可选：添加 Font Awesome 图标（需确保按钮 HTML 中有 <i> 标签） */
-.btn-modify i, .btn-confirm i {
-    font-size: 16px;
-}
         .empty-state {
             text-align: center;
             padding: 40px 0;
             color: #777;
         }
-
-        /* ===== 表格滚动防溢出 ===== */
+        /* 设置页面专用 */
+        .settings-item {
+            background: #161616;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .settings-item h3 {
+            color: #00d4aa;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        .type-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .type-badge {
+            background: #2a2a2a;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .type-badge .remove-type {
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-danger {
+            background: transparent;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 12px 20px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
         .table-scroll {
-            width: 100%;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        .table-scroll table {
-            width: 100%;
-            min-width: 720px;
-            border-collapse: collapse;
-        }
-        .table-scroll th,
-        .table-scroll td {
-            padding: 8px 10px;
-            font-size: 13px;
-            line-height: 1.4;
-            white-space: normal;
-            word-break: break-word;
-            text-align: left;
-        }
-        .table-scroll th { white-space: nowrap; font-weight: 600; }
-        @media (max-width: 768px) {
-            .table-scroll table { min-width: 640px; }
-            .table-scroll th, .table-scroll td { padding: 6px 8px; font-size: 12px; }
-        }
-
-        /* ===== 饼图容器强制限制 ===== */
-         .chart-box canvas {
-    max-height: none;
-    width: 100%;
-    height: auto !important;
-}
-        @media (max-width: 768px) {
-            #costPieChart { max-height: 180px !important; }
+        .receivable-table th, .receivable-table td {
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ========== 头部 ========= -->
+    <div class="app">
+        <!-- 头部 -->
         <div class="header">
             <h1>装修<span>记账 · PROJECT AI</span></h1>
-            <!-- 右上角加号已彻底删除，更极简 -->
         </div>
 
-        <!-- ========== 复合筛选栏：时间筛选 + 项目搜索（极简融合）========= -->
+        <!-- 全局筛选栏 -->
         <div class="filter-section">
             <div class="time-filter-container">
                 <div class="time-filter-btn" id="timeFilterBtn">
                     <i class="fas fa-calendar-alt" style="color:#00d4aa;"></i>
                     <span id="timeFilterLabel">全部时间</span>
-                    <i class="fas fa-chevron-down" style="font-size:12px; margin-left:4px; color:#888;"></i>
+                    <i class="fas fa-chevron-down" style="font-size:12px; color:#888;"></i>
                 </div>
                 <div class="time-dropdown" id="timeDropdown">
                     <div class="time-dropdown-item active" data-value="all">📅 全部时间</div>
@@ -1186,174 +965,170 @@
                     <div class="time-dropdown-item" data-value="custom">📆 自定义</div>
                 </div>
             </div>
-            
             <div class="search-container">
                 <input type="text" class="search-input" id="projectSearchInput" placeholder="搜索项目...">
-                <div class="search-icon">
-                    <i class="fas fa-search"></i>
-                </div>
+                <div class="search-icon"><i class="fas fa-search"></i></div>
                 <div class="search-dropdown" id="projectSearchDropdown"></div>
             </div>
         </div>
-
-        <!-- 已选标签区：时间标签 + 项目标签 平级展示 -->
         <div class="selected-tags" id="selectedTagsArea"></div>
 
-        <!-- ========== 仪表盘 · 六卡 ========= -->
-        <div class="dashboard">
-            <div class="dashboard-card">
-                <h3>📦 总项目</h3>
-                <div class="value" id="totalProjects">0</div>
-                <div class="subtext">进行中</div>
+        <!-- 页面容器 -->
+        <div class="pages">
+            <!-- 首页 / 仪表盘 -->
+            <div class="page active" id="home-page">
+                <div class="dashboard">
+                    <div class="dashboard-card"><h3>📦 总项目</h3><div class="value" id="totalProjects">0</div><div class="subtext">进行中</div></div>
+                    <div class="dashboard-card"><h3>📋 合同总额</h3><div class="value profit" id="totalContract">¥0</div><div class="subtext">全部项目预算</div></div>
+                    <div class="dashboard-card"><h3>💰 总收入</h3><div class="value profit" id="totalIncome">¥0</div><div class="subtext">累计已收</div></div>
+                    <div class="dashboard-card"><h3>📉 总支出</h3><div class="value loss" id="totalExpense">¥0</div><div class="subtext">累计支出</div></div>
+                    <div class="dashboard-card"><h3>📊 毛利润总额</h3><div class="value profit" id="totalGrossProfit">¥0</div><div class="subtext">合同额-支出</div></div>
+                    <div class="dashboard-card"><h3>✅ 毛利润(已结算)</h3><div class="value profit" id="totalProfit">¥0</div><div class="subtext">收入-支出</div></div>
+                </div>
+
+                <!-- 应收账款模块 -->
+                <div class="receivable-section">
+                    <div class="receivable-header">
+                        <h2><i class="fas fa-file-invoice-dollar"></i> 应收账款提醒</h2>
+                        <span style="color:#ffd93d;">实时</span>
+                    </div>
+                    <div class="receivable-stats">
+                        <div class="receivable-card"><h4>📋 待收总额</h4><div class="amount warning" id="totalReceivable">¥0</div><div class="count" id="totalReceivableCount">0个项目</div></div>
+                        <div class="receivable-card overdue"><h4>⚠️ 逾期金额</h4><div class="amount overdue" id="overdueAmount">¥0</div><div class="count" id="overdueCount">0笔逾期</div></div>
+                        <div class="receivable-card upcoming"><h4>📅 即将到期</h4><div class="amount upcoming" id="upcomingAmount">¥0</div><div class="count" id="upcomingCount">7天内到期</div></div>
+                    </div>
+                    <div class="receivable-table-container">
+                        <div class="table-scroll">
+                            <table class="receivable-table data-table">
+                                <thead><tr><th>项目</th><th>收款日期</th><th>应收</th><th>已收</th><th>待收</th><th>状态</th></tr></thead>
+                                <tbody id="receivableTableBody"><tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 综合报表表格 -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <div style="font-size:18px;">📋 项目利润汇总</div>
+                        <button class="btn-export" id="exportSummaryBtn"><i class="fas fa-file-excel"></i> 导出</button>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table" id="summaryTable">
+                            <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
+                            <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state">暂无项目</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="dashboard-card">
-                <h3>📋 合同总额</h3>
-                <div class="value profit" id="totalContract">¥0</div>
-                <div class="subtext">全部项目预算</div>
+
+            <!-- 项目列表页面 -->
+            <div class="page" id="projects-page">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div style="font-size:18px;">📁 所有项目</div>
+                        <button class="btn-export" id="exportProjectsBtn"><i class="fas fa-file-excel"></i> 导出</button>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table" id="projectsTable">
+                            <thead><tr><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
+                            <tbody id="projectsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="dashboard-card">
-                <h3>💰 总收入</h3>
-                <div class="value profit" id="totalIncome">¥0</div>
-                <div class="subtext">累计已收</div>
+
+            <!-- 收支流水页面 -->
+            <div class="page" id="transactions-page">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div style="font-size:18px;">💸 收支记录</div>
+                        <button class="btn-export" id="exportTransactionsBtn"><i class="fas fa-file-excel"></i> 导出</button>
+                    </div>
+                    <div class="table-scroll">
+                        <table class="data-table" id="transactionsTable">
+                            <thead><tr><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
+                            <tbody id="transactionsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="dashboard-card">
-                <h3>📉 总支出</h3>
-                <div class="value loss" id="totalExpense">¥0</div>
-                <div class="subtext">累计支出</div>
+
+            <!-- 统计分析页面 -->
+            <div class="page" id="stats-page">
+                <div class="charts-container">
+                    <div class="chart-box" id="profitChartBox">
+                        <h3><i class="fas fa-chart-bar" style="color:#00d4aa;"></i> 项目利润对比</h3>
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                    <div class="chart-box" id="profitMarginChartBox">
+                        <h3><i class="fas fa-chart-line" style="color:#ffd93d;"></i> 利润率排行</h3>
+                        <canvas id="profitMarginChart"></canvas>
+                    </div>
+                    <div class="chart-box" id="agingChartBox">
+                        <h3><i class="fas fa-chart-bar" style="color:#ff6b6b;"></i> 应收账款账龄分析</h3>
+                        <canvas id="agingChart"></canvas>
+                    </div>
+                    <div class="chart-box" id="cashflowChartBox">
+                        <h3><i class="fas fa-chart-line" style="color:#00d4aa;"></i> 现金流量</h3>
+                        <canvas id="cashflowChart"></canvas>
+                    </div>
+                    <div class="chart-box" id="progressChartBox">
+                        <h3><i class="fas fa-tasks" style="color:#4dabf7;"></i> 预算执行进度</h3>
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h3><i class="fas fa-chart-pie" style="color:#ffd93d;"></i> 项目成本排行</h3>
+                        <canvas id="costPieChart"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="dashboard-card">
-                <h3>📊 毛利润总额</h3>
-                <div class="value profit" id="totalGrossProfit">¥0</div>
-                <div class="subtext">合同额-支出</div>
-            </div>
-            <div class="dashboard-card">
-                <h3>✅ 毛利润(已结算)</h3>
-                <div class="value profit" id="totalProfit">¥0</div>
-                <div class="subtext">收入-支出</div>
+
+            <!-- 设置页面 -->
+            <div class="page" id="settings-page">
+                <div class="settings-item">
+                    <h3>📌 费用类型管理</h3>
+                    <div class="type-list" id="settingsTypeList"></div>
+                    <div class="custom-category-input" style="margin-top:16px;">
+                        <input type="text" id="settingsNewType" class="form-control" placeholder="新类型">
+                        <button class="btn-add-category" id="settingsAddTypeBtn">添加</button>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <h3>📤 数据导出</h3>
+                    <button class="btn-export" id="exportAllBtn" style="width:100%; justify-content:center;">导出全部数据 (Excel)</button>
+                </div>
+                <div class="settings-item">
+                    <h3>🔐 关于 & 会员</h3>
+                    <p style="color:#aaa; margin-bottom:16px;">装修记账 v2.1 · 修复版</p>
+                    <button class="btn-danger" id="clearAllDataBtn">⚠️ 清除所有本地数据</button>
+                </div>
+                <div class="settings-item">
+                    <h3>💎 会员订阅 (即将上线)</h3>
+                    <p style="color:#aaa;">解锁无限项目、云同步、高级图表</p>
+                </div>
             </div>
         </div>
 
-        <!-- ========== 应收账款模块 ========= -->
-        <div class="receivable-section">
-            <div class="receivable-header">
-                <h2><i class="fas fa-file-invoice-dollar"></i> 应收账款提醒</h2>
-                <span style="color:#ffd93d; font-size:14px;">实时更新</span>
-            </div>
-            <div class="receivable-stats">
-                <div class="receivable-card">
-                    <h4>📋 待收总额</h4>
-                    <div class="amount warning" id="totalReceivable">¥0</div>
-                    <div class="count" id="totalReceivableCount">0个项目</div>
-                </div>
-                <div class="receivable-card overdue">
-                    <h4>⚠️ 逾期金额</h4>
-                    <div class="amount overdue" id="overdueAmount">¥0</div>
-                    <div class="count" id="overdueCount">0笔逾期</div>
-                </div>
-                <div class="receivable-card upcoming">
-                    <h4>📅 即将到期</h4>
-                    <div class="amount upcoming" id="upcomingAmount">¥0</div>
-                    <div class="count" id="upcomingCount">7天内到期</div>
-                </div>
-            </div>
-            <div class="receivable-table-container">
-                <div class="table-scroll">
-                    <table class="receivable-table data-table">
-                        <thead>
-                            <tr>
-                                <th>项目名称</th>
-                                <th>收款日期</th>
-                                <th>应收金额</th>
-                                <th>已收金额</th>
-                                <th>待收金额</th>
-                                <th>状态</th>
-                            </tr>
-                        </thead>
-                        <tbody id="receivableTableBody">
-                            <tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <div class="bottom-nav-item active" data-page="home"><i class="fas fa-home"></i><span>首页</span></div>
+            <div class="bottom-nav-item" data-page="projects"><i class="fas fa-folder"></i><span>项目</span></div>
+            <div class="bottom-nav-item" data-page="transactions"><i class="fas fa-exchange-alt"></i><span>收支</span></div>
+            <div class="bottom-nav-item" data-page="stats"><i class="fas fa-chart-pie"></i><span>统计</span></div>
+            <div class="bottom-nav-item" data-page="settings"><i class="fas fa-cog"></i><span>设置</span></div>
+        </nav>
 
-        <!-- ========== 双图 ========= -->
-        <div class="charts-container">
-            <div class="chart-box" id="profitChartBox">
-                <h3><i class="fas fa-chart-bar" style="color:#00d4aa;"></i> 项目利润对比</h3>
-                <canvas id="profitChart"></canvas>
-            </div>
-            <div class="chart-box" id="profitMarginChartBox">
-    <h3><i class="fas fa-chart-line" style="color:#ffd93d;"></i> 项目利润率排行</h3>
-    <canvas id="profitMarginChart"></canvas>
-</div>
-<div class="chart-box" id="agingChartBox">
-    <h3><i class="fas fa-chart-bar" style="color:#ff6b6b;"></i> 应收账款账龄分析</h3>
-    <canvas id="agingChart"></canvas>
-</div>
-<div class="chart-box" id="cashflowChartBox">
-    <h3><i class="fas fa-chart-line" style="color:#00d4aa;"></i> 现金流量</h3>
-    <canvas id="cashflowChart"></canvas>
-</div>
-<div class="chart-box" id="progressChartBox">
-    <h3><i class="fas fa-tasks" style="color:#4dabf7;"></i> 预算执行进度</h3>
-    <canvas id="progressChart"></canvas>
-</div>
-            <div class="chart-box">
-                <h3><i class="fas fa-chart-pie" style="color:#ffd93d;"></i> 项目成本排行</h3>
-                <canvas id="costPieChart"></canvas>
-            </div>
-        </div>
-
-        <!-- ========== 三合一智能表格 ========= -->
-        <div class="table-container">
-            <div class="table-header">
-                <div class="table-title-area">
-                    <div style="font-size:18px; font-weight:500;" id="tableTitle">📋 综合报表</div>
-                    <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> 导出Excel</button>
-                </div>
-                <div class="table-tabs">
-                    <button class="tab-btn active" id="summaryToggle">综合</button>
-                    <button class="tab-btn" id="projectsToggle">项目</button>
-                    <button class="tab-btn" id="transactionsToggle">收支</button>
-                </div>
-            </div>
-            <div class="table-scroll">
-                <table class="data-table" id="summaryTable">
-                    <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
-                    <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
-                </table>
-            </div>
-            <div class="table-scroll" id="projectsTableWrap" style="display:none;">
-                <table class="data-table" id="projectsTable">
-                    <thead><tr><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
-                    <tbody id="projectsTableBody"></tbody>
-                </table>
-            </div>
-            <div class="table-scroll" id="transactionsTableWrap" style="display:none;">
-                <table class="data-table" id="transactionsTable">
-                    <thead><tr><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
-                    <tbody id="transactionsTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ========== 极简浮动菜单 ========= -->
+        <!-- 浮动按钮菜单 -->
         <div class="fab-container">
             <button class="fab-transaction" id="fabMainBtn"><i class="fas fa-plus"></i></button>
             <div class="fab-menu" id="fabMenu">
-                <button class="fab-menu-item" id="fabAddProject">
-                    <i class="fas fa-folder-plus"></i>
-                    <span>新建项目</span>
-                </button>
-                <button class="fab-menu-item" id="fabAddTransaction">
-                    <i class="fas fa-yen-sign"></i>
-                    <span>新增收支</span>
-                </button>
+                <button class="fab-menu-item" id="fabAddProject"><i class="fas fa-folder-plus"></i><span>新建项目</span></button>
+                <button class="fab-menu-item" id="fabAddTransaction"><i class="fas fa-yen-sign"></i><span>新增收支</span></button>
             </div>
         </div>
 
-        <!-- ========== 模态框：项目管理 ========= -->
+        <!-- 项目管理模态框 -->
         <div class="modal" id="projectModal">
             <div class="modal-content">
                 <div class="modal-header"><h2 id="projectModalTitle">➕ 新建项目</h2><button class="btn-close" id="closeProjectModal">&times;</button></div>
@@ -1376,20 +1151,7 @@
             </div>
         </div>
 
-        <!-- ========== 添加收款节点模态框 ========= -->
-        <div class="modal" id="milestoneModal">
-            <div class="modal-content">
-                <div class="modal-header"><h2>📅 添加收款节点</h2><button class="btn-close" id="closeMilestoneModal">&times;</button></div>
-                <form id="milestoneForm">
-                    <div class="form-group"><label>📅 收款日期</label><input type="date" id="milestoneDate" class="form-control" required></div>
-                    <div class="form-group"><label>💰 收款金额 (元)</label><input type="number" id="milestoneAmount" class="form-control" placeholder="50000" min="0" step="0.01" required></div>
-                    <div class="form-group"><label>📝 备注</label><input type="text" id="milestoneNote" class="form-control" placeholder="如：首付款、进度款"></div>
-                    <button type="submit" class="btn-submit">添加节点</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- ========== 模态框：收支记录 ========= -->
+        <!-- 收支记录模态框 -->
         <div class="modal" id="transactionModal">
             <div class="modal-content">
                 <div class="modal-header"><h2 id="transactionModalTitle">💰 收支记录</h2><button class="btn-close" id="closeTransactionModal">&times;</button></div>
@@ -1406,7 +1168,7 @@
                     <div class="form-group"><label>📅 日期</label><input type="date" id="transactionDate" class="form-control" required></div>
                     <div class="form-group"><label>🏗️ 项目</label><select id="transactionProject" class="form-control" required><option value="">请选择</option></select></div>
                     <div class="form-group">
-                        <label>🏷️ 费用类型 <span style="color:#00d4aa; font-size:12px;">（点击标签手动选择）</span></label>
+                        <label>🏷️ 费用类型</label>
                         <div class="category-tags" id="categoryTags"></div>
                         <div class="custom-category-input">
                             <input type="text" id="customCategory" class="form-control" placeholder="自定义类型">
@@ -1420,7 +1182,20 @@
             </div>
         </div>
 
-        <!-- ========== 语音确认模态框 ========= -->
+        <!-- 收款节点模态框 -->
+        <div class="modal" id="milestoneModal">
+            <div class="modal-content">
+                <div class="modal-header"><h2>📅 添加收款节点</h2><button class="btn-close" id="closeMilestoneModal">&times;</button></div>
+                <form id="milestoneForm">
+                    <div class="form-group"><label>📅 收款日期</label><input type="date" id="milestoneDate" class="form-control" required></div>
+                    <div class="form-group"><label>💰 收款金额 (元)</label><input type="number" id="milestoneAmount" class="form-control" placeholder="50000" min="0" step="0.01" required></div>
+                    <div class="form-group"><label>📝 备注</label><input type="text" id="milestoneNote" class="form-control" placeholder="如：首付款、进度款"></div>
+                    <button type="submit" class="btn-submit">添加节点</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 语音确认模态框 -->
         <div class="modal" id="voiceConfirmModal">
             <div class="modal-content">
                 <div class="modal-header"><h2>🎤 AI智能匹配结果</h2><button class="btn-close" id="closeVoiceConfirmModal">&times;</button></div>
@@ -1434,14 +1209,14 @@
     </div>
 
     <script>
-        // ================= 注册Chart.js数据标签插件 =================
+        // ========== 注册 Chart.js 插件 ==========
         Chart.register(ChartDataLabels);
-        
-        // ================= 阿里云百炼大模型 =================
-        const BAILIAN_API_KEY = 'sk-cbfb73b5ae5b41608922e86705340311';
+
+        // ========== 阿里云百炼 API Key (演示用，实际部署应后端调用) ==========
+        const BAILIAN_API_KEY = 'sk-cbfb73b5ae5b41608922e86705340311'; // 请替换为自己的有效key
         const BAILIAN_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
-        
-        // ========== 获取当天日期 ==========
+
+        // ========== 辅助函数 ==========
         function getTodayDate() {
             const today = new Date();
             const year = today.getFullYear();
@@ -1449,28 +1224,22 @@
             const day = String(today.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-
-        // ========== 智能日期解析 ==========
         function parseNaturalDate(dateText) {
             if (!dateText) return getTodayDate();
-            const today = new Date();
-            const currentYear = today.getFullYear();
             if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) return dateText;
             const chineseDateMatch = dateText.match(/(\d{2,4})?年?(\d{1,2})月(\d{1,2})[号日]?/);
             if (chineseDateMatch) {
-                let year = chineseDateMatch[1] ? parseInt(chineseDateMatch[1]) : currentYear;
+                let year = chineseDateMatch[1] ? parseInt(chineseDateMatch[1]) : new Date().getFullYear();
                 if (year < 100) year += 2000;
                 const month = parseInt(chineseDateMatch[2]);
                 const day = parseInt(chineseDateMatch[3]);
                 return `${year}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
             }
-            if (dateText.includes('昨天')) { const d = new Date(today); d.setDate(today.getDate()-1); return d.toISOString().split('T')[0]; }
+            if (dateText.includes('昨天')) { const d = new Date(); d.setDate(d.getDate()-1); return d.toISOString().split('T')[0]; }
             if (dateText.includes('今天')) return getTodayDate();
-            if (dateText.includes('明天')) { const d = new Date(today); d.setDate(today.getDate()+1); return d.toISOString().split('T')[0]; }
+            if (dateText.includes('明天')) { const d = new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
             return getTodayDate();
         }
-
-        // ========== 中文数字转阿拉伯数字 ==========
         function chineseToNumber(chineseStr) {
             if (!chineseStr) return 0;
             const chineseNum = {'零':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'百':100,'千':1000,'万':10000,'亿':100000000,'两':2,'俩':2};
@@ -1511,7 +1280,6 @@
                     const targetId = Number(id);
                     this.transactions = this.transactions.filter(t => Number(t.projectId) !== targetId);
                     this.projects = this.projects.filter(p => Number(p.id) !== targetId);
-                    console.log(`🗑️ 已删除项目ID=${targetId} 及其所有收支记录`);
                 }
                 const newId = id ? Number(id) : Date.now();
                 const proj = { 
@@ -1524,7 +1292,6 @@
                 this.projects.push(proj);
                 Storage.save('projects', this.projects);
                 Storage.save('transactions', this.transactions);
-                console.log(`✅ 已添加新项目 ID=${newId}`, proj);
                 return proj;
             },
             deleteProject(id) {
@@ -1538,7 +1305,6 @@
                 if (id) {
                     const targetId = Number(id);
                     this.transactions = this.transactions.filter(t => Number(t.id) !== targetId);
-                    console.log(`🗑️ 已删除交易 ID=${targetId}`);
                 }
                 const newId = id ? Number(id) : Date.now();
                 const trans = { 
@@ -1550,7 +1316,6 @@
                 };
                 this.transactions.push(trans);
                 Storage.save('transactions', this.transactions);
-                console.log(`✅ 已添加新交易 ID=${newId}`, trans);
                 return trans;
             },
             deleteTransaction(id) {
@@ -1691,8 +1456,9 @@
             }
         };
 
-        // ========== DOM 绑定 ==========
+        // ========== DOM 元素 ==========
         const DOM = {
+            // 首页元素
             totalProjects: document.getElementById('totalProjects'),
             totalContract: document.getElementById('totalContract'),
             totalIncome: document.getElementById('totalIncome'),
@@ -1709,11 +1475,12 @@
             summaryBody: document.getElementById('summaryTableBody'),
             projectsBody: document.getElementById('projectsTableBody'),
             transactionsBody: document.getElementById('transactionsTableBody'),
-            tableTitle: document.getElementById('tableTitle'),
-            summaryToggle: document.getElementById('summaryToggle'),
-            projectsToggle: document.getElementById('projectsToggle'),
-            transactionsToggle: document.getElementById('transactionsToggle'),
-            exportBtn: document.getElementById('exportBtn'),
+            // 导出按钮
+            exportSummaryBtn: document.getElementById('exportSummaryBtn'),
+            exportProjectsBtn: document.getElementById('exportProjectsBtn'),
+            exportTransactionsBtn: document.getElementById('exportTransactionsBtn'),
+            exportAllBtn: document.getElementById('exportAllBtn'),
+            // 模态框
             projectModal: document.getElementById('projectModal'),
             transactionModal: document.getElementById('transactionModal'),
             milestoneModal: document.getElementById('milestoneModal'),
@@ -1752,14 +1519,25 @@
             voiceConfirmContent: document.getElementById('voiceConfirmContent'),
             modifyBtn: document.getElementById('modifyVoiceResultBtn'),
             confirmBtn: document.getElementById('confirmVoiceResultBtn'),
-            profitChartBox: document.getElementById('profitChartBox'),
-            // 筛选相关DOM
+            // 筛选相关
             projectSearchInput: document.getElementById('projectSearchInput'),
             projectSearchDropdown: document.getElementById('projectSearchDropdown'),
             selectedTagsArea: document.getElementById('selectedTagsArea'),
             timeFilterBtn: document.getElementById('timeFilterBtn'),
             timeDropdown: document.getElementById('timeDropdown'),
-            timeFilterLabel: document.getElementById('timeFilterLabel')
+            timeFilterLabel: document.getElementById('timeFilterLabel'),
+            // 图表 canvas
+            profitChart: document.getElementById('profitChart'),
+            profitMarginChart: document.getElementById('profitMarginChart'),
+            agingChart: document.getElementById('agingChart'),
+            cashflowChart: document.getElementById('cashflowChart'),
+            progressChart: document.getElementById('progressChart'),
+            costPieChart: document.getElementById('costPieChart'),
+            // 设置页面
+            settingsTypeList: document.getElementById('settingsTypeList'),
+            settingsNewType: document.getElementById('settingsNewType'),
+            settingsAddTypeBtn: document.getElementById('settingsAddTypeBtn'),
+            clearAllDataBtn: document.getElementById('clearAllDataBtn'),
         };
 
         let profitChart, profitMarginChart, costPieChart, agingChart, cashflowChart, progressChart, currentMilestones = [];
@@ -1805,7 +1583,7 @@
             updateMilestoneTotalDisplay();
         }
 
-        // ========== 费用类型标签 ==========
+        // ========== 费用类型标签渲染 ==========
         function renderCategoryTags() {
             DOM.categoryTags.innerHTML = '';
             const incomeTag = document.createElement('span'); 
@@ -1826,6 +1604,7 @@
                     if(AppState.expenseTypes.length>1){ 
                         AppState.deleteExpenseType(type); 
                         renderCategoryTags(); 
+                        renderSettingsTypes(); 
                     } else alert('至少保留一个费用类型');
                 });
                 DOM.categoryTags.appendChild(tag);
@@ -1839,78 +1618,67 @@
             DOM.transactionType.value = type;
         }
 
-        // ========== 项目下拉框 ==========
+        // ========== 设置页面费用类型渲染 ==========
+        function renderSettingsTypes() {
+            if (!DOM.settingsTypeList) return;
+            DOM.settingsTypeList.innerHTML = '';
+            AppState.expenseTypes.forEach(type => {
+                const badge = document.createElement('span');
+                badge.className = 'type-badge';
+                badge.innerHTML = `${type} <span class="remove-type" data-type="${type}">&times;</span>`;
+                badge.querySelector('.remove-type').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (AppState.expenseTypes.length > 1) {
+                        AppState.deleteExpenseType(type);
+                        renderCategoryTags();
+                        renderSettingsTypes();
+                    } else alert('至少保留一个费用类型');
+                });
+                DOM.settingsTypeList.appendChild(badge);
+            });
+        }
+
+        // ========== 项目下拉框填充 ==========
         function fillProjectSelect() {
             DOM.transactionProject.innerHTML = '<option value="">请选择项目</option>' + 
                 AppState.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
         }
 
-        // ========== 表格切换 ==========
-        function bindToggles() {
-            DOM.summaryToggle.onclick = ()=>{
-                document.getElementById('summaryTable').style.display = 'table';
-                document.getElementById('projectsTable').style.display = 'none';
-                document.getElementById('transactionsTable').style.display = 'none';
-                document.getElementById('projectsTableWrap').style.display = 'none';
-                document.getElementById('transactionsTableWrap').style.display = 'none';
-                DOM.summaryToggle.classList.add('active'); 
-                DOM.projectsToggle.classList.remove('active'); 
-                DOM.transactionsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '📋 综合报表';
-            };
-            DOM.projectsToggle.onclick = ()=>{
-                document.getElementById('summaryTable').style.display = 'none';
-                document.getElementById('projectsTable').style.display = 'table';
-                document.getElementById('transactionsTable').style.display = 'none';
-                document.getElementById('projectsTableWrap').style.display = 'block';
-                document.getElementById('transactionsTableWrap').style.display = 'none';
-                DOM.projectsToggle.classList.add('active'); 
-                DOM.summaryToggle.classList.remove('active'); 
-                DOM.transactionsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '📁 项目列表';
-            };
-            DOM.transactionsToggle.onclick = ()=>{
-                document.getElementById('summaryTable').style.display = 'none';
-                document.getElementById('projectsTable').style.display = 'none';
-                document.getElementById('transactionsTable').style.display = 'table';
-                document.getElementById('projectsTableWrap').style.display = 'none';
-                document.getElementById('transactionsTableWrap').style.display = 'block';
-                DOM.transactionsToggle.classList.add('active'); 
-                DOM.summaryToggle.classList.remove('active'); 
-                DOM.projectsToggle.classList.remove('active');
-                DOM.tableTitle.innerText = '💸 收支记录';
-            };
-        }
-
         // ========== 更新应收账款 ==========
         function updateReceivableSection() {
             const analysis = AppState.getReceivableAnalysis();
-            DOM.totalReceivable.textContent = formatMoney(analysis.totalReceivable);
-            DOM.totalReceivableCount.textContent = `${analysis.items.filter(i=>i.pendingAmount>0).length}笔待收`;
-            DOM.overdueAmount.textContent = formatMoney(analysis.overdueAmount);
-            DOM.overdueCount.textContent = `${analysis.overdueCount}笔逾期`;
-            DOM.upcomingAmount.textContent = formatMoney(analysis.upcomingAmount);
-            DOM.upcomingCount.textContent = `${analysis.upcomingCount}笔7天内到期`;
-            if(analysis.items.length===0) {
-                DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>';
-                return;
+            let filteredItems = analysis.items;
+            if (FilterState && FilterState.selectedProjectIds.size > 0) {
+                filteredItems = filteredItems.filter(item => FilterState.selectedProjectIds.has(item.projectId));
             }
-            DOM.receivableTableBody.innerHTML = analysis.items.map(item=>{
-                let statusClass='', statusText='';
-                if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
-                else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
-                else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
-                else { statusClass='status-normal'; statusText='正常'; }
-                const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
-                return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
-            }).join('');
+            const totalReceivable = filteredItems.reduce((s,i)=>s+i.pendingAmount,0);
+            const overdueAmount = filteredItems.filter(i=>i.status==='overdue').reduce((s,i)=>s+i.pendingAmount,0);
+            const upcomingAmount = filteredItems.filter(i=>i.status==='upcoming').reduce((s,i)=>s+i.pendingAmount,0);
+            const overdueCount = filteredItems.filter(i=>i.status==='overdue').length;
+            const upcomingCount = filteredItems.filter(i=>i.status==='upcoming').length;
+            DOM.totalReceivable.textContent = formatMoney(totalReceivable);
+            DOM.totalReceivableCount.textContent = `${filteredItems.filter(i=>i.pendingAmount>0).length}笔待收`;
+            DOM.overdueAmount.textContent = formatMoney(overdueAmount);
+            DOM.overdueCount.textContent = `${overdueCount}笔逾期`;
+            DOM.upcomingAmount.textContent = formatMoney(upcomingAmount);
+            DOM.upcomingCount.textContent = `${upcomingCount}笔7天内到期`;
+            if(filteredItems.length===0) { 
+                DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>'; 
+            } else {
+                DOM.receivableTableBody.innerHTML = filteredItems.map(item=>{
+                    let statusClass='', statusText='';
+                    if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
+                    else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
+                    else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
+                    else { statusClass='status-normal'; statusText='正常'; }
+                    const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
+                    return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
+                }).join('');
+            }
         }
 
         // ========== 刷新所有UI ==========
         function refreshUI() {
-            console.log('🔄 刷新UI...');
-            if(profitChart) { profitChart.destroy(); profitChart=null; }
-            if(costPieChart) { costPieChart.destroy(); costPieChart=null; }
             const ov = AppState.getOverallStats();
             DOM.totalProjects.textContent = ov.totalProjects;
             DOM.totalContract.textContent = formatMoney(ov.totalContract);
@@ -1921,16 +1689,22 @@
             DOM.totalGrossProfit.className = 'value ' + (grossProfit>=0?'profit':'loss');
             DOM.totalProfit.textContent = formatMoney(ov.totalProfit);
             DOM.totalProfit.className = 'value ' + (ov.totalProfit>=0?'profit':'loss');
+
             const stats = AppState.getAllStats();
+            // 综合报表
             if(stats.length) {
                 DOM.summaryBody.innerHTML = stats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
             } else { DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; }
+
+            // 项目列表
             if(AppState.projects.length) {
                 DOM.projectsBody.innerHTML = AppState.projects.map(p=>{ 
                     const s = AppState.getProjectStats(p.id); 
                     return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
                 }).join('');
             } else { DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; }
+
+            // 收支记录
             if(AppState.transactions.length) {
                 const sorted = [...AppState.transactions].sort((a,b)=>b.date.localeCompare(a.date));
                 DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
@@ -1938,780 +1712,310 @@
                     return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
                 }).join('');
             } else { DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; }
+
             updateReceivableSection();
-            setTimeout(()=>{ updateCharts(); addProfitCornerLabel(); }, 50);
             fillProjectSelect();
+            if (typeof FilterState !== 'undefined' && FilterState) {
+                FilterState.renderSelectedTags();
+                FilterState.applyFilter();  // 重新应用筛选，图表也会更新
+            } else {
+                setTimeout(() => { updateCharts(); addProfitCornerLabel(); }, 50);
+            }
         }
 
-// ========== 图表更新 ==========
-function updateCharts() {
-    const ctxBar = document.getElementById('profitChart').getContext('2d');
-    const ctxPie = document.getElementById('costPieChart').getContext('2d');
-    const ctxMargin = document.getElementById('profitMarginChart')?.getContext('2d');
-    const ctxAging = document.getElementById('agingChart')?.getContext('2d');
-    const ctxCashflow = document.getElementById('cashflowChart')?.getContext('2d');
-    const ctxProgress = document.getElementById('progressChart')?.getContext('2d'); // 新增
+        // ========== 图表更新（修复标签样式位置颜色） ==========
+        function updateCharts() {
+            if (!DOM.profitChart || !DOM.costPieChart) return;
+            // 销毁旧图表
+            if (profitChart) { profitChart.destroy(); profitChart = null; }
+            if (costPieChart) { costPieChart.destroy(); costPieChart = null; }
+            if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; }
+            if (agingChart) { agingChart.destroy(); agingChart = null; }
+            if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
+            if (progressChart) { progressChart.destroy(); progressChart = null; }
 
-    // 获取并筛选统计数据
-    let stats = AppState.getAllStats();
-    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-        const selectedIds = Array.from(FilterState.selectedProjectIds);
-        stats = stats.filter(s => selectedIds.includes(s.id));
-    }
+            let stats = AppState.getAllStats();
+            if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
+                const selectedIds = Array.from(FilterState.selectedProjectIds);
+                stats = stats.filter(s => selectedIds.includes(s.id));
+            }
+            if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
+                FilterState.timeRange.type !== 'all' &&
+                FilterState.timeRange.startDate &&
+                FilterState.timeRange.endDate) {
+                const start = new Date(FilterState.timeRange.startDate);
+                const end = new Date(FilterState.timeRange.endDate);
+                end.setHours(23, 59, 59, 999);
+                stats = stats.map(stat => {
+                    const timeFilteredTransactions = AppState.transactions.filter(t =>
+                        Number(t.projectId) === stat.id &&
+                        new Date(t.date) >= start &&
+                        new Date(t.date) <= end
+                    );
+                    const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                    const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                    const profit = income - expense;
+                    return {
+                        ...stat,
+                        income,
+                        expense,
+                        profit,
+                        profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
+                        pendingIncome: Math.max(0, stat.contractTotal - income)
+                    };
+                });
+            }
 
-    if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
-        FilterState.timeRange.type !== 'all' &&
-        FilterState.timeRange.startDate &&
-        FilterState.timeRange.endDate) {
-        const start = new Date(FilterState.timeRange.startDate);
-        const end = new Date(FilterState.timeRange.endDate);
-        end.setHours(23, 59, 59, 999);
-
-        stats = stats.map(stat => {
-            const timeFilteredTransactions = AppState.transactions.filter(t =>
-                Number(t.projectId) === stat.id &&
-                new Date(t.date) >= start &&
-                new Date(t.date) <= end
-            );
-            const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
-            const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
-            const profit = income - expense;
-            return {
-                ...stat,
-                income,
-                expense,
-                profit,
-                profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
-                pendingIncome: Math.max(0, stat.contractTotal - income)
-            };
-        });
-    }
-
-    // 无项目时的占位处理
-    if (!stats.length) {
-        // 销毁所有现有图表
-        if (profitChart) { profitChart.destroy(); profitChart = null; }
-        if (costPieChart) { costPieChart.destroy(); costPieChart = null; }
-        if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; }
-        if (agingChart) { agingChart.destroy(); agingChart = null; }
-        if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
-        if (progressChart) { progressChart.destroy(); progressChart = null; }
-
-        profitChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: { labels: ['无数据'], datasets: [{ label: '合同总额', data: [0], backgroundColor: '#444' }] },
-            options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
-        });
-        costPieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: { labels: ['无支出'], datasets: [{ data: [1], backgroundColor: ['#555'] }] },
-            options: { maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
-        });
-        if (ctxMargin) {
-            profitMarginChart = new Chart(ctxMargin, {
+            // 项目利润对比图（柱状图，标签在柱子顶部）
+            profitChart = new Chart(DOM.profitChart.getContext('2d'), {
                 type: 'bar',
-                data: { labels: ['无数据'], datasets: [{ label: '利润率', data: [0], backgroundColor: '#444' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
-            });
-        }
-        if (ctxAging) {
-            agingChart = new Chart(ctxAging, {
-                type: 'bar',
-                data: { labels: ['无应收账款'], datasets: [{ label: '金额', data: [0], backgroundColor: '#444' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
-            });
-        }
-        if (ctxCashflow) {
-            cashflowChart = new Chart(ctxCashflow, {
-                type: 'line',
-                data: { labels: ['无数据'], datasets: [{ label: '收入', data: [0], borderColor: '#00d4aa' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#ccc' } }, datalabels: { display: false } } }
-            });
-        }
-        if (ctxProgress) {
-            progressChart = new Chart(ctxProgress, {
-                type: 'bar',
-                data: { labels: ['无项目'], datasets: [{ label: '进度', data: [0], backgroundColor: '#444' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
-            });
-        }
-        return;
-    }
-
-    // ---------- 1. 项目利润对比图（黄色利润柱）----------
-    if (profitChart) { profitChart.destroy(); profitChart = null; } // 销毁旧实例
-    profitChart = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-            labels: stats.map(s => s.name),
-            datasets: [
-                { label: '合同总额', data: stats.map(s => s.contractTotal), backgroundColor: '#6c757d' },
-                { label: '已收', data: stats.map(s => s.income), backgroundColor: '#00d4aa' },
-                { label: '支出', data: stats.map(s => s.expense), backgroundColor: '#ff6b6b' },
-                { label: '利润', data: stats.map(s => s.profit), backgroundColor: '#ffd93d' }
-            ]
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: { padding: { top: 25, bottom: 20 } },
-            plugins: {
-                legend: { labels: { color: '#ccc' } },
-                datalabels: {
-                    display: true,
-                    color: '#fff',
-                    anchor: 'end',
-                    align: 'top',
-                    offset: 4,
-                    formatter: (value) => value ? '¥' + value.toFixed(0) : ''
-                }
-            },
-            scales: {
-                y: { ticks: { callback: v => '¥' + v }, grid: { color: '#333' } },
-                x: {
-                    ticks: {
-                        color: '#ccc',
-                        maxRotation: 0,
-                        minRotation: 0,
-                        autoSkip: true,
-                        autoSkipPadding: 15,
-                        maxTicksLimit: 8,
-                        callback: function (val) {
-                            const fullName = this.getLabelForValue(val);
-                            if (!fullName) return '';
-                            const isMobile = window.innerWidth <= 768;
-                            const maxLength = isMobile ? 6 : 8;
-                            if (fullName.length <= maxLength) return fullName;
-                            const prefix = fullName.slice(0, 3);
-                            const suffix = fullName.slice(-3);
-                            return `${prefix}*${suffix}`;
+                data: {
+                    labels: stats.map(s => s.name),
+                    datasets: [
+                        { label: '合同总额', data: stats.map(s => s.contractTotal), backgroundColor: '#6c757d' },
+                        { label: '已收', data: stats.map(s => s.income), backgroundColor: '#00d4aa' },
+                        { label: '支出', data: stats.map(s => s.expense), backgroundColor: '#ff6b6b' },
+                        { label: '利润', data: stats.map(s => s.profit), backgroundColor: '#ffd93d' }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ccc' } },
+                        datalabels: {
+                            display: true,
+                            color: '#fff',
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            formatter: (value) => value ? '¥' + value.toFixed(0) : ''
                         }
                     },
-                    grid: { display: false }
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-
-    // ---------- 2. 成本类型排行图（横向条形图，可滚动）----------
-    let filteredTransactions = [...AppState.transactions];
-    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-        const selectedIds = Array.from(FilterState.selectedProjectIds);
-        filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectId));
-    }
-    if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
-        FilterState.timeRange.type !== 'all' &&
-        FilterState.timeRange.startDate &&
-        FilterState.timeRange.endDate) {
-        const start = new Date(FilterState.timeRange.startDate);
-        const end = new Date(FilterState.timeRange.endDate);
-        end.setHours(23, 59, 59, 999);
-        filteredTransactions = filteredTransactions.filter(t => {
-            const tDate = new Date(t.date);
-            return tDate >= start && tDate <= end;
-        });
-    }
-
-    const costMap = {};
-    filteredTransactions.filter(t => t.type !== '收入').forEach(t => {
-        costMap[t.type] = (costMap[t.type] || 0) + t.amount;
-    });
-    const costData = Object.keys(costMap).map(k => ({ type: k, amount: costMap[k] })).sort((a, b) => b.amount - a.amount);
-
-    const costContainer = ctxPie.canvas.parentElement;
-    if (costContainer) {
-        costContainer.style.overflowY = 'auto';
-        costContainer.style.overflowX = 'hidden';
-        costContainer.style.height = '320px';
-        ctxPie.canvas.style.maxHeight = 'none';
-        ctxPie.canvas.style.height = 'auto';
-    }
-
-    if (costData.length) {
-        const barHeight = 30;
-        const extraHeight = 80;
-        const canvasHeight = costData.length * barHeight + extraHeight;
-        ctxPie.canvas.height = canvasHeight;
-        ctxPie.canvas.style.height = canvasHeight + 'px';
-
-        if (costPieChart) { costPieChart.destroy(); costPieChart = null; } // 销毁旧实例
-        costPieChart = new Chart(ctxPie, {
-            type: 'bar',
-            data: {
-                labels: costData.map(c => c.type),
-                datasets: [{
-                    label: '成本金额',
-                    data: costData.map(c => c.amount),
-                    backgroundColor: '#ff6b6b',
-                    borderColor: '#ff6b6b',
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                    categoryPercentage: 0.9
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                maintainAspectRatio: false,
-                responsive: true,
-                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw ? formatMoney(ctx.raw) : ''}` } },
-                    datalabels: {
-                        display: true,
-                        color: '#fff',
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        borderRadius: 4,
-                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                        formatter: (value) => formatMoney(value),
-                        font: { size: 10, weight: 'bold' },
-                        align: 'end',
-                        anchor: 'end',
-                        offset: 5
+                    scales: {
+                        y: { ticks: { callback: v => '¥' + v, color: '#ccc' }, grid: { color: '#333' } },
+                        x: { ticks: { color: '#ccc' } }
                     }
                 },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: { callback: (v) => '¥' + v, color: '#ccc' },
-                        grid: { color: '#333' }
+                plugins: [ChartDataLabels]
+            });
+
+            // 成本排行（水平条形图，标签在条形末端）
+            const costData = AppState.getCostTypeAnalysis();
+            if (costData.length) {
+                costPieChart = new Chart(DOM.costPieChart.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: costData.map(c => c.type),
+                        datasets: [{
+                            label: '成本金额',
+                            data: costData.map(c => c.amount),
+                            backgroundColor: '#ff6b6b'
+                        }]
                     },
-                    y: {
-                        ticks: {
-                            color: '#ccc',
-                            font: { size: 11 },
-                            callback: function (val) {
-                                const label = this.getLabelForValue(val);
-                                if (!label) return '';
-                                const maxLen = 8;
-                                return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
+                    options: {
+                        indexAxis: 'y',
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                display: true,
+                                color: '#fff',
+                                anchor: 'end',
+                                align: 'end',
+                                offset: 4,
+                                formatter: (value) => formatMoney(value)
                             }
                         },
-                        grid: { display: false }
-                    }
-                }
+                        scales: {
+                            x: { ticks: { callback: v => '¥' + v, color: '#ccc' }, grid: { color: '#333' } },
+                            y: { ticks: { color: '#ccc' } }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+           } else {
+    // 无数据：创建一个空条形图，与利润率排行风格一致
+    if (costPieChart) costPieChart.destroy();
+    costPieChart = new Chart(ctxPie, {
+        type: 'bar',
+        data: {
+            labels: [''],
+            datasets: [{
+                label: '成本金额',
+                data: [0],
+                backgroundColor: '#444'  // 深灰色柱子，可改为背景色 #161616 以完全隐藏
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                datalabels: { display: false }
             },
-            plugins: [ChartDataLabels]
-        });
-    } else {
-        ctxPie.canvas.height = 300;
-        ctxPie.canvas.style.height = '300px';
-        if (costPieChart) { costPieChart.destroy(); costPieChart = null; } // 销毁旧实例
-        costPieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: { labels: ['暂无支出'], datasets: [{ data: [1], backgroundColor: ['#555'] }] },
-            options: { maintainAspectRatio: true, aspectRatio: 1.5, responsive: true, plugins: { legend: { labels: { color: '#ccc' } }, datalabels: { display: false } } }
-        });
-    }
-
-    // ---------- 3. 项目利润率排行图（水平条形图，可滚动）----------
-    if (ctxMargin) {
-        const marginContainer = ctxMargin.canvas.parentElement;
-        if (marginContainer) {
-            marginContainer.style.overflowY = 'auto';
-            marginContainer.style.overflowX = 'hidden';
-            marginContainer.style.height = '320px';
-            ctxMargin.canvas.style.maxHeight = 'none';
-            ctxMargin.canvas.style.height = 'auto';
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            }
         }
+    });
+}
 
-        const marginStats = stats
-            .map(s => ({ name: s.name, margin: s.profitMargin }))
-            .sort((a, b) => b.margin - a.margin);
-
-        if (marginStats.length) {
-            const barHeight = 30;
-            const extraHeight = 80;
-            const canvasHeight = marginStats.length * barHeight + extraHeight;
-            ctxMargin.canvas.height = canvasHeight;
-            ctxMargin.canvas.style.height = canvasHeight + 'px';
-
-            if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; } // 销毁旧实例
-            profitMarginChart = new Chart(ctxMargin, {
+            // 利润率排行（水平条形图，标签在末端）
+            const marginStats = stats.map(s => ({ name: s.name, margin: s.profitMargin })).sort((a,b)=>b.margin-a.margin);
+            profitMarginChart = new Chart(DOM.profitMarginChart.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: marginStats.map(s => s.name),
                     datasets: [{
                         label: '利润率 (%)',
                         data: marginStats.map(s => s.margin),
-                        backgroundColor: '#ffd93d',
-                        borderColor: '#ffd93d',
-                        borderWidth: 1,
-                        barPercentage: 0.8,
-                        categoryPercentage: 0.9
+                        backgroundColor: '#ffd93d'
                     }]
                 },
                 options: {
                     indexAxis: 'y',
                     maintainAspectRatio: false,
-                    responsive: true,
-                    layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
                     plugins: {
                         legend: { display: false },
-                        tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } },
                         datalabels: {
                             display: true,
                             color: '#fff',
-                            backgroundColor: 'rgba(0,0,0,0.7)',
-                            borderRadius: 4,
-                            padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                            formatter: (value) => value.toFixed(1) + '%',
-                            font: { size: 10, weight: 'bold' },
-                            align: 'end',
                             anchor: 'end',
-                            offset: 5
+                            align: 'end',
+                            offset: 4,
+                            formatter: (v) => v.toFixed(1) + '%'
                         }
                     },
                     scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { callback: (v) => v + '%', color: '#ccc' },
-                            grid: { color: '#333' }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#ccc',
-                                font: { size: 11 },
-                                callback: function (val) {
-                                    const label = this.getLabelForValue(val);
-                                    if (!label) return '';
-                                    const maxLen = 8;
-                                    return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
-                                }
-                            },
-                            grid: { display: false }
-                        }
+                        x: { max: 100, ticks: { callback: v => v + '%', color: '#ccc' }, grid: { color: '#333' } },
+                        y: { ticks: { color: '#ccc' } }
                     }
                 },
                 plugins: [ChartDataLabels]
             });
-        } else {
-            ctxMargin.canvas.height = 300;
-            ctxMargin.canvas.style.height = '300px';
-            if (profitMarginChart) { profitMarginChart.destroy(); profitMarginChart = null; } // 销毁旧实例
-            profitMarginChart = new Chart(ctxMargin, {
-                type: 'bar',
-                data: { labels: ['无项目'], datasets: [{ label: '利润率', data: [0], backgroundColor: '#444' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
+
+            // 账龄分析（柱状图，标签在柱子顶部）
+            const analysis = AppState.getReceivableAnalysis();
+            const agingLabels = ['未到期', '逾期1-30天', '逾期31-60天', '逾期61-90天', '逾期90+天'];
+            const agingData = [0,0,0,0,0];
+            analysis.items.filter(i => i.pendingAmount > 0).forEach(item => {
+                const days = Math.floor((new Date() - new Date(item.dueDate)) / (1000*3600*24));
+                if (days <= 0) agingData[0] += item.pendingAmount;
+                else if (days <= 30) agingData[1] += item.pendingAmount;
+                else if (days <= 60) agingData[2] += item.pendingAmount;
+                else if (days <= 90) agingData[3] += item.pendingAmount;
+                else agingData[4] += item.pendingAmount;
             });
-        }
-    }
-
-    // ---------- 4. 应收账款账龄分析（堆叠柱状图）----------
-    if (ctxAging) {
-        const analysis = AppState.getReceivableAnalysis();
-        const items = analysis.items.filter(item => item.pendingAmount > 0 && item.status !== 'paid');
-
-        if (items.length === 0) {
-            if (agingChart) { agingChart.destroy(); agingChart = null; }
-            agingChart = new Chart(ctxAging, {
-                type: 'bar',
-                data: { labels: ['无应收账款'], datasets: [{ label: '金额', data: [0], backgroundColor: '#444' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } } }
-            });
-        } else {
-            const agingRanges = [
-                { label: '未到期', max: 0, min: -Infinity },
-                { label: '逾期1-30天', min: 1, max: 30 },
-                { label: '逾期31-60天', min: 31, max: 60 },
-                { label: '逾期61-90天', min: 61, max: 90 },
-                { label: '逾期90+天', min: 91, max: Infinity }
-            ];
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const projectMap = new Map();
-            items.forEach(item => {
-                const dueDate = new Date(item.dueDate);
-                dueDate.setHours(0, 0, 0, 0);
-                const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
-                let rangeIndex = -1;
-                if (daysOverdue <= 0) rangeIndex = 0;
-                else if (daysOverdue <= 30) rangeIndex = 1;
-                else if (daysOverdue <= 60) rangeIndex = 2;
-                else if (daysOverdue <= 90) rangeIndex = 3;
-                else rangeIndex = 4;
-
-                if (!projectMap.has(item.projectId)) {
-                    projectMap.set(item.projectId, { name: item.projectName, amounts: [0, 0, 0, 0, 0] });
-                }
-                const proj = projectMap.get(item.projectId);
-                proj.amounts[rangeIndex] += item.pendingAmount;
-            });
-
-            const projects = Array.from(projectMap.values())
-                .map(p => ({ ...p, total: p.amounts.reduce((sum, a) => sum + a, 0) }))
-                .sort((a, b) => b.total - a.total);
-
-            const topN = 5;
-            const topProjects = projects.slice(0, topN);
-            const otherProjects = projects.slice(topN);
-            const otherAmounts = [0, 0, 0, 0, 0];
-            otherProjects.forEach(p => {
-                for (let i = 0; i < 5; i++) otherAmounts[i] += p.amounts[i];
-            });
-
-            const datasets = [];
-            const colors = ['#00d4aa', '#ff6b6b', '#ffd93d', '#4dabf7', '#9b5de5', '#f15bb5'];
-            topProjects.forEach((p, idx) => {
-                datasets.push({
-                    label: p.name,
-                    data: p.amounts,
-                    backgroundColor: colors[idx % colors.length],
-                    stack: 'aging',
-                    borderWidth: 0
-                });
-            });
-            if (otherProjects.length > 0) {
-                datasets.push({
-                    label: '其他',
-                    data: otherAmounts,
-                    backgroundColor: '#888',
-                    stack: 'aging',
-                    borderWidth: 0
-                });
-            }
-
-            const agingContainer = ctxAging.canvas.parentElement;
-            if (agingContainer) {
-                agingContainer.style.overflowY = 'auto';
-                agingContainer.style.overflowX = 'auto';
-                agingContainer.style.height = '320px';
-                ctxAging.canvas.style.maxHeight = 'none';
-                ctxAging.canvas.style.height = 'auto';
-            }
-
-            ctxAging.canvas.height = 300;
-            ctxAging.canvas.style.height = '300px';
-
-            if (agingChart) { agingChart.destroy(); agingChart = null; }
-            agingChart = new Chart(ctxAging, {
+            agingChart = new Chart(DOM.agingChart.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: agingRanges.map(r => r.label),
-                    datasets: datasets
+                    labels: agingLabels,
+                    datasets: [{ label: '应收金额', data: agingData, backgroundColor: '#ff6b6b' }]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    responsive: true,
-                    layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
                     plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: { color: '#ccc', font: { size: 10 } }
-                        },
-                        tooltip: {
-                            callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}` }
-                        },
+                        legend: { display: false },
                         datalabels: {
                             display: true,
                             color: '#fff',
-                            backgroundColor: 'rgba(0,0,0,0.7)',
-                            borderRadius: 4,
-                            padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                            formatter: (value) => value > 0 ? formatMoney(value) : '',
-                            font: { size: 9, weight: 'bold' },
-                            align: 'center',
-                            anchor: 'center'
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4,
+                            formatter: (v) => formatMoney(v)
                         }
                     },
                     scales: {
-                        x: { stacked: true, ticks: { color: '#ccc' }, grid: { display: false } },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            ticks: { callback: (v) => '¥' + v, color: '#ccc' },
-                            grid: { color: '#333' }
-                        }
+                        y: { ticks: { callback: v => '¥' + v, color: '#ccc' }, grid: { color: '#333' } },
+                        x: { ticks: { color: '#ccc' } }
                     }
                 },
                 plugins: [ChartDataLabels]
             });
-        }
-    }
 
-    // ---------- 5. 现金流量图（折线图）----------
-    if (ctxCashflow) {
-        let cashTransactions = [...AppState.transactions];
-        if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-            const selectedIds = Array.from(FilterState.selectedProjectIds);
-            cashTransactions = cashTransactions.filter(t => selectedIds.includes(t.projectId));
-        }
-        if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
-            FilterState.timeRange.type !== 'all' &&
-            FilterState.timeRange.startDate &&
-            FilterState.timeRange.endDate) {
-            const start = new Date(FilterState.timeRange.startDate);
-            const end = new Date(FilterState.timeRange.endDate);
-            end.setHours(23, 59, 59, 999);
-            cashTransactions = cashTransactions.filter(t => {
-                const tDate = new Date(t.date);
-                return tDate >= start && tDate <= end;
-            });
-        }
-
-        if (cashTransactions.length === 0) {
-            if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
-            cashflowChart = new Chart(ctxCashflow, {
-                type: 'line',
-                data: { labels: ['无数据'], datasets: [{ label: '收入', data: [0], borderColor: '#00d4aa', backgroundColor: 'transparent' }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#ccc' } }, datalabels: { display: false } } }
-            });
-        } else {
-            let startDate, endDate;
-            if (FilterState.timeRange && FilterState.timeRange.type !== 'all') {
-                startDate = new Date(FilterState.timeRange.startDate);
-                endDate = new Date(FilterState.timeRange.endDate);
-            } else {
-                const dates = cashTransactions.map(t => new Date(t.date));
-                startDate = new Date(Math.min(...dates));
-                endDate = new Date(Math.max(...dates));
-            }
-            startDate.setHours(0, 0, 0, 0);
-            endDate.setHours(23, 59, 59, 999);
-
-            const dateArray = [];
-            const currentDate = new Date(startDate);
-            while (currentDate <= endDate) {
-                dateArray.push(new Date(currentDate));
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-
-            const dailyIncome = {};
-            const dailyExpense = {};
-            dateArray.forEach(d => {
+            // 现金流量（折线图，标签不适合显示太多，这里关闭 datalabels）
+            const today = new Date();
+            const labels = [];
+            const incomeData = [], expenseData = [];
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date(today); d.setDate(d.getDate() - i);
                 const dateStr = d.toISOString().split('T')[0];
-                dailyIncome[dateStr] = 0;
-                dailyExpense[dateStr] = 0;
-            });
-
-            cashTransactions.forEach(t => {
-                const dateStr = t.date;
-                if (dailyIncome.hasOwnProperty(dateStr) || dailyExpense.hasOwnProperty(dateStr)) {
-                    if (t.type === '收入') {
-                        dailyIncome[dateStr] += t.amount;
-                    } else {
-                        dailyExpense[dateStr] += t.amount;
-                    }
-                }
-            });
-
-            const labels = dateArray.map(d => d.toISOString().split('T')[0].slice(5));
-            const incomeData = dateArray.map(d => dailyIncome[d.toISOString().split('T')[0]]);
-            const expenseData = dateArray.map(d => dailyExpense[d.toISOString().split('T')[0]]);
-            const netData = dateArray.map((d, i) => incomeData[i] - expenseData[i]);
-
-            const cashContainer = ctxCashflow.canvas.parentElement;
-            if (cashContainer) {
-                cashContainer.style.overflowX = 'auto';
-                cashContainer.style.overflowY = 'hidden';
-                cashContainer.style.height = '320px';
-                ctxCashflow.canvas.style.maxHeight = 'none';
-                ctxCashflow.canvas.style.height = 'auto';
+                labels.push(dateStr.slice(5));
+                const dayTrans = AppState.transactions.filter(t => t.date === dateStr);
+                incomeData.push(dayTrans.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0));
+                expenseData.push(dayTrans.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0));
             }
-
-            const minWidthPerDay = 30;
-            const canvasWidth = Math.max(800, labels.length * minWidthPerDay);
-            ctxCashflow.canvas.width = canvasWidth;
-            ctxCashflow.canvas.style.width = canvasWidth + 'px';
-
-            if (cashflowChart) { cashflowChart.destroy(); cashflowChart = null; }
-            cashflowChart = new Chart(ctxCashflow, {
+            cashflowChart = new Chart(DOM.cashflowChart.getContext('2d'), {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: '收入',
-                            data: incomeData,
-                            borderColor: '#00d4aa',
-                            backgroundColor: 'rgba(0,212,170,0.1)',
-                            tension: 0.2,
-                            fill: true,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#00d4aa'
-                        },
-                        {
-                            label: '支出',
-                            data: expenseData,
-                            borderColor: '#ff6b6b',
-                            backgroundColor: 'rgba(255,107,107,0.1)',
-                            tension: 0.2,
-                            fill: true,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#ff6b6b'
-                        },
-                        {
-                            label: '净现金流',
-                            data: netData,
-                            borderColor: '#ffd93d',
-                            backgroundColor: 'transparent',
-                            borderDash: [5, 5],
-                            tension: 0.2,
-                            pointRadius: 2,
-                            pointBackgroundColor: '#ffd93d',
-                            borderWidth: 2
-                        }
+                        { label: '收入', data: incomeData, borderColor: '#00d4aa', tension: 0.2, fill: false },
+                        { label: '支出', data: expenseData, borderColor: '#ff6b6b', tension: 0.2, fill: false }
                     ]
                 },
                 options: {
                     maintainAspectRatio: false,
-                    responsive: true,
-                    layout: { padding: { top: 20, bottom: 20, left: 10, right: 10 } },
                     plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: { color: '#ccc', font: { size: 10 } }
-                        },
-                        tooltip: {
-                            callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatMoney(ctx.raw)}` }
-                        },
-                        datalabels: { display: false }
+                        legend: { labels: { color: '#ccc' } },
+                        datalabels: { display: false } // 折线图避免标签重叠
                     },
                     scales: {
-                        x: {
-                            ticks: { color: '#ccc', maxRotation: 45, minRotation: 30, autoSkip: true, maxTicksLimit: 20 },
-                            grid: { display: false }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: (v) => '¥' + v, color: '#ccc' },
-                            grid: { color: '#333' }
-                        }
-                    }
-                },
-                plugins: []
-            });
-        }
-    }
-
-    // ---------- 6. 预算执行进度图（水平进度条图）----------
-    if (ctxProgress) {
-        const progressContainer = ctxProgress.canvas.parentElement;
-        if (progressContainer) {
-            progressContainer.style.overflowY = 'auto';
-            progressContainer.style.overflowX = 'hidden';
-            progressContainer.style.height = '320px';
-            ctxProgress.canvas.style.maxHeight = 'none';
-            ctxProgress.canvas.style.height = 'auto';
-        }
-
-        // 构建数据：每个项目生成两条记录（收入、支出）
-        const labels = [];
-        const progressData = [];
-        const backgroundColors = [];
-        stats.forEach(s => {
-            const incomePercent = s.contractTotal > 0 ? (s.income / s.contractTotal * 100) : 0;
-            const expensePercent = s.contractTotal > 0 ? (s.expense / s.contractTotal * 100) : 0;
-            // 收入条（绿色）
-            labels.push(s.name + ' (收入)');
-            progressData.push(Math.min(incomePercent, 100));
-            backgroundColors.push('#00d4aa'); // 绿色
-            // 支出条（红色，若超支则颜色加深）
-            labels.push(s.name + ' (支出)');
-            progressData.push(Math.min(expensePercent, 100));
-            // 如果支出进度 > 收入进度，用亮红色；否则用标准红色
-            backgroundColors.push(expensePercent > incomePercent ? '#ff4444' : '#ff6b6b');
-        });
-
-        // 动态计算 canvas 高度
-        const barHeight = 25; // 每个条形高度
-        const extraHeight = 80; // 预留空间
-        const canvasHeight = labels.length * barHeight + extraHeight;
-        ctxProgress.canvas.height = canvasHeight;
-        ctxProgress.canvas.style.height = canvasHeight + 'px';
-
-        if (progressChart) { progressChart.destroy(); progressChart = null; }
-        progressChart = new Chart(ctxProgress, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '执行进度 (%)',
-                    data: progressData,
-                    backgroundColor: backgroundColors,
-                    borderColor: 'transparent',
-                    borderWidth: 0,
-                    barPercentage: 0.7, // 控制条的高度占比
-                    categoryPercentage: 0.8
-                }]
-            },
-            options: {
-                indexAxis: 'y', // 水平条形图
-                maintainAspectRatio: false,
-                responsive: true,
-                layout: { padding: { top: 10, bottom: 10, left: 10, right: 10 } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: (ctx) => {
-                                const rawValue = ctx.raw;
-                                const datasetIndex = ctx.datasetIndex;
-                                const dataIndex = ctx.dataIndex;
-                                // 从原始 stats 中获取对应项目的实际金额
-                                const projectIndex = Math.floor(dataIndex / 2);
-                                const isIncome = dataIndex % 2 === 0;
-                                const project = stats[projectIndex];
-                                if (!project) return '';
-                                if (isIncome) {
-                                    return `已收: ${formatMoney(project.income)} / 合同: ${formatMoney(project.contractTotal)} (${rawValue.toFixed(1)}%)`;
-                                } else {
-                                    return `支出: ${formatMoney(project.expense)} / 合同: ${formatMoney(project.contractTotal)} (${rawValue.toFixed(1)}%)`;
-                                }
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: true,
-                        color: '#fff',
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        borderRadius: 4,
-                        padding: { top: 3, bottom: 3, left: 6, right: 6 },
-                        formatter: (value) => value.toFixed(1) + '%',
-                        font: { size: 10, weight: 'bold' },
-                        align: 'end',
-                        anchor: 'end',
-                        offset: 5
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            callback: (v) => v + '%',
-                            color: '#ccc'
-                        },
-                        grid: { color: '#333' }
-                    },
-                    y: {
-                        ticks: {
-                            color: '#ccc',
-                            font: { size: 10 },
-                            callback: function (val) {
-                                const label = this.getLabelForValue(val);
-                                if (!label) return '';
-                                const maxLen = 12; // 显示稍长一点
-                                return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
-                            }
-                        },
-                        grid: { display: false }
+                        y: { ticks: { callback: v => '¥' + v, color: '#ccc' }, grid: { color: '#333' } },
+                        x: { ticks: { color: '#ccc' } }
                     }
                 }
-            },
-            plugins: [ChartDataLabels]
-        });
-    }
-}
+            });
 
-        // ========== 右上角毛利润总额标注 ==========
+            // 预算执行进度（水平条形图，双色，标签在末端）
+            const progLabels = [];
+            const progData = [];
+            stats.forEach(s => {
+                progLabels.push(s.name + ' (收入)');
+                progData.push(s.contractTotal > 0 ? (s.income / s.contractTotal * 100) : 0);
+                progLabels.push(s.name + ' (支出)');
+                progData.push(s.contractTotal > 0 ? (s.expense / s.contractTotal * 100) : 0);
+            });
+            progressChart = new Chart(DOM.progressChart.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: progLabels,
+                    datasets: [{
+                        label: '进度 %',
+                        data: progData,
+                        backgroundColor: progLabels.map((l,idx) => idx%2===0 ? '#00d4aa' : '#ff6b6b')
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            display: true,
+                            color: '#fff',
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 4,
+                            formatter: (v) => v.toFixed(1) + '%'
+                        }
+                    },
+                    scales: {
+                        x: { max: 100, ticks: { callback: v => v + '%', color: '#ccc' }, grid: { color: '#333' } },
+                        y: { ticks: { color: '#ccc' } }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+
+        // ========== 右上角毛利润标注 ==========
         function addProfitCornerLabel() {
-            const oldLabel = document.querySelector('.profit-corner-label');
-            if(oldLabel) oldLabel.remove();
+            const box = document.getElementById('profitChartBox');
+            if (!box) return;
+            const old = box.querySelector('.profit-corner-label');
+            if(old) old.remove();
             let totalContract = 0, totalExpense = 0;
             if (typeof FilterState !== 'undefined') {
                 let stats = AppState.getAllStats();
@@ -2743,10 +2047,10 @@ function updateCharts() {
             const label = document.createElement('div');
             label.className = 'profit-corner-label';
             label.innerHTML = `毛利润：${formatMoney(grossProfit)}`;
-            if(DOM.profitChartBox) DOM.profitChartBox.appendChild(label);
+            box.appendChild(label);
         }
 
-        // ========== 全局函数 ==========
+        // ========== 全局函数供 onclick 调用 ==========
         window.editProject = (id) => { 
             const p = AppState.projects.find(p=>p.id===id); if(!p) return;
             DOM.projectId.value = p.id; 
@@ -2787,14 +2091,369 @@ function updateCharts() {
             } 
         };
 
-        // ========== 初始化日期 ==========
-        function initDates() {
-            const today = getTodayDate();
-            if(DOM.transactionDate) DOM.transactionDate.value = today;
-            if(DOM.milestoneDate) DOM.milestoneDate.value = today;
-        }
+        // ========== 筛选模块 ==========
+        const FilterState = {
+            selectedProjectIds: new Set(),
+            timeRange: { type: 'all', startDate: null, endDate: null, label: '全部时间' },
 
-        // ========== 百炼AI语音 ==========
+            init() {
+                this.loadFromStorage();
+                this.loadTimeFromStorage();
+                this.bindEvents();
+                this.bindTimeEvents();
+                this.renderDropdown();
+                this.renderSelectedTags();
+                this.updateTimeLabel();
+                this.applyFilter();
+            },
+            loadFromStorage() {
+                const saved = localStorage.getItem('selectedProjectIds');
+                if (saved) { try { const ids = JSON.parse(saved); this.selectedProjectIds = new Set(ids); } catch (e) {} }
+            },
+            saveToStorage() {
+                localStorage.setItem('selectedProjectIds', JSON.stringify(Array.from(this.selectedProjectIds)));
+            },
+            bindEvents() {
+                const searchInput = DOM.projectSearchInput;
+                const dropdown = DOM.projectSearchDropdown;
+                if (!searchInput || !dropdown) return;
+                searchInput.addEventListener('focus', () => { this.renderDropdown(searchInput.value.trim()); dropdown.classList.add('active'); });
+                document.addEventListener('click', (e) => { 
+                    if (!e.target.closest('.search-container') && !e.target.closest('.time-filter-container')) 
+                        dropdown.classList.remove('active'); 
+                });
+                searchInput.addEventListener('input', () => { this.renderDropdown(searchInput.value.trim()); });
+            },
+            getFilteredProjects(keyword = '') {
+                let projects = [...AppState.projects];
+                if (keyword) { const lower = keyword.toLowerCase(); projects = projects.filter(p => p.name.toLowerCase().includes(lower)); }
+                return projects;
+            },
+            renderDropdown(keyword = '') {
+                const dropdown = DOM.projectSearchDropdown;
+                if (!dropdown) return;
+                const projects = this.getFilteredProjects(keyword);
+                if (projects.length === 0) { dropdown.innerHTML = '<div class="dropdown-empty">🔍 未找到相关项目</div>'; return; }
+                let html = `<div class="dropdown-actions"><button class="dropdown-action-btn" id="selectAllBtn">全选</button><button class="dropdown-action-btn" id="clearAllBtn">清除</button></div>`;
+                projects.forEach(p => {
+                    const isChecked = this.selectedProjectIds.has(p.id);
+                    html += `<div class="dropdown-item" data-project-id="${p.id}">
+                        <input type="checkbox" id="project_${p.id}" ${isChecked ? 'checked' : ''} data-project-id="${p.id}">
+                        <label for="project_${p.id}"><span>${p.name}</span><span class="project-budget-badge">${formatMoney(p.budget || 0)}</span></label>
+                    </div>`;
+                });
+                dropdown.innerHTML = html;
+                dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
+                    cb.addEventListener('change', (e) => { 
+                        e.stopPropagation(); 
+                        const pid = parseInt(e.target.dataset.projectId); 
+                        this.toggleProject(pid, e.target.checked); 
+                    }); 
+                });
+                dropdown.querySelectorAll('.dropdown-item').forEach(item => { 
+                    item.addEventListener('click', (e) => { 
+                        if (e.target.type !== 'checkbox') { 
+                            const cb = item.querySelector('input[type="checkbox"]'); 
+                            cb.checked = !cb.checked; 
+                            const pid = parseInt(item.dataset.projectId); 
+                            this.toggleProject(pid, cb.checked); 
+                        } 
+                    }); 
+                });
+                const selectAllBtn = document.getElementById('selectAllBtn'); 
+                if (selectAllBtn) { 
+                    selectAllBtn.addEventListener('click', (e) => { 
+                        e.stopPropagation(); 
+                        projects.forEach(p => this.selectedProjectIds.add(p.id)); 
+                        this.saveToStorage(); 
+                        this.renderDropdown(keyword); 
+                        this.renderSelectedTags(); 
+                        this.applyFilter(); 
+                    }); 
+                }
+                const clearAllBtn = document.getElementById('clearAllBtn'); 
+                if (clearAllBtn) { 
+                    clearAllBtn.addEventListener('click', (e) => { 
+                        e.stopPropagation(); 
+                        this.selectedProjectIds.clear(); 
+                        this.saveToStorage(); 
+                        this.renderDropdown(keyword); 
+                        this.renderSelectedTags(); 
+                        this.applyFilter(); 
+                    }); 
+                }
+            },
+            toggleProject(projectId, checked) {
+                if (checked === undefined) {
+                    if (this.selectedProjectIds.has(projectId)) this.selectedProjectIds.delete(projectId);
+                    else this.selectedProjectIds.add(projectId);
+                } else { 
+                    if (checked) this.selectedProjectIds.add(projectId); 
+                    else this.selectedProjectIds.delete(projectId); 
+                }
+                this.saveToStorage();
+                this.renderSelectedTags();
+                this.applyFilter();
+            },
+            renderSelectedTags() {
+                const container = DOM.selectedTagsArea;
+                if (!container) return;
+                container.innerHTML = '';
+                if (this.timeRange && this.timeRange.type !== 'all') {
+                    const timeTag = document.createElement('span');
+                    timeTag.id = 'timeRangeTag';
+                    timeTag.className = 'time-tag';
+                    timeTag.innerHTML = `<i class="fas fa-calendar-alt"></i><span>${this.timeRange.label}</span><span class="remove-tag" onclick="FilterState.clearTimeRange()">&times;</span>`;
+                    container.appendChild(timeTag);
+                }
+                this.selectedProjectIds.forEach(id => {
+                    const p = AppState.projects.find(p => p.id === id);
+                    if (p) {
+                        const tag = document.createElement('span');
+                        tag.className = 'selected-tag';
+                        tag.dataset.projectId = id;
+                        tag.innerHTML = `<span>${p.name}</span><span class="remove-tag" onclick="FilterState.toggleProject(${id}, false)">&times;</span>`;
+                        container.appendChild(tag);
+                    }
+                });
+            },
+            bindTimeEvents() {
+                const timeBtn = DOM.timeFilterBtn;
+                const timeDropdown = DOM.timeDropdown;
+                if (!timeBtn || !timeDropdown) return;
+                timeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    timeDropdown.classList.toggle('active');
+                    this.hideCustomDateRange();
+                });
+                timeDropdown.querySelectorAll('.time-dropdown-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const value = item.dataset.value;
+                        timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        if (value === 'custom') {
+                            this.showCustomDateRange();
+                        } else {
+                            this.setTimeRange(value);
+                            timeDropdown.classList.remove('active');
+                        }
+                    });
+                });
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.time-filter-container')) {
+                        if (timeDropdown) timeDropdown.classList.remove('active');
+                        this.hideCustomDateRange();
+                    }
+                });
+            },
+            setTimeRange(type, startDate = null, endDate = null) {
+                const today = new Date();
+                const end = new Date(today);
+                end.setHours(23, 59, 59, 999);
+                let start = new Date(today);
+                start.setHours(0, 0, 0, 0);
+                switch(type) {
+                    case 'today': break;
+                    case 'yesterday': start.setDate(today.getDate() - 1); end.setDate(today.getDate() - 1); break;
+                    case 'week': start.setDate(today.getDate() - 6); break;
+                    case 'month': start.setDate(today.getDate() - 29); break;
+                    case 'quarter': start.setDate(today.getDate() - 89); break;
+                    case 'all':
+                    default:
+                        this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
+                        this.saveTimeToStorage();
+                        this.updateTimeLabel();
+                        this.renderSelectedTags();
+                        this.applyFilter();
+                        return;
+                }
+                if (type !== 'all' && type !== 'custom') {
+                    this.timeRange = {
+                        type,
+                        startDate: start.toISOString().split('T')[0],
+                        endDate: end.toISOString().split('T')[0],
+                        label: this.getTimeLabel(type)
+                    };
+                }
+                this.saveTimeToStorage();
+                this.updateTimeLabel();
+                this.renderSelectedTags();
+                this.applyFilter();
+            },
+            getTimeLabel(type) {
+                const map = { 'today': '今日', 'yesterday': '昨日', 'week': '近7天', 'month': '近30天', 'quarter': '近90天' };
+                return map[type] || type;
+            },
+            updateTimeLabel() {
+                if (DOM.timeFilterLabel) DOM.timeFilterLabel.textContent = this.timeRange.label;
+            },
+            clearTimeRange() {
+                this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
+                this.updateTimeLabel();
+                this.renderSelectedTags();
+                const dropdown = DOM.timeDropdown;
+                if (dropdown) {
+                    dropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                    const allItem = dropdown.querySelector('[data-value="all"]');
+                    if (allItem) allItem.classList.add('active');
+                }
+                this.saveTimeToStorage();
+                this.applyFilter();
+            },
+            showCustomDateRange() {
+                this.hideCustomDateRange();
+                const container = document.querySelector('.time-filter-container');
+                if (!container) return;
+                const div = document.createElement('div');
+                div.className = 'custom-date-range active';
+                div.id = 'customDateRange';
+                div.innerHTML = `<div class="date-input"><input type="date" id="customStartDate" value="${this.timeRange.startDate || ''}"><span style="color:#888;">至</span><input type="date" id="customEndDate" value="${this.timeRange.endDate || ''}"></div><button class="apply-btn" id="applyCustomDate">应用</button>`;
+                container.appendChild(div);
+                document.getElementById('applyCustomDate').addEventListener('click', () => {
+                    const start = document.getElementById('customStartDate').value;
+                    const end = document.getElementById('customEndDate').value;
+                    if (start && end) {
+                        this.timeRange = { type: 'custom', startDate: start, endDate: end, label: `${start.slice(5)}~${end.slice(5)}` };
+                        this.updateTimeLabel();
+                        this.renderSelectedTags();
+                        this.saveTimeToStorage();
+                        this.applyFilter();
+                        this.hideCustomDateRange();
+                        if (DOM.timeDropdown) DOM.timeDropdown.classList.remove('active');
+                    }
+                });
+            },
+            hideCustomDateRange() {
+                const el = document.getElementById('customDateRange');
+                if (el) el.remove();
+            },
+            saveTimeToStorage() {
+                localStorage.setItem('timeFilter', JSON.stringify(this.timeRange));
+            },
+            loadTimeFromStorage() {
+                const saved = localStorage.getItem('timeFilter');
+                if (saved) {
+                    try {
+                        const tr = JSON.parse(saved);
+                        if (tr && tr.type) {
+                            this.timeRange = tr;
+                            setTimeout(() => {
+                                if (DOM.timeDropdown) {
+                                    DOM.timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
+                                    const activeItem = DOM.timeDropdown.querySelector(`[data-value="${tr.type}"]`);
+                                    if (activeItem) activeItem.classList.add('active');
+                                }
+                                this.updateTimeLabel();
+                            }, 50);
+                        }
+                    } catch (e) {}
+                }
+            },
+            applyFilter() {
+                const selectedIds = Array.from(this.selectedProjectIds);
+                let startDate = null, endDate = null;
+                if (this.timeRange && this.timeRange.type !== 'all' && this.timeRange.startDate && this.timeRange.endDate) {
+                    startDate = new Date(this.timeRange.startDate);
+                    endDate = new Date(this.timeRange.endDate);
+                    endDate.setHours(23, 59, 59, 999);
+                }
+
+                let allStats = AppState.getAllStats();
+                if (selectedIds.length > 0) allStats = allStats.filter(s => selectedIds.includes(s.id));
+                
+                if (startDate && endDate) {
+                    allStats = allStats.map(stat => {
+                        const timeFilteredTransactions = AppState.transactions.filter(t => 
+                            Number(t.projectId) === stat.id &&
+                            new Date(t.date) >= startDate &&
+                            new Date(t.date) <= endDate
+                        );
+                        const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
+                        const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
+                        const profit = income - expense;
+                        return {
+                            ...stat,
+                            income,
+                            expense,
+                            profit,
+                            profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
+                            pendingIncome: Math.max(0, stat.contractTotal - income)
+                        };
+                    });
+                }
+
+                // 仪表盘
+                const totalProjects = allStats.length;
+                const totalContract = allStats.reduce((s,st)=>s+(st.contractTotal||0),0);
+                const totalIncome = allStats.reduce((s,st)=>s+st.income,0);
+                const totalExpense = allStats.reduce((s,st)=>s+st.expense,0);
+                const totalProfit = allStats.reduce((s,st)=>s+st.profit,0);
+                const grossProfit = totalContract - totalExpense;
+                if (DOM.totalProjects) DOM.totalProjects.textContent = totalProjects;
+                if (DOM.totalContract) DOM.totalContract.textContent = formatMoney(totalContract);
+                if (DOM.totalIncome) DOM.totalIncome.textContent = formatMoney(totalIncome);
+                if (DOM.totalExpense) DOM.totalExpense.textContent = formatMoney(totalExpense);
+                if (DOM.totalGrossProfit) { 
+                    DOM.totalGrossProfit.textContent = formatMoney(grossProfit); 
+                    DOM.totalGrossProfit.className = 'value ' + (grossProfit>=0?'profit':'loss'); 
+                }
+                if (DOM.totalProfit) { 
+                    DOM.totalProfit.textContent = formatMoney(totalProfit); 
+                    DOM.totalProfit.className = 'value ' + (totalProfit>=0?'profit':'loss'); 
+                }
+
+                // 综合报表
+                if (DOM.summaryBody) {
+                    if(allStats.length) {
+                        DOM.summaryBody.innerHTML = allStats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
+                    } else { 
+                        DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
+                    }
+                }
+
+                // 项目列表
+                let projects = AppState.projects;
+                if (selectedIds.length > 0) projects = projects.filter(p => selectedIds.includes(p.id));
+                if (DOM.projectsBody) {
+                    if(projects.length) {
+                        DOM.projectsBody.innerHTML = projects.map(p=>{ 
+                            const s = allStats.find(stat => stat.id === p.id) || AppState.getProjectStats(p.id);
+                            return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
+                        }).join('');
+                    } else { 
+                        DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
+                    }
+                }
+
+                // 收支记录
+                let transactions = AppState.transactions;
+                if (selectedIds.length > 0) transactions = transactions.filter(t => selectedIds.includes(t.projectId));
+                if (startDate && endDate) {
+                    transactions = transactions.filter(t => new Date(t.date) >= startDate && new Date(t.date) <= endDate);
+                }
+                if (DOM.transactionsBody) {
+                    if(transactions.length) {
+                        const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+                        DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
+                            const proj = AppState.projects.find(p=>p.id===t.projectId); 
+                            return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
+                        }).join('');
+                    } else { 
+                        DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
+                    }
+                }
+
+                // 应收账款
+                updateReceivableSection();
+
+                // 图表
+                setTimeout(() => { updateCharts(); addProfitCornerLabel(); }, 50);
+            }
+        };
+        window.FilterState = FilterState;
+
+        // ========== 语音识别模块 ==========
         const BailianAI = {
             isListening: false, recognition: null,
             init() {
@@ -2808,7 +2467,6 @@ function updateCharts() {
             },
             bindClickEvents() {
                 const btn = DOM.voiceInputBtn;
-                btn.onclick = null;
                 btn.onclick = (e) => {
                     e.preventDefault(); 
                     e.stopPropagation();
@@ -2824,7 +2482,6 @@ function updateCharts() {
                 this.recognition.lang = 'zh-CN'; 
                 this.recognition.continuous = true; 
                 this.recognition.interimResults = true; 
-                this.recognition.maxAlternatives = 1;
                 this.recognition.onstart = () => { 
                     this.isListening = true; 
                     DOM.voiceInputBtn.classList.add('listening'); 
@@ -3010,425 +2667,64 @@ function updateCharts() {
             }
         };
 
-        // ========== 项目+时间 筛选核心模块 FilterState ==========
-        const FilterState = {
-            selectedProjectIds: new Set(),
-            timeRange: { type: 'all', startDate: null, endDate: null, label: '全部时间' },
-
-            init() {
-                this.loadFromStorage();
-                this.loadTimeFromStorage();
-                this.bindEvents();
-                this.bindTimeEvents();
-                this.renderDropdown();
-                this.renderSelectedTags();
-                this.updateTimeLabel();
-                this.applyFilter();
-            },
-
-            // 项目筛选
-            loadFromStorage() {
-                const saved = localStorage.getItem('selectedProjectIds');
-                if (saved) { try { const ids = JSON.parse(saved); this.selectedProjectIds = new Set(ids); } catch (e) {} }
-            },
-            saveToStorage() {
-                localStorage.setItem('selectedProjectIds', JSON.stringify(Array.from(this.selectedProjectIds)));
-            },
-            bindEvents() {
-                const searchInput = DOM.projectSearchInput;
-                const dropdown = DOM.projectSearchDropdown;
-                if (!searchInput || !dropdown) return;
-                searchInput.addEventListener('focus', () => { this.renderDropdown(searchInput.value.trim()); dropdown.classList.add('active'); });
-                document.addEventListener('click', (e) => { 
-                    if (!e.target.closest('.search-container') && !e.target.closest('.time-filter-container')) 
-                        dropdown.classList.remove('active'); 
-                });
-                searchInput.addEventListener('input', () => { this.renderDropdown(searchInput.value.trim()); });
-                searchInput.addEventListener('keypress', (e) => { 
-                    if (e.key === 'Enter') { 
-                        const kw = searchInput.value.trim(); 
-                        if (kw) { 
-                            const filtered = this.getFilteredProjects(kw); 
-                            if (filtered.length > 0) { 
-                                this.toggleProject(filtered[0].id); 
-                                this.renderDropdown(''); 
-                                searchInput.value = ''; 
-                                dropdown.classList.remove('active'); 
-                            } 
-                        } 
-                    } 
-                });
-            },
-            getFilteredProjects(keyword = '') {
-                let projects = [...AppState.projects];
-                if (keyword) { const lower = keyword.toLowerCase(); projects = projects.filter(p => p.name.toLowerCase().includes(lower)); }
-                return projects;
-            },
-            renderDropdown(keyword = '') {
-                const dropdown = DOM.projectSearchDropdown;
-                if (!dropdown) return;
-                const projects = this.getFilteredProjects(keyword);
-                if (projects.length === 0) { dropdown.innerHTML = '<div class="dropdown-empty">🔍 未找到相关项目</div>'; return; }
-                let html = `<div class="dropdown-actions"><button class="dropdown-action-btn" id="selectAllBtn">全选</button><button class="dropdown-action-btn" id="clearAllBtn">清除</button></div>`;
-                projects.forEach(p => {
-                    const isChecked = this.selectedProjectIds.has(p.id);
-                    html += `<div class="dropdown-item" data-project-id="${p.id}">
-                        <input type="checkbox" id="project_${p.id}" ${isChecked ? 'checked' : ''} data-project-id="${p.id}">
-                        <label for="project_${p.id}"><span>${p.name}</span><span class="project-budget-badge">${formatMoney(p.budget || 0)}</span></label>
-                    </div>`;
-                });
-                dropdown.innerHTML = html;
-                dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
-                    cb.addEventListener('change', (e) => { 
-                        e.stopPropagation(); 
-                        const pid = parseInt(e.target.dataset.projectId); 
-                        this.toggleProject(pid, e.target.checked); 
-                    }); 
-                });
-                dropdown.querySelectorAll('.dropdown-item').forEach(item => { 
-                    item.addEventListener('click', (e) => { 
-                        if (e.target.type !== 'checkbox') { 
-                            const cb = item.querySelector('input[type="checkbox"]'); 
-                            cb.checked = !cb.checked; 
-                            const pid = parseInt(item.dataset.projectId); 
-                            this.toggleProject(pid, cb.checked); 
-                        } 
-                    }); 
-                });
-                const selectAllBtn = document.getElementById('selectAllBtn'); 
-                if (selectAllBtn) { 
-                    selectAllBtn.addEventListener('click', (e) => { 
-                        e.stopPropagation(); 
-                        projects.forEach(p => this.selectedProjectIds.add(p.id)); 
-                        this.saveToStorage(); 
-                        this.renderDropdown(keyword); 
-                        this.renderSelectedTags(); 
-                        this.applyFilter(); 
-                    }); 
-                }
-                const clearAllBtn = document.getElementById('clearAllBtn'); 
-                if (clearAllBtn) { 
-                    clearAllBtn.addEventListener('click', (e) => { 
-                        e.stopPropagation(); 
-                        this.selectedProjectIds.clear(); 
-                        this.saveToStorage(); 
-                        this.renderDropdown(keyword); 
-                        this.renderSelectedTags(); 
-                        this.applyFilter(); 
-                    }); 
-                }
-            },
-            toggleProject(projectId, checked) {
-                if (checked === undefined) {
-                    if (this.selectedProjectIds.has(projectId)) this.selectedProjectIds.delete(projectId);
-                    else this.selectedProjectIds.add(projectId);
-                } else { 
-                    if (checked) this.selectedProjectIds.add(projectId); 
-                    else this.selectedProjectIds.delete(projectId); 
-                }
-                this.saveToStorage();
-                this.renderSelectedTags();
-                this.applyFilter();
-            },
-            renderSelectedTags() {
-                const container = DOM.selectedTagsArea;
-                if (!container) return;
-                container.innerHTML = '';
-                if (this.timeRange && this.timeRange.type !== 'all') {
-                    const timeTag = document.createElement('span');
-                    timeTag.id = 'timeRangeTag';
-                    timeTag.className = 'time-tag';
-                    timeTag.innerHTML = `<i class="fas fa-calendar-alt"></i><span>${this.timeRange.label}</span><span class="remove-tag" onclick="FilterState.clearTimeRange()">&times;</span>`;
-                    container.appendChild(timeTag);
-                }
-                this.selectedProjectIds.forEach(id => {
-                    const p = AppState.projects.find(p => p.id === id);
-                    if (p) {
-                        const tag = document.createElement('span');
-                        tag.className = 'selected-tag';
-                        tag.dataset.projectId = id;
-                        tag.innerHTML = `<span>${p.name}</span><span class="remove-tag" onclick="FilterState.toggleProject(${id}, false)">&times;</span>`;
-                        container.appendChild(tag);
-                    }
-                });
-            },
-
-            // 时间筛选
-            bindTimeEvents() {
-                const timeBtn = DOM.timeFilterBtn;
-                const timeDropdown = DOM.timeDropdown;
-                if (!timeBtn || !timeDropdown) return;
-                timeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    timeDropdown.classList.toggle('active');
-                    this.hideCustomDateRange();
-                });
-                timeDropdown.querySelectorAll('.time-dropdown-item').forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const value = item.dataset.value;
-                        timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
-                        item.classList.add('active');
-                        if (value === 'custom') {
-                            this.showCustomDateRange();
-                        } else {
-                            this.setTimeRange(value);
-                            timeDropdown.classList.remove('active');
-                        }
-                    });
-                });
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.time-filter-container')) {
-                        if (timeDropdown) timeDropdown.classList.remove('active');
-                        this.hideCustomDateRange();
-                    }
-                });
-            },
-            setTimeRange(type, startDate = null, endDate = null) {
-                const today = new Date();
-                const end = new Date(today);
-                end.setHours(23, 59, 59, 999);
-                let start = new Date(today);
-                start.setHours(0, 0, 0, 0);
-                switch(type) {
-                    case 'today': break;
-                    case 'yesterday': start.setDate(today.getDate() - 1); end.setDate(today.getDate() - 1); break;
-                    case 'week': start.setDate(today.getDate() - 6); break;
-                    case 'month': start.setDate(today.getDate() - 29); break;
-                    case 'quarter': start.setDate(today.getDate() - 89); break;
-                    case 'all':
-                    default:
-                        this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
-                        this.saveTimeToStorage();
-                        this.updateTimeLabel();
-                        this.renderSelectedTags();
-                        this.applyFilter();
-                        return;
-                }
-                if (type !== 'all' && type !== 'custom') {
-                    this.timeRange = {
-                        type,
-                        startDate: start.toISOString().split('T')[0],
-                        endDate: end.toISOString().split('T')[0],
-                        label: this.getTimeLabel(type)
-                    };
-                }
-                this.saveTimeToStorage();
-                this.updateTimeLabel();
-                this.renderSelectedTags();
-                this.applyFilter();
-            },
-            getTimeLabel(type) {
-                const map = { 'today': '今日', 'yesterday': '昨日', 'week': '近7天', 'month': '近30天', 'quarter': '近90天' };
-                return map[type] || type;
-            },
-            updateTimeLabel() {
-                if (DOM.timeFilterLabel) DOM.timeFilterLabel.textContent = this.timeRange.label;
-            },
-            clearTimeRange() {
-                this.timeRange = { type: 'all', startDate: null, endDate: null, label: '全部时间' };
-                this.updateTimeLabel();
-                this.renderSelectedTags();
-                const dropdown = DOM.timeDropdown;
-                if (dropdown) {
-                    dropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
-                    const allItem = dropdown.querySelector('[data-value="all"]');
-                    if (allItem) allItem.classList.add('active');
-                }
-                this.saveTimeToStorage();
-                this.applyFilter();
-            },
-            showCustomDateRange() {
-                this.hideCustomDateRange();
-                const container = document.querySelector('.time-filter-container');
-                if (!container) return;
-                const div = document.createElement('div');
-                div.className = 'custom-date-range active';
-                div.id = 'customDateRange';
-                div.innerHTML = `<div class="date-input"><input type="date" id="customStartDate" value="${this.timeRange.startDate || ''}"><span style="color:#888;">至</span><input type="date" id="customEndDate" value="${this.timeRange.endDate || ''}"></div><button class="apply-btn" id="applyCustomDate">应用</button>`;
-                container.appendChild(div);
-                document.getElementById('applyCustomDate').addEventListener('click', () => {
-                    const start = document.getElementById('customStartDate').value;
-                    const end = document.getElementById('customEndDate').value;
-                    if (start && end) {
-                        this.timeRange = { type: 'custom', startDate: start, endDate: end, label: `${start.slice(5)}~${end.slice(5)}` };
-                        this.updateTimeLabel();
-                        this.renderSelectedTags();
-                        this.saveTimeToStorage();
-                        this.applyFilter();
-                        this.hideCustomDateRange();
-                        if (DOM.timeDropdown) DOM.timeDropdown.classList.remove('active');
-                    }
-                });
-            },
-            hideCustomDateRange() {
-                const el = document.getElementById('customDateRange');
-                if (el) el.remove();
-            },
-            saveTimeToStorage() {
-                localStorage.setItem('timeFilter', JSON.stringify(this.timeRange));
-            },
-            loadTimeFromStorage() {
-                const saved = localStorage.getItem('timeFilter');
-                if (saved) {
-                    try {
-                        const tr = JSON.parse(saved);
-                        if (tr && tr.type) {
-                            this.timeRange = tr;
-                            setTimeout(() => {
-                                if (DOM.timeDropdown) {
-                                    DOM.timeDropdown.querySelectorAll('.time-dropdown-item').forEach(i => i.classList.remove('active'));
-                                    const activeItem = DOM.timeDropdown.querySelector(`[data-value="${tr.type}"]`);
-                                    if (activeItem) activeItem.classList.add('active');
-                                }
-                                this.updateTimeLabel();
-                            }, 50);
-                        }
-                    } catch (e) {}
-                }
-            },
-
-            // 核心筛选应用
-            applyFilter() {
-                const selectedIds = Array.from(this.selectedProjectIds);
-                let startDate = null, endDate = null;
-                if (this.timeRange && this.timeRange.type !== 'all' && this.timeRange.startDate && this.timeRange.endDate) {
-                    startDate = new Date(this.timeRange.startDate);
-                    endDate = new Date(this.timeRange.endDate);
-                    endDate.setHours(23, 59, 59, 999);
-                }
-
-                let allStats = AppState.getAllStats();
-                if (selectedIds.length > 0) allStats = allStats.filter(s => selectedIds.includes(s.id));
-                
-                if (startDate && endDate) {
-                    allStats = allStats.map(stat => {
-                        const timeFilteredTransactions = AppState.transactions.filter(t => 
-                            Number(t.projectId) === stat.id &&
-                            new Date(t.date) >= startDate &&
-                            new Date(t.date) <= endDate
-                        );
-                        const income = timeFilteredTransactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
-                        const expense = timeFilteredTransactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
-                        const profit = income - expense;
-                        return {
-                            ...stat,
-                            income,
-                            expense,
-                            profit,
-                            profitMargin: stat.contractTotal > 0 ? (profit / stat.contractTotal * 100) : 0,
-                            pendingIncome: Math.max(0, stat.contractTotal - income)
-                        };
-                    });
-                }
-
-                // 仪表盘
-                const totalProjects = allStats.length;
-                const totalContract = allStats.reduce((s,st)=>s+(st.contractTotal||0),0);
-                const totalIncome = allStats.reduce((s,st)=>s+st.income,0);
-                const totalExpense = allStats.reduce((s,st)=>s+st.expense,0);
-                const totalProfit = allStats.reduce((s,st)=>s+st.profit,0);
-                const grossProfit = totalContract - totalExpense;
-                if (DOM.totalProjects) DOM.totalProjects.textContent = totalProjects;
-                if (DOM.totalContract) DOM.totalContract.textContent = formatMoney(totalContract);
-                if (DOM.totalIncome) DOM.totalIncome.textContent = formatMoney(totalIncome);
-                if (DOM.totalExpense) DOM.totalExpense.textContent = formatMoney(totalExpense);
-                if (DOM.totalGrossProfit) { 
-                    DOM.totalGrossProfit.textContent = formatMoney(grossProfit); 
-                    DOM.totalGrossProfit.className = 'value ' + (grossProfit>=0?'profit':'loss'); 
-                }
-                if (DOM.totalProfit) { 
-                    DOM.totalProfit.textContent = formatMoney(totalProfit); 
-                    DOM.totalProfit.className = 'value ' + (totalProfit>=0?'profit':'loss'); 
-                }
-
-                // 综合报表
-                if (DOM.summaryBody) {
-                    if(allStats.length) {
-                        DOM.summaryBody.innerHTML = allStats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
-                    } else { 
-                        DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
-                    }
-                }
-
-                // 项目列表
+        // ========== 导出功能 ==========
+        function exportTable(type) {
+            let data=[], sheetName='', headers=[];
+            if (type === 'summary') {
+                sheetName='综合报表'; 
+                headers=['项目','合同总额','已收','待收','支出','利润','毛利率'];
+                let stats = AppState.getAllStats();
+                if (FilterState && FilterState.selectedProjectIds.size > 0) stats = stats.filter(s => FilterState.selectedProjectIds.has(s.id));
+                data = stats.map(s=>[s.name, s.contractTotal||0, s.income, s.pendingIncome||0, s.expense, s.profit, s.profitMargin.toFixed(1)]);
+            } else if (type === 'projects') {
+                sheetName='项目列表'; 
+                headers=['项目名称','合同总额','收款节点','已收','待收','创建时间'];
                 let projects = AppState.projects;
-                if (selectedIds.length > 0) projects = projects.filter(p => selectedIds.includes(p.id));
-                if (DOM.projectsBody) {
-                    if(projects.length) {
-                        DOM.projectsBody.innerHTML = projects.map(p=>{ 
-                            const s = allStats.find(stat => stat.id === p.id) || AppState.getProjectStats(p.id);
-                            return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
-                        }).join('');
-                    } else { 
-                        DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
-                    }
-                }
-
-                // 收支记录
+                if (FilterState && FilterState.selectedProjectIds.size > 0) projects = projects.filter(p => FilterState.selectedProjectIds.has(p.id));
+                data = projects.map(p=>{ 
+                    let s = AppState.getProjectStats(p.id);
+                    return [p.name, p.budget||0, p.milestones?.length||0, s?.income||0, s?.pendingIncome||0, new Date(p.createdAt).toLocaleDateString()];
+                });
+            } else if (type === 'transactions') {
+                sheetName='收支记录'; 
+                headers=['日期','项目','类型','金额'];
                 let transactions = AppState.transactions;
-                if (selectedIds.length > 0) transactions = transactions.filter(t => selectedIds.includes(t.projectId));
-                if (startDate && endDate) {
-                    transactions = transactions.filter(t => new Date(t.date) >= startDate && new Date(t.date) <= endDate);
-                }
-                if (DOM.transactionsBody) {
-                    if(transactions.length) {
-                        const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                        DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
-                            const proj = AppState.projects.find(p=>p.id===t.projectId); 
-                            return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
-                        }).join('');
-                    } else { 
-                        DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
-                    }
-                }
-
-                // 应收账款
-                const analysis = AppState.getReceivableAnalysis();
-                let filteredItems = analysis.items;
-                if (selectedIds.length > 0) filteredItems = filteredItems.filter(item => selectedIds.includes(item.projectId));
-                const totalReceivable = filteredItems.reduce((s,i)=>s+i.pendingAmount,0);
-                const overdueAmount = filteredItems.filter(i=>i.status==='overdue').reduce((s,i)=>s+i.pendingAmount,0);
-                const upcomingAmount = filteredItems.filter(i=>i.status==='upcoming').reduce((s,i)=>s+i.pendingAmount,0);
-                const overdueCount = filteredItems.filter(i=>i.status==='overdue').length;
-                const upcomingCount = filteredItems.filter(i=>i.status==='upcoming').length;
-                if (DOM.totalReceivable) DOM.totalReceivable.textContent = formatMoney(totalReceivable);
-                if (DOM.totalReceivableCount) DOM.totalReceivableCount.textContent = `${filteredItems.filter(i=>i.pendingAmount>0).length}笔待收`;
-                if (DOM.overdueAmount) DOM.overdueAmount.textContent = formatMoney(overdueAmount);
-                if (DOM.overdueCount) DOM.overdueCount.textContent = `${overdueCount}笔逾期`;
-                if (DOM.upcomingAmount) DOM.upcomingAmount.textContent = formatMoney(upcomingAmount);
-                if (DOM.upcomingCount) DOM.upcomingCount.textContent = `${upcomingCount}笔7天内到期`;
-                if (DOM.receivableTableBody) {
-                    if(filteredItems.length===0) { 
-                        DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>'; 
-                    } else {
-                        DOM.receivableTableBody.innerHTML = filteredItems.map(item=>{
-                            let statusClass='', statusText='';
-                            if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
-                            else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
-                            else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
-                            else { statusClass='status-normal'; statusText='正常'; }
-                            const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
-                            return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
-                        }).join('');
-                    }
-                }
-
-                // 图表
-                if(profitChart) { profitChart.destroy(); profitChart=null; }
-                if(costPieChart) { costPieChart.destroy(); costPieChart=null; }
-                setTimeout(() => { updateCharts(); addProfitCornerLabel(); }, 50);
+                if (FilterState && FilterState.selectedProjectIds.size > 0) transactions = transactions.filter(t => FilterState.selectedProjectIds.has(t.projectId));
+                const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+                data = sorted.map(t=>{ 
+                    const p=AppState.projects.find(p=>p.id===t.projectId); 
+                    return [t.date, p?.name||'未知', t.type, t.type==='收入'?t.amount:-t.amount]; 
+                });
             }
-        };
-        window.FilterState = FilterState;
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            XLSX.writeFile(wb, `装修记账_${sheetName}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+        function exportAll() {
+            exportTable('summary');
+            exportTable('projects');
+            exportTable('transactions');
+        }
 
-        // ========== 初始化App ==========
+        // ========== 初始化 ==========
         function initApp() {
-            initDates();
+            // 设置日期默认值
+            const today = getTodayDate();
+            if(DOM.transactionDate) DOM.transactionDate.value = today;
+            if(DOM.milestoneDate) DOM.milestoneDate.value = today;
+
+            // 初始化语音
             BailianAI.init();
+
+            // 渲染费用类型标签
             renderCategoryTags();
+            renderSettingsTypes();
+
+            // 监听预算输入
             DOM.projectBudget.addEventListener('input', updateMilestoneTotalDisplay);
 
+            // 项目表单提交
             DOM.projectForm.onsubmit = (e) => {
                 e.preventDefault();
                 const total = calculateMilestoneTotal();
@@ -3443,27 +2739,29 @@ function updateCharts() {
                 DOM.projectModalTitle.textContent = '➕ 新建项目'; 
                 DOM.projectSubmitBtn.textContent = '保存项目';
                 refreshUI();
-                if (typeof FilterState !== 'undefined') { 
+                if (FilterState) { 
                     FilterState.renderDropdown(); 
                     FilterState.renderSelectedTags(); 
                     FilterState.applyFilter(); 
                 }
             };
 
+            // 交易表单提交
             DOM.transactionForm.onsubmit = (e) => {
                 e.preventDefault();
                 AppState.addTransaction(DOM.transactionId.value||null, DOM.transactionDate.value, DOM.transactionProject.value, DOM.transactionType.value, DOM.transactionAmount.value);
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
                 DOM.transactionId.value=''; 
-                initDates(); 
+                DOM.transactionDate.value = today; 
                 setActiveCategory('收入');
                 DOM.transactionModalTitle.textContent = '💰 收支记录'; 
                 DOM.transactionSubmitBtn.textContent = '保存记录';
                 refreshUI();
-                if (typeof FilterState !== 'undefined') FilterState.applyFilter();
+                if (FilterState) FilterState.applyFilter();
             };
 
+            // 关闭模态框
             DOM.closeProjectModal.onclick = ()=>{ 
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
@@ -3474,110 +2772,102 @@ function updateCharts() {
             DOM.closeTransactionModal.onclick = ()=>{ 
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
-                initDates(); 
+                DOM.transactionDate.value = today; 
                 setActiveCategory('收入'); 
             };
             DOM.closeMilestoneModal.onclick = ()=>{ 
                 DOM.milestoneModal.classList.remove('active'); 
                 DOM.milestoneForm.reset(); 
-                initDates(); 
+                DOM.milestoneDate.value = today; 
             };
             DOM.closeVoiceConfirm.onclick = ()=> DOM.voiceConfirmModal.classList.remove('active');
 
-// ========== 语音确认按钮事件 ==========
-DOM.modifyBtn.onclick = ()=>{
-    DOM.voiceConfirmModal.classList.remove('active');
-    if(window.__voiceResult) {
-        fillProjectSelect();
-        DOM.transactionDate.value = window.__voiceResult.date;
-        if(window.__voiceResult.project) DOM.transactionProject.value = window.__voiceResult.project.id;
-        DOM.transactionAmount.value = window.__voiceResult.amount||'';
-        setActiveCategory(window.__voiceResult.type||'其他费用');
-    }
-};
-
-DOM.confirmBtn.onclick = ()=>{
-    if(!window.__voiceResult||!window.__voiceResult.project){ alert('项目无效，请手动选择'); return; }
-    if(!window.__voiceResult.amount||window.__voiceResult.amount<=0){ alert('金额无效'); return; }
-    AppState.addTransaction(null, window.__voiceResult.date, window.__voiceResult.project.id, window.__voiceResult.type, window.__voiceResult.amount);
-    DOM.voiceConfirmModal.classList.remove('active');
-    DOM.transactionModal.classList.remove('active');
-    refreshUI();
-    if (typeof FilterState !== 'undefined') FilterState.applyFilter();
-    DOM.voiceStatus.innerHTML = '✅ 语音记账成功！';
-    setTimeout(()=>{ DOM.voiceStatus.innerHTML = '✨ 点击麦克风开始录音'; },3000);
-};
-
-console.log('✅ 语音确认按钮事件已绑定');
-
-            window.onclick = (e)=>{
-                if(e.target===DOM.projectModal) { 
-                    DOM.projectModal.classList.remove('active'); 
-                    DOM.projectForm.reset(); 
-                    DOM.projectId.value=''; 
-                    currentMilestones=[]; 
-                    renderMilestoneList(); 
-                }
-                if(e.target===DOM.transactionModal) { 
-                    DOM.transactionModal.classList.remove('active'); 
-                    DOM.transactionForm.reset(); 
-                    initDates(); 
-                    setActiveCategory('收入'); 
-                }
-                if(e.target===DOM.milestoneModal) { 
-                    DOM.milestoneModal.classList.remove('active'); 
-                    DOM.milestoneForm.reset(); 
-                    initDates(); 
-                }
-                if(e.target===DOM.voiceConfirmModal) DOM.voiceConfirmModal.classList.remove('active');
-            };
-            
-            // ✅ 添加节点按钮事件（防抖 + 阻止冒泡，确保无限次添加）
+            // 添加节点按钮
             DOM.addMilestoneBtn.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 DOM.milestoneModal.classList.add('active');
             };
 
-            // ========== 极简浮动按钮控制 ==========
+            // 节点表单提交
+            DOM.milestoneForm.onsubmit = (e) => {
+                e.preventDefault();
+                const milestone = { 
+                    date: DOM.milestoneDate.value, 
+                    amount: parseFloat(DOM.milestoneAmount.value), 
+                    note: DOM.milestoneNote.value.trim() || '' 
+                };
+                currentMilestones.push(milestone);
+                renderMilestoneList();
+                DOM.milestoneModal.classList.remove('active'); 
+                DOM.milestoneForm.reset(); 
+                DOM.milestoneDate.value = today;
+            };
+
+            // 添加自定义费用类型
+            DOM.addCategoryBtn.onclick = ()=>{ 
+                const val = DOM.customCategory.value.trim(); 
+                if(val){ 
+                    AppState.addExpenseType(val); 
+                    renderCategoryTags(); 
+                    renderSettingsTypes();
+                    DOM.customCategory.value=''; 
+                    setActiveCategory(val); 
+                } 
+            };
+            if (DOM.settingsAddTypeBtn) {
+                DOM.settingsAddTypeBtn.onclick = () => {
+                    const val = DOM.settingsNewType.value.trim();
+                    if (val) {
+                        AppState.addExpenseType(val);
+                        renderCategoryTags();
+                        renderSettingsTypes();
+                        DOM.settingsNewType.value = '';
+                    }
+                };
+            }
+
+            // 清除所有数据
+            if (DOM.clearAllDataBtn) {
+                DOM.clearAllDataBtn.onclick = () => {
+                    if (confirm('清除所有项目、收支记录？不可恢复！')) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                };
+            }
+
+            // 浮动菜单
             const fabMainBtn = document.getElementById('fabMainBtn');
             const fabMenu = document.getElementById('fabMenu');
             const fabAddProject = document.getElementById('fabAddProject');
             const fabAddTransaction = document.getElementById('fabAddTransaction');
-
             if (fabMainBtn && fabMenu) {
                 fabMainBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     fabMenu.classList.toggle('active');
                 });
-
-                if (fabAddProject) {
-                    fabAddProject.addEventListener('click', () => {
-                        fabMenu.classList.remove('active');
-                        DOM.projectModalTitle.textContent = '➕ 新建项目';
-                        DOM.projectSubmitBtn.textContent = '保存项目';
-                        DOM.projectId.value = '';
-                        DOM.projectName.value = '';
-                        DOM.projectBudget.value = '';
-                        currentMilestones = [];
-                        renderMilestoneList();
-                        DOM.projectModal.classList.add('active');
-                    });
-                }
-
-                if (fabAddTransaction) {
-                    fabAddTransaction.addEventListener('click', () => {
-                        fabMenu.classList.remove('active');
-                        fillProjectSelect();
-                        DOM.transactionModalTitle.textContent = '💰 收支记录';
-                        DOM.transactionSubmitBtn.textContent = '保存记录';
-                        DOM.transactionId.value = '';
-                        initDates();
-                        setActiveCategory('收入');
-                        DOM.transactionModal.classList.add('active');
-                    });
-                }
-
+                fabAddProject.addEventListener('click', () => {
+                    fabMenu.classList.remove('active');
+                    DOM.projectModalTitle.textContent = '➕ 新建项目';
+                    DOM.projectSubmitBtn.textContent = '保存项目';
+                    DOM.projectId.value = '';
+                    DOM.projectName.value = '';
+                    DOM.projectBudget.value = '';
+                    currentMilestones = [];
+                    renderMilestoneList();
+                    DOM.projectModal.classList.add('active');
+                });
+                fabAddTransaction.addEventListener('click', () => {
+                    fabMenu.classList.remove('active');
+                    fillProjectSelect();
+                    DOM.transactionModalTitle.textContent = '💰 收支记录';
+                    DOM.transactionSubmitBtn.textContent = '保存记录';
+                    DOM.transactionId.value = '';
+                    DOM.transactionDate.value = today;
+                    setActiveCategory('收入');
+                    DOM.transactionModal.classList.add('active');
+                });
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.fab-container')) {
                         fabMenu.classList.remove('active');
@@ -3585,111 +2875,56 @@ console.log('✅ 语音确认按钮事件已绑定');
                 });
             }
 
-            // ✅ 收款节点表单提交（无限添加，不跳转页面）
-            DOM.milestoneForm.onsubmit = (e) => {
-                e.preventDefault();
-                try {
-                    const milestone = { 
-                        date: DOM.milestoneDate.value, 
-                        amount: parseFloat(DOM.milestoneAmount.value), 
-                        note: DOM.milestoneNote.value.trim() || '' 
-                    };
-                    currentMilestones.push(milestone);
-                    renderMilestoneList();
-                    DOM.milestoneModal.classList.remove('active'); 
-                    DOM.milestoneForm.reset(); 
-                    initDates();
-                } catch (err) {
-                    console.error('添加节点失败:', err);
-                    alert('节点添加失败，请重试');
+            // 语音确认按钮
+            DOM.modifyBtn.onclick = ()=>{
+                DOM.voiceConfirmModal.classList.remove('active');
+                if(window.__voiceResult) {
+                    fillProjectSelect();
+                    DOM.transactionDate.value = window.__voiceResult.date;
+                    if(window.__voiceResult.project) DOM.transactionProject.value = window.__voiceResult.project.id;
+                    DOM.transactionAmount.value = window.__voiceResult.amount||'';
+                    setActiveCategory(window.__voiceResult.type||'其他费用');
                 }
             };
-
-            DOM.addCategoryBtn.onclick = ()=>{ 
-                const val = DOM.customCategory.value.trim(); 
-                if(val){ 
-                    AppState.addExpenseType(val); 
-                    renderCategoryTags(); 
-                    DOM.customCategory.value=''; 
-                    setActiveCategory(val); 
-                } 
+            DOM.confirmBtn.onclick = ()=>{
+                if(!window.__voiceResult||!window.__voiceResult.project){ alert('项目无效，请手动选择'); return; }
+                if(!window.__voiceResult.amount||window.__voiceResult.amount<=0){ alert('金额无效'); return; }
+                AppState.addTransaction(null, window.__voiceResult.date, window.__voiceResult.project.id, window.__voiceResult.type, window.__voiceResult.amount);
+                DOM.voiceConfirmModal.classList.remove('active');
+                DOM.transactionModal.classList.remove('active');
+                refreshUI();
+                if (FilterState) FilterState.applyFilter();
+                DOM.voiceStatus.innerHTML = '✅ 语音记账成功！';
+                setTimeout(()=>{ DOM.voiceStatus.innerHTML = '✨ 点击麦克风开始录音'; },3000);
             };
 
-            DOM.exportBtn.onclick = ()=>{
-                let data=[], sheetName='', headers=[];
-                if(document.getElementById('summaryTable').style.display!=='none') {
-                    sheetName='综合报表'; 
-                    headers=['项目','合同总额','已收','待收','支出','利润','毛利率'];
-                    let stats = AppState.getAllStats();
-                    if (typeof FilterState !== 'undefined') {
-                        const selectedIds = Array.from(FilterState.selectedProjectIds);
-                        if (selectedIds.length > 0) stats = stats.filter(s => selectedIds.includes(s.id));
-                        if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
-                            const start = new Date(FilterState.timeRange.startDate);
-                            const end = new Date(FilterState.timeRange.endDate);
-                            end.setHours(23,59,59,999);
-                            stats = stats.map(stat => {
-                                const transactions = AppState.transactions.filter(t => Number(t.projectId) === stat.id && new Date(t.date) >= start && new Date(t.date) <= end);
-                                const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
-                                const expense = transactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
-                                return { ...stat, income, expense, profit: income - expense, profitMargin: stat.contractTotal > 0 ? ((income - expense) / stat.contractTotal * 100) : 0, pendingIncome: Math.max(0, stat.contractTotal - income) };
-                            });
-                        }
-                    }
-                    data = stats.map(s=>[s.name, s.contractTotal||0, s.income, s.pendingIncome||0, s.expense, s.profit, s.profitMargin.toFixed(1)]);
-                } else if(document.getElementById('projectsTable').style.display!=='none') {
-                    sheetName='项目列表'; 
-                    headers=['项目名称','合同总额','收款节点','已收','待收','创建时间'];
-                    let projects = AppState.projects;
-                    if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
-                        const selectedIds = Array.from(FilterState.selectedProjectIds);
-                        projects = projects.filter(p => selectedIds.includes(p.id));
-                    }
-                    data = projects.map(p=>{ 
-                        let s = AppState.getProjectStats(p.id);
-                        if (typeof FilterState !== 'undefined' && FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
-                            const start = new Date(FilterState.timeRange.startDate);
-                            const end = new Date(FilterState.timeRange.endDate);
-                            end.setHours(23,59,59,999);
-                            const transactions = AppState.transactions.filter(t => Number(t.projectId) === p.id && new Date(t.date) >= start && new Date(t.date) <= end);
-                            const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
-                            s = { ...s, income, pendingIncome: Math.max(0, (p.budget||0) - income) };
-                        }
-                        return [p.name, p.budget||0, p.milestones?.length||0, s?.income||0, s?.pendingIncome||0, new Date(p.createdAt).toLocaleDateString()];
-                    });
-                } else {
-                    sheetName='收支记录'; 
-                    headers=['日期','项目','类型','金额'];
-                    let transactions = AppState.transactions;
-                    if (typeof FilterState !== 'undefined') {
-                        if (FilterState.selectedProjectIds.size > 0) transactions = transactions.filter(t => FilterState.selectedProjectIds.has(t.projectId));
-                        if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
-                            const start = new Date(FilterState.timeRange.startDate);
-                            const end = new Date(FilterState.timeRange.endDate);
-                            end.setHours(23,59,59,999);
-                            transactions = transactions.filter(t => new Date(t.date) >= start && new Date(t.date) <= end);
-                        }
-                    }
-                    const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                    data = sorted.map(t=>{ 
-                        const p=AppState.projects.find(p=>p.id===t.projectId); 
-                        return [t.date, p?.name||'未知', t.type, t.type==='收入'?t.amount:-t.amount]; 
-                    });
-                }
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
-                ws['!cols'] = headers.map(()=>({wch:15}));
-                XLSX.utils.book_append_sheet(wb, ws, sheetName);
-                XLSX.writeFile(wb, `装修记账_${sheetName}_${new Date().toISOString().split('T')[0]}.xlsx`);
-            };
+            // 导出按钮绑定
+            if (DOM.exportSummaryBtn) DOM.exportSummaryBtn.onclick = () => exportTable('summary');
+            if (DOM.exportProjectsBtn) DOM.exportProjectsBtn.onclick = () => exportTable('projects');
+            if (DOM.exportTransactionsBtn) DOM.exportTransactionsBtn.onclick = () => exportTable('transactions');
+            if (DOM.exportAllBtn) DOM.exportAllBtn.onclick = exportAll;
 
-            bindToggles();
-            fillProjectSelect();
-            refreshUI();
-            
+            // 底部导航切换
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const page = item.dataset.page;
+                    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                    document.getElementById(page + '-page').classList.add('active');
+                    if (page === 'stats') {
+                        setTimeout(() => updateCharts(), 50);
+                    }
+                });
+            });
+
+            // 初始化筛选模块
             if (typeof FilterState !== 'undefined') {
                 setTimeout(() => { FilterState.init(); }, 100);
             }
+
+            // 首次刷新UI
+            refreshUI();
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
