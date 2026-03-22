@@ -8,109 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://imgcache.qq.com/qcloud/tcbjs/1.10.1/tcb.js"></script>
     <style>
-        /* ====== 登录/注册页面 ====== */
-        #authScreen {
-            position: fixed; inset: 0;
-            background: #0a0a0a;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999;
-        }
-        #authScreen.hidden { display: none; }
-        .auth-card {
-            width: 92%; max-width: 420px;
-            background: #141414;
-            border: 1px solid #2a2a2a;
-            border-radius: 28px;
-            padding: 36px 32px;
-        }
-        .auth-logo {
-            text-align: center; margin-bottom: 28px;
-        }
-        .auth-logo h1 { font-size: 26px; font-weight: 300; letter-spacing: 1px; }
-        .auth-logo h1 span { color: #00d4aa; font-weight: 700; }
-        .auth-logo p { color: #666; font-size: 13px; margin-top: 6px; }
-        .auth-tabs {
-            display: flex; background: #1e1e1e; border-radius: 30px;
-            padding: 4px; margin-bottom: 28px;
-        }
-        .auth-tab {
-            flex: 1; padding: 10px; border: none; background: transparent;
-            color: #888; border-radius: 26px; cursor: pointer;
-            font-size: 14px; transition: 0.2s;
-        }
-        .auth-tab.active { background: #00d4aa; color: #0a0a0a; font-weight: 600; }
-        .auth-form-group { margin-bottom: 18px; }
-        .auth-form-group label { display: block; color: #b0b0b0; font-size: 13px; margin-bottom: 8px; }
-        .auth-input {
-            width: 100%; padding: 14px 16px;
-            background: #1e1e1e; border: 1px solid #2a2a2a;
-            border-radius: 14px; color: #fff; font-size: 15px; outline: none;
-            transition: border-color 0.2s;
-        }
-        .auth-input:focus { border-color: #00d4aa; }
-        .auth-btn {
-            width: 100%; padding: 16px; border: none;
-            background: #00d4aa; color: #0a0a0a;
-            border-radius: 40px; font-size: 16px; font-weight: 700;
-            cursor: pointer; margin-top: 8px; transition: 0.2s;
-        }
-        .auth-btn:hover { background: #00b894; }
-        .auth-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; }
-        .auth-error {
-            background: #ff6b6b18; border: 1px solid #ff6b6b40;
-            color: #ff9f9f; border-radius: 12px; padding: 12px 16px;
-            font-size: 13px; margin-bottom: 16px; display: none;
-        }
-        .auth-error.show { display: block; }
-        .auth-divider {
-            text-align: center; color: #444; font-size: 12px;
-            margin: 20px 0; position: relative;
-        }
-        .auth-divider::before, .auth-divider::after {
-            content: ''; position: absolute; top: 50%;
-            width: 42%; height: 1px; background: #2a2a2a;
-        }
-        .auth-divider::before { left: 0; }
-        .auth-divider::after { right: 0; }
-
-        /* ====== 全局加载遮罩 ====== */
-        #globalLoading {
-            position: fixed; inset: 0; background: #0a0a0a;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            z-index: 9998;
-        }
-        #globalLoading.hidden { display: none; }
-        .loading-spinner {
-            width: 48px; height: 48px;
-            border: 3px solid #1e1e1e; border-top-color: #00d4aa;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #globalLoading p { color: #666; font-size: 14px; }
-
-        /* ====== 用户信息栏 ====== */
-        .user-bar {
-            display: flex; align-items: center; gap: 8px;
-        }
-        .user-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: #00d4aa22; border: 1px solid #00d4aa55;
-            display: flex; align-items: center; justify-content: center;
-            color: #00d4aa; font-size: 14px; font-weight: 600;
-        }
-        .user-email { color: #888; font-size: 12px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .btn-logout {
-            background: transparent; border: 1px solid #333;
-            border-radius: 20px; padding: 6px 14px;
-            color: #888; font-size: 12px; cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-logout:hover { border-color: #ff6b6b; color: #ff6b6b; }
-    </style>
         /* ========== 黑色极简主义 · 移动优先 ========== */
         * {
             margin: 0;
@@ -1331,62 +1229,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- ====== 全局加载遮罩 ====== -->
-        <div id="globalLoading">
-            <div class="loading-spinner"></div>
-            <p>正在连接云端…</p>
-        </div>
-
-        <!-- ====== 登录/注册页面 ====== -->
-        <div id="authScreen" class="hidden">
-            <div class="auth-card">
-                <div class="auth-logo">
-                    <h1>装修<span>记账</span></h1>
-                    <p>PROJECT AI · 智能装修财务管理</p>
-                </div>
-                <div class="auth-tabs">
-                    <button class="auth-tab active" id="tabLogin">登 录</button>
-                    <button class="auth-tab" id="tabRegister">注 册</button>
-                </div>
-                <div id="authError" class="auth-error"></div>
-                <div id="loginForm">
-                    <div class="auth-form-group">
-                        <label>邮箱地址</label>
-                        <input type="email" class="auth-input" id="loginEmail" placeholder="请输入邮箱">
-                    </div>
-                    <div class="auth-form-group">
-                        <label>密码</label>
-                        <input type="password" class="auth-input" id="loginPassword" placeholder="请输入密码">
-                    </div>
-                    <button class="auth-btn" id="loginBtn">登 录</button>
-                </div>
-                <div id="registerForm" style="display:none;">
-                    <div class="auth-form-group">
-                        <label>邮箱地址</label>
-                        <input type="email" class="auth-input" id="registerEmail" placeholder="请输入邮箱">
-                    </div>
-                    <div class="auth-form-group">
-                        <label>密码（至少6位）</label>
-                        <input type="password" class="auth-input" id="registerPassword" placeholder="请输入密码">
-                    </div>
-                    <div class="auth-form-group">
-                        <label>确认密码</label>
-                        <input type="password" class="auth-input" id="registerConfirm" placeholder="再次输入密码">
-                    </div>
-                    <button class="auth-btn" id="registerBtn">注 册</button>
-                </div>
-            </div>
-        </div>
-
         <!-- ========== 头部 ========= -->
         <div class="header">
             <h1>装修<span>记账 · PROJECT AI</span></h1>
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <div class="user-bar">
-                    <div class="user-avatar" id="userAvatar">?</div>
-                    <span class="user-email" id="userEmail">未登录</span>
-                    <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</button>
-                </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button class="btn-template" id="backupBtn" style="font-size:13px;"><i class="fas fa-download"></i> 备份</button>
                 <button class="btn-import" id="restoreBtn" style="font-size:13px; color:#ffd93d; border-color:#ffd93d;"><i class="fas fa-upload"></i> 恢复</button>
             </div>
@@ -1747,66 +1593,10 @@
             return 0;
         }
 
-        // ====== 腾讯云 CloudBase 初始化 ======
-        const CB_ENV = 'zhuangxiu-0gfl54ht3afc66a0';
-        let cbApp, cbAuth, cbDb;
-        let currentUser = null;   // 当前登录用户
-
-        function initCloudBase() {
-            cbApp  = tcb.init({ env: CB_ENV });
-            cbAuth = cbApp.auth({ persistence: 'local' });
-            cbDb   = cbApp.database();
-        }
-
-        // ====== 云端数据读写 ======
-        // 每次数据变更都把完整 AppState 写入云端（简单可靠）
-        function saveAllData() {
-            if (!currentUser) return;
-            cbDb.collection('userdata').doc(currentUser.uid).set({
-                projects:     AppState.projects,
-                transactions: AppState.transactions,
-                expenseTypes: AppState.expenseTypes
-            }).catch(e => console.error('[CloudBase] 保存失败:', e));
-        }
-
-        async function loadUserData() {
-            try {
-                const res = await cbDb.collection('userdata').doc(currentUser.uid).get();
-                const data = res.data;
-                if (data && (data.projects || data.transactions)) {
-                    AppState.projects      = data.projects      || [];
-                    AppState.transactions  = data.transactions  || [];
-                    AppState.expenseTypes  = data.expenseTypes  || ['材料费','人工费','其他费用'];
-                } else {
-                    // 新用户：初始化空数据并写入
-                    AppState.projects      = [];
-                    AppState.transactions  = [];
-                    AppState.expenseTypes  = ['材料费','人工费','其他费用'];
-                    saveAllData();
-                }
-            } catch(e) {
-                console.warn('[CloudBase] 读取数据失败，使用空状态:', e);
-                AppState.projects     = [];
-                AppState.transactions = [];
-                AppState.expenseTypes = ['材料费','人工费','其他费用'];
-            }
-        }
-
-        // ========== 数据持久化（兼容层）==========
-        // UI 偏好（筛选状态）仍用 localStorage；核心数据走云端
+        // ========== 数据持久化 ==========
         const Storage = {
-            load: key => {
-                // 仅供 FilterState 读取 UI 偏好使用
-                try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){ return []; }
-            },
-            save: (key, data) => {
-                if (key === 'selectedProjectIds' || key === 'timeFilter') {
-                    localStorage.setItem(key, JSON.stringify(data));
-                    return;
-                }
-                // 主数据统一走云端
-                saveAllData();
-            }
+            load: key => JSON.parse(localStorage.getItem(key) || '[]'),
+            save: (key, data) => localStorage.setItem(key, JSON.stringify(data))
         };
 
         // ========== 编码生成器（字母数字，无歧义字符）==========
@@ -1823,11 +1613,11 @@
             return code;
         }
 
-        // ========== 全局状态（云端加载前为空，loadUserData 后填充）==========
+        // ========== 全局状态 ==========
         const AppState = {
-            projects: [],
-            transactions: [],
-            expenseTypes: ['材料费', '人工费', '其他费用'],
+            projects: Storage.load('projects') || [],
+            transactions: Storage.load('transactions') || [],
+            expenseTypes: Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'],
 
             addProject(code, name, budget, milestones) {
                 // code 非空 = 更新已有项目（不碰收支记录！）
@@ -2073,8 +1863,8 @@
             }
         };
 
-        // ========== 旧数据迁移：补充 code 字段（云端加载后调用）==========
-        function runMigration() {
+        // ========== 旧数据迁移：补充 code 字段 ==========
+        (function migrateData() {
             let changed = false;
             const usedProjectCodes = new Set(AppState.projects.filter(p=>p.code).map(p=>p.code));
             AppState.projects.forEach(p => {
@@ -2086,19 +1876,24 @@
             });
             const usedTxCodes = new Set(AppState.transactions.filter(t=>t.code).map(t=>t.code));
             AppState.transactions.forEach(t => {
+                // 补充 code
                 if (!t.code) {
                     t.code = makeUniqueCode('T', usedTxCodes);
                     usedTxCodes.add(t.code);
                     changed = true;
                 }
+                // 旧数据用 projectId（数字），迁移成 projectCode
                 if (!t.projectCode && t.projectId !== undefined) {
                     const proj = AppState.projects.find(p => Number(p.id) === Number(t.projectId));
                     t.projectCode = proj ? proj.code : String(t.projectId);
                     changed = true;
                 }
             });
-            if (changed) saveAllData();
-        }
+            if (changed) {
+                Storage.save('projects', AppState.projects);
+                Storage.save('transactions', AppState.transactions);
+            }
+        })();
         const DOM = {
             totalProjects: document.getElementById('totalProjects'),
             totalContract: document.getElementById('totalContract'),
@@ -2167,9 +1962,6 @@
             timeFilterBtn: document.getElementById('timeFilterBtn'),
             timeDropdown: document.getElementById('timeDropdown'),
             timeFilterLabel: document.getElementById('timeFilterLabel'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            userAvatar: document.getElementById('userAvatar'),
-            userEmail: document.getElementById('userEmail'),
             // ===== 新增：备份/导入/批量删除 =====
             backupBtn: document.getElementById('backupBtn'),
             restoreBtn: document.getElementById('restoreBtn'),
@@ -2295,8 +2087,10 @@
                     AppState.projects = data.projects || [];
                     AppState.transactions = data.transactions || [];
                     AppState.expenseTypes = data.expenseTypes || ['材料费','人工费','其他费用'];
-                    saveAllData(); // 写入云端
-                    alert('✅ 数据恢复成功！页面即将刷新');
+                    Storage.save('projects', AppState.projects);
+                    Storage.save('transactions', AppState.transactions);
+                    Storage.save('expenseTypes', AppState.expenseTypes);
+                    alert('✅ 数据恢复成功！');
                     location.reload();
                 } catch(err) { alert('❌ 备份文件解析失败：' + err.message); }
             };
@@ -4417,168 +4211,7 @@ console.log('✅ 语音确认按钮事件已绑定');
             }
         }
 
-        // ====== 认证 + 启动入口 ======
-        async function startApp() {
-            initCloudBase();
-            try {
-                const loginState = await cbAuth.getLoginState();
-                if (loginState && loginState.isAnonymous === false) {
-                    // 已登录：加载数据 → 进入系统
-                    currentUser = loginState.user;
-                    await loadUserData();
-                    runMigration();
-                    showMainApp();
-                    document.addEventListener('DOMContentLoaded', () => {});
-                    initApp();
-                } else {
-                    // 未登录：展示登录页
-                    showAuthScreen();
-                }
-            } catch(e) {
-                console.error('[CloudBase] 检查登录状态失败:', e);
-                showAuthScreen();
-            }
-        }
-
-        function showMainApp() {
-            document.getElementById('globalLoading').classList.add('hidden');
-            document.getElementById('authScreen').classList.add('hidden');
-            // 更新用户信息栏
-            const email = currentUser.email || currentUser.uid || '';
-            const avatar = email ? email[0].toUpperCase() : '?';
-            const avatarEl = document.getElementById('userAvatar');
-            const emailEl  = document.getElementById('userEmail');
-            if (avatarEl) avatarEl.textContent = avatar;
-            if (emailEl)  emailEl.textContent  = email;
-        }
-
-        function showAuthScreen() {
-            document.getElementById('globalLoading').classList.add('hidden');
-            document.getElementById('authScreen').classList.remove('hidden');
-            bindAuthEvents();
-        }
-
-        // 错误码 → 中文提示
-        function authErrMsg(e) {
-            const code = e.code || '';
-            if (code.includes('INVALID_EMAIL') || code.includes('invalid_email')) return '邮箱格式不正确';
-            if (code.includes('EMAIL_EXIST') || code.includes('email_exist')) return '该邮箱已注册，请直接登录';
-            if (code.includes('INVALID_PASSWORD') || code.includes('wrong_password') || code.includes('WRONG_PASSWORD')) return '密码错误，请重试';
-            if (code.includes('USER_NOT_FOUND') || code.includes('user_not_found')) return '用户不存在，请先注册';
-            if (code.includes('NETWORK') || code.includes('network')) return '网络异常，请检查连接后重试';
-            return e.message || '操作失败，请稍后重试';
-        }
-
-        function setAuthError(msg) {
-            const el = document.getElementById('authError');
-            el.textContent = msg;
-            el.classList.add('show');
-        }
-        function clearAuthError() {
-            const el = document.getElementById('authError');
-            el.textContent = '';
-            el.classList.remove('show');
-        }
-        function setAuthBtnLoading(btnId, loading) {
-            const btn = document.getElementById(btnId);
-            if (!btn) return;
-            btn.disabled = loading;
-            btn.textContent = loading ? '请稍候…' : (btnId === 'loginBtn' ? '登 录' : '注 册');
-        }
-
-        function bindAuthEvents() {
-            // Tab 切换
-            document.getElementById('tabLogin').onclick = () => {
-                document.getElementById('tabLogin').classList.add('active');
-                document.getElementById('tabRegister').classList.remove('active');
-                document.getElementById('loginForm').style.display = '';
-                document.getElementById('registerForm').style.display = 'none';
-                clearAuthError();
-            };
-            document.getElementById('tabRegister').onclick = () => {
-                document.getElementById('tabRegister').classList.add('active');
-                document.getElementById('tabLogin').classList.remove('active');
-                document.getElementById('registerForm').style.display = '';
-                document.getElementById('loginForm').style.display = 'none';
-                clearAuthError();
-            };
-
-            // 登录
-            document.getElementById('loginBtn').onclick = async () => {
-                clearAuthError();
-                const email    = document.getElementById('loginEmail').value.trim();
-                const password = document.getElementById('loginPassword').value;
-                if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
-                setAuthBtnLoading('loginBtn', true);
-                try {
-                    await cbAuth.signInWithEmailAndPassword(email, password);
-                    const loginState = await cbAuth.getLoginState();
-                    currentUser = loginState.user;
-                    await loadUserData();
-                    runMigration();
-                    showMainApp();
-                    initApp();
-                } catch(e) {
-                    setAuthError(authErrMsg(e));
-                    setAuthBtnLoading('loginBtn', false);
-                }
-            };
-
-            // 注册
-            document.getElementById('registerBtn').onclick = async () => {
-                clearAuthError();
-                const email    = document.getElementById('registerEmail').value.trim();
-                const password = document.getElementById('registerPassword').value;
-                const confirm  = document.getElementById('registerConfirm').value;
-                if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
-                if (password.length < 6)  { setAuthError('密码至少6位'); return; }
-                if (password !== confirm)  { setAuthError('两次密码不一致'); return; }
-                setAuthBtnLoading('registerBtn', true);
-                try {
-                    await cbAuth.signUpWithEmailAndPassword(email, password);
-                    await cbAuth.signInWithEmailAndPassword(email, password);
-                    const loginState = await cbAuth.getLoginState();
-                    currentUser = loginState.user;
-                    await loadUserData();
-                    showMainApp();
-                    initApp();
-                } catch(e) {
-                    setAuthError(authErrMsg(e));
-                    setAuthBtnLoading('registerBtn', false);
-                }
-            };
-
-            // 回车键提交
-            ['loginEmail','loginPassword'].forEach(id => {
-                document.getElementById(id).addEventListener('keypress', e => {
-                    if (e.key === 'Enter') document.getElementById('loginBtn').click();
-                });
-            });
-            ['registerEmail','registerPassword','registerConfirm'].forEach(id => {
-                document.getElementById(id).addEventListener('keypress', e => {
-                    if (e.key === 'Enter') document.getElementById('registerBtn').click();
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // 退出登录
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.onclick = async () => {
-                    if (!confirm('确定退出登录？')) return;
-                    try {
-                        await cbAuth.signOut();
-                    } catch(e) {}
-                    currentUser = null;
-                    AppState.projects = [];
-                    AppState.transactions = [];
-                    AppState.expenseTypes = ['材料费','人工费','其他费用'];
-                    location.reload();
-                };
-            }
-            startApp();
-        });
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
