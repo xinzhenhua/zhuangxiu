@@ -8,7 +8,109 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://imgcache.qq.com/qcloud/tcbjs/1.10.1/tcb.js"></script>
     <style>
+        /* ====== 登录/注册页面 ====== */
+        #authScreen {
+            position: fixed; inset: 0;
+            background: #0a0a0a;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        #authScreen.hidden { display: none; }
+        .auth-card {
+            width: 92%; max-width: 420px;
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 28px;
+            padding: 36px 32px;
+        }
+        .auth-logo {
+            text-align: center; margin-bottom: 28px;
+        }
+        .auth-logo h1 { font-size: 26px; font-weight: 300; letter-spacing: 1px; }
+        .auth-logo h1 span { color: #00d4aa; font-weight: 700; }
+        .auth-logo p { color: #666; font-size: 13px; margin-top: 6px; }
+        .auth-tabs {
+            display: flex; background: #1e1e1e; border-radius: 30px;
+            padding: 4px; margin-bottom: 28px;
+        }
+        .auth-tab {
+            flex: 1; padding: 10px; border: none; background: transparent;
+            color: #888; border-radius: 26px; cursor: pointer;
+            font-size: 14px; transition: 0.2s;
+        }
+        .auth-tab.active { background: #00d4aa; color: #0a0a0a; font-weight: 600; }
+        .auth-form-group { margin-bottom: 18px; }
+        .auth-form-group label { display: block; color: #b0b0b0; font-size: 13px; margin-bottom: 8px; }
+        .auth-input {
+            width: 100%; padding: 14px 16px;
+            background: #1e1e1e; border: 1px solid #2a2a2a;
+            border-radius: 14px; color: #fff; font-size: 15px; outline: none;
+            transition: border-color 0.2s;
+        }
+        .auth-input:focus { border-color: #00d4aa; }
+        .auth-btn {
+            width: 100%; padding: 16px; border: none;
+            background: #00d4aa; color: #0a0a0a;
+            border-radius: 40px; font-size: 16px; font-weight: 700;
+            cursor: pointer; margin-top: 8px; transition: 0.2s;
+        }
+        .auth-btn:hover { background: #00b894; }
+        .auth-btn:disabled { background: #2a2a2a; color: #666; cursor: not-allowed; }
+        .auth-error {
+            background: #ff6b6b18; border: 1px solid #ff6b6b40;
+            color: #ff9f9f; border-radius: 12px; padding: 12px 16px;
+            font-size: 13px; margin-bottom: 16px; display: none;
+        }
+        .auth-error.show { display: block; }
+        .auth-divider {
+            text-align: center; color: #444; font-size: 12px;
+            margin: 20px 0; position: relative;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: ''; position: absolute; top: 50%;
+            width: 42%; height: 1px; background: #2a2a2a;
+        }
+        .auth-divider::before { left: 0; }
+        .auth-divider::after { right: 0; }
+
+        /* ====== 全局加载遮罩 ====== */
+        #globalLoading {
+            position: fixed; inset: 0; background: #0a0a0a;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9998;
+        }
+        #globalLoading.hidden { display: none; }
+        .loading-spinner {
+            width: 48px; height: 48px;
+            border: 3px solid #1e1e1e; border-top-color: #00d4aa;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #globalLoading p { color: #666; font-size: 14px; }
+
+        /* ====== 用户信息栏 ====== */
+        .user-bar {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #00d4aa22; border: 1px solid #00d4aa55;
+            display: flex; align-items: center; justify-content: center;
+            color: #00d4aa; font-size: 14px; font-weight: 600;
+        }
+        .user-email { color: #888; font-size: 12px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-logout {
+            background: transparent; border: 1px solid #333;
+            border-radius: 20px; padding: 6px 14px;
+            color: #888; font-size: 12px; cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-logout:hover { border-color: #ff6b6b; color: #ff6b6b; }
+    </style>
         /* ========== 黑色极简主义 · 移动优先 ========== */
         * {
             margin: 0;
@@ -549,6 +651,7 @@
         .status-upcoming { background: #ffd93d20; color: #ffd93d; border: 1px solid #ffd93d; }
         .status-normal { background: #00d4aa20; color: #00d4aa; border: 1px solid #00d4aa; }
         .status-paid { background: #4dabf720; color: #4dabf7; border: 1px solid #4dabf7; }
+        .status-partial { background: #ff9f4320; color: #ff9f43; border: 1px solid #ff9f43; }
 
         /* 双图表布局 */
         .charts-container {
@@ -1157,14 +1260,136 @@
         @media (max-width: 768px) {
             #costPieChart { max-height: 180px !important; }
         }
+
+        /* ===== 新增：批量删除 / 模板导入 / 备份恢复 ===== */
+        .btn-template, .btn-import, .btn-batch-delete {
+            background: transparent;
+            border: 1px solid;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-template { color: #4dabf7; border-color: #4dabf7; }
+        .btn-template:hover { background: #4dabf7; color: #0a0a0a; }
+        .btn-import { color: #ffd93d; border-color: #ffd93d; }
+        .btn-import:hover { background: #ffd93d; color: #0a0a0a; }
+        .btn-batch-delete { color: #ff6b6b; border-color: #ff6b6b; }
+        .btn-batch-delete:hover { background: #ff6b6b; color: #0a0a0a; }
+        .btn-batch-delete.active-mode { background: #ff6b6b; color: #0a0a0a; }
+
+        .batch-select-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            border: 1px solid #ff6b6b40;
+            flex-wrap: wrap;
+        }
+        .batch-select-bar span { color: #ccc; font-size: 14px; }
+        .btn-batch-confirm {
+            background: #ff6b6b;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-batch-cancel {
+            background: transparent;
+            color: #aaa;
+            border: 1px solid #3a3a3a;
+            border-radius: 16px;
+            padding: 6px 16px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .batch-checkbox { width: 16px; height: 16px; accent-color: #ff6b6b; cursor: pointer; }
+        .data-table .checkbox-col { width: 36px; }
+
+        /* 备份恢复菜单项 */
+        .fab-menu-divider { height: 1px; background: #2a2a2a; margin: 4px 0; }
+        .fab-menu-item.danger { color: #ff9f9f; }
+        .fab-menu-item.danger i { color: #ff6b6b; }
+
+        /* 导入预览弹窗 */
+        .import-preview-list { max-height: 260px; overflow-y: auto; margin: 16px 0; }
+        .import-row { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; }
+        .import-row.success { background: #00d4aa15; border-left: 3px solid #00d4aa; color: #ccc; }
+        .import-row.error { background: #ff6b6b15; border-left: 3px solid #ff6b6b; color: #ff9f9f; }
+        .import-summary { padding: 12px; background: #1e1e1e; border-radius: 10px; margin-bottom: 16px; font-size: 14px; color: #ccc; }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- ====== 全局加载遮罩 ====== -->
+        <div id="globalLoading">
+            <div class="loading-spinner"></div>
+            <p>正在连接云端…</p>
+        </div>
+
+        <!-- ====== 登录/注册页面 ====== -->
+        <div id="authScreen" class="hidden">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <h1>装修<span>记账</span></h1>
+                    <p>PROJECT AI · 智能装修财务管理</p>
+                </div>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin">登 录</button>
+                    <button class="auth-tab" id="tabRegister">注 册</button>
+                </div>
+                <div id="authError" class="auth-error"></div>
+                <div id="loginForm">
+                    <div class="auth-form-group">
+                        <label>邮箱地址</label>
+                        <input type="email" class="auth-input" id="loginEmail" placeholder="请输入邮箱">
+                    </div>
+                    <div class="auth-form-group">
+                        <label>密码</label>
+                        <input type="password" class="auth-input" id="loginPassword" placeholder="请输入密码">
+                    </div>
+                    <button class="auth-btn" id="loginBtn">登 录</button>
+                </div>
+                <div id="registerForm" style="display:none;">
+                    <div class="auth-form-group">
+                        <label>邮箱地址</label>
+                        <input type="email" class="auth-input" id="registerEmail" placeholder="请输入邮箱">
+                    </div>
+                    <div class="auth-form-group">
+                        <label>密码（至少6位）</label>
+                        <input type="password" class="auth-input" id="registerPassword" placeholder="请输入密码">
+                    </div>
+                    <div class="auth-form-group">
+                        <label>确认密码</label>
+                        <input type="password" class="auth-input" id="registerConfirm" placeholder="再次输入密码">
+                    </div>
+                    <button class="auth-btn" id="registerBtn">注 册</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ========== 头部 ========= -->
         <div class="header">
             <h1>装修<span>记账 · PROJECT AI</span></h1>
-            <!-- 右上角加号已彻底删除，更极简 -->
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div class="user-bar">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-email" id="userEmail">未登录</span>
+                    <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出</button>
+                </div>
+                <button class="btn-template" id="backupBtn" style="font-size:13px;"><i class="fas fa-download"></i> 备份</button>
+                <button class="btn-import" id="restoreBtn" style="font-size:13px; color:#ffd93d; border-color:#ffd93d;"><i class="fas fa-upload"></i> 恢复</button>
+            </div>
         </div>
 
         <!-- ========== 复合筛选栏：时间筛选 + 项目搜索（极简融合）========= -->
@@ -1310,7 +1535,10 @@
             <div class="table-header">
                 <div class="table-title-area">
                     <div style="font-size:18px; font-weight:500;" id="tableTitle">📋 综合报表</div>
-                    <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> 导出Excel</button>
+                    <button class="btn-template" id="downloadTemplateBtn"><i class="fas fa-file-download"></i> 模板</button>
+                    <button class="btn-import" id="batchImportBtn"><i class="fas fa-file-upload"></i> 导入</button>
+                    <button class="btn-export" id="exportBtn"><i class="fas fa-file-excel"></i> 导出</button>
+                    <button class="btn-batch-delete" id="batchDeleteBtn"><i class="fas fa-trash-alt"></i> 批量删除</button>
                 </div>
                 <div class="table-tabs">
                     <button class="tab-btn active" id="summaryToggle">综合</button>
@@ -1318,21 +1546,26 @@
                     <button class="tab-btn" id="transactionsToggle">收支</button>
                 </div>
             </div>
+            <div id="batchSelectBar" class="batch-select-bar" style="display:none;">
+                <span>已选 <strong id="selectedCount" style="color:#ff6b6b;">0</strong> 项</span>
+                <button class="btn-batch-confirm" id="confirmBatchDeleteBtn">确认删除</button>
+                <button class="btn-batch-cancel" id="cancelBatchDeleteBtn">取消</button>
+            </div>
             <div class="table-scroll">
                 <table class="data-table" id="summaryTable">
-                    <thead><tr><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
-                    <tbody id="summaryTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
+                    <thead><tr><th class="checkbox-col"><input type="checkbox" class="batch-checkbox" id="selectAllSummary"></th><th>项目</th><th>合同总额</th><th>已收</th><th>待收</th><th>支出</th><th>利润</th><th>毛利率</th></tr></thead>
+                    <tbody id="summaryTableBody"><tr><td colspan="8" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr></tbody>
                 </table>
             </div>
             <div class="table-scroll" id="projectsTableWrap" style="display:none;">
                 <table class="data-table" id="projectsTable">
-                    <thead><tr><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
+                    <thead><tr><th class="checkbox-col"><input type="checkbox" class="batch-checkbox" id="selectAllProjects"></th><th>项目名称</th><th>合同总额</th><th>收款节点</th><th>已收</th><th>待收</th><th>创建时间</th><th>操作</th></tr></thead>
                     <tbody id="projectsTableBody"></tbody>
                 </table>
             </div>
             <div class="table-scroll" id="transactionsTableWrap" style="display:none;">
                 <table class="data-table" id="transactionsTable">
-                    <thead><tr><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
+                    <thead><tr><th class="checkbox-col"><input type="checkbox" class="batch-checkbox" id="selectAllTransactions"></th><th>日期</th><th>项目</th><th>类型</th><th>金额</th><th>操作</th></tr></thead>
                     <tbody id="transactionsTableBody"></tbody>
                 </table>
             </div>
@@ -1431,6 +1664,26 @@
                 </div>
             </div>
         </div>
+
+        <!-- 隐藏文件输入 -->
+        <input type="file" id="restoreFileInput" style="display:none" accept=".json">
+        <input type="file" id="batchImportFileInput" style="display:none" accept=".xlsx,.xls">
+
+        <!-- 批量导入预览弹窗 -->
+        <div class="modal" id="importPreviewModal">
+            <div class="modal-content" style="max-width:560px;">
+                <div class="modal-header">
+                    <h2>📊 导入预览</h2>
+                    <button class="btn-close" id="closeImportPreviewModal">&times;</button>
+                </div>
+                <div class="import-summary" id="importSummary"></div>
+                <div class="import-preview-list" id="importPreviewList"></div>
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <button class="btn-modify" id="cancelImportBtn" style="flex:1;">取消</button>
+                    <button class="btn-confirm" id="confirmImportBtn" style="flex:1;">确认导入</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1494,68 +1747,159 @@
             return 0;
         }
 
-        // ========== 数据持久化 ==========
+        // ====== 腾讯云 CloudBase 初始化 ======
+        const CB_ENV = 'zhuangxiu-0gfl54ht3afc66a0';
+        let cbApp, cbAuth, cbDb;
+        let currentUser = null;   // 当前登录用户
+
+        function initCloudBase() {
+            cbApp  = tcb.init({ env: CB_ENV });
+            cbAuth = cbApp.auth({ persistence: 'local' });
+            cbDb   = cbApp.database();
+        }
+
+        // ====== 云端数据读写 ======
+        // 每次数据变更都把完整 AppState 写入云端（简单可靠）
+        function saveAllData() {
+            if (!currentUser) return;
+            cbDb.collection('userdata').doc(currentUser.uid).set({
+                projects:     AppState.projects,
+                transactions: AppState.transactions,
+                expenseTypes: AppState.expenseTypes
+            }).catch(e => console.error('[CloudBase] 保存失败:', e));
+        }
+
+        async function loadUserData() {
+            try {
+                const res = await cbDb.collection('userdata').doc(currentUser.uid).get();
+                const data = res.data;
+                if (data && (data.projects || data.transactions)) {
+                    AppState.projects      = data.projects      || [];
+                    AppState.transactions  = data.transactions  || [];
+                    AppState.expenseTypes  = data.expenseTypes  || ['材料费','人工费','其他费用'];
+                } else {
+                    // 新用户：初始化空数据并写入
+                    AppState.projects      = [];
+                    AppState.transactions  = [];
+                    AppState.expenseTypes  = ['材料费','人工费','其他费用'];
+                    saveAllData();
+                }
+            } catch(e) {
+                console.warn('[CloudBase] 读取数据失败，使用空状态:', e);
+                AppState.projects     = [];
+                AppState.transactions = [];
+                AppState.expenseTypes = ['材料费','人工费','其他费用'];
+            }
+        }
+
+        // ========== 数据持久化（兼容层）==========
+        // UI 偏好（筛选状态）仍用 localStorage；核心数据走云端
         const Storage = {
-            load: key => JSON.parse(localStorage.getItem(key) || '[]'),
-            save: (key, data) => localStorage.setItem(key, JSON.stringify(data))
+            load: key => {
+                // 仅供 FilterState 读取 UI 偏好使用
+                try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){ return []; }
+            },
+            save: (key, data) => {
+                if (key === 'selectedProjectIds' || key === 'timeFilter') {
+                    localStorage.setItem(key, JSON.stringify(data));
+                    return;
+                }
+                // 主数据统一走云端
+                saveAllData();
+            }
         };
 
-        // ========== 全局状态 ==========
-        const AppState = {
-            projects: Storage.load('projects') || [],
-            transactions: Storage.load('transactions') || [],
-            expenseTypes: Storage.load('expenseTypes') || ['材料费', '人工费', '其他费用'],
+        // ========== 编码生成器（字母数字，无歧义字符）==========
+        // 项目编码: P-XXXX  收支编码: T-XXXX
+        function generateCode(prefix) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 去掉 0/O/1/I 避免混淆
+            let suffix = '';
+            for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+            return prefix + '-' + suffix;
+        }
+        function makeUniqueCode(prefix, existingCodes) {
+            let code = generateCode(prefix);
+            while (existingCodes.has(code)) code = generateCode(prefix);
+            return code;
+        }
 
-            addProject(id, name, budget, milestones) {
-                if (id) {
-                    const targetId = Number(id);
-                    this.transactions = this.transactions.filter(t => Number(t.projectId) !== targetId);
-                    this.projects = this.projects.filter(p => Number(p.id) !== targetId);
-                    console.log(`🗑️ 已删除项目ID=${targetId} 及其所有收支记录`);
+        // ========== 全局状态（云端加载前为空，loadUserData 后填充）==========
+        const AppState = {
+            projects: [],
+            transactions: [],
+            expenseTypes: ['材料费', '人工费', '其他费用'],
+
+            addProject(code, name, budget, milestones) {
+                // code 非空 = 更新已有项目（不碰收支记录！）
+                if (code) {
+                    const idx = this.projects.findIndex(p => p.code === code);
+                    if (idx !== -1) {
+                        this.projects[idx].name     = name;
+                        this.projects[idx].budget   = parseFloat(budget);
+                        this.projects[idx].milestones = milestones || [];
+                        Storage.save('projects', this.projects);
+                        return this.projects[idx];
+                    }
                 }
-                const newId = id ? Number(id) : Date.now();
-                const proj = { 
-                    id: newId, 
-                    name, 
-                    budget: parseFloat(budget),
-                    milestones: milestones || [], 
-                    createdAt: new Date().toISOString() 
+                // code 为空 = 新建项目
+                const existingCodes = new Set(this.projects.map(p => p.code));
+                const newCode = makeUniqueCode('P', existingCodes);
+                const proj = {
+                    id:        Date.now(),   // 保留数字 id 供内部引用
+                    code:      newCode,
+                    name,
+                    budget:    parseFloat(budget),
+                    milestones: milestones || [],
+                    createdAt: new Date().toISOString()
                 };
                 this.projects.push(proj);
                 Storage.save('projects', this.projects);
-                Storage.save('transactions', this.transactions);
-                console.log(`✅ 已添加新项目 ID=${newId}`, proj);
                 return proj;
             },
-            deleteProject(id) {
-                const targetId = Number(id);
-                this.transactions = this.transactions.filter(t => Number(t.projectId) !== targetId);
-                this.projects = this.projects.filter(p => Number(p.id) !== targetId);
-                Storage.save('projects', this.projects); 
+            deleteProject(code) {
+                const proj = this.projects.find(p => p.code === code);
+                if (!proj) return;
+                this.transactions = this.transactions.filter(t => t.projectCode !== code);
+                this.projects = this.projects.filter(p => p.code !== code);
+                Storage.save('projects', this.projects);
                 Storage.save('transactions', this.transactions);
             },
-            addTransaction(id, date, projectId, type, amount) {
-                if (id) {
-                    const targetId = Number(id);
-                    this.transactions = this.transactions.filter(t => Number(t.id) !== targetId);
-                    console.log(`🗑️ 已删除交易 ID=${targetId}`);
+            addTransaction(code, date, projectCode, type, amount) {
+                // code 非空 = 更新已有记录（原地修改，不删不建）
+                if (code) {
+                    const idx = this.transactions.findIndex(t => t.code === code);
+                    if (idx !== -1) {
+                        this.transactions[idx].date        = date;
+                        this.transactions[idx].projectCode = projectCode;
+                        this.transactions[idx].type        = type;
+                        this.transactions[idx].amount      = parseFloat(amount);
+                        Storage.save('transactions', this.transactions);
+                        return this.transactions[idx];
+                    }
                 }
-                const newId = id ? Number(id) : Date.now();
-                const trans = { 
-                    id: newId, 
-                    date, 
-                    projectId: Number(projectId), 
-                    type, 
-                    amount: parseFloat(amount) 
+                // code 为空 = 新建收支
+                const existingCodes = new Set(this.transactions.map(t => t.code));
+                const newCode = makeUniqueCode('T', existingCodes);
+                // 兼容：projectCode 可能传来的是数字 id（旧数据/批量导入），统一转成 code
+                let pCode = projectCode;
+                if (typeof projectCode === 'number' || /^\d+$/.test(String(projectCode))) {
+                    const proj = this.projects.find(p => Number(p.id) === Number(projectCode));
+                    pCode = proj ? proj.code : String(projectCode);
+                }
+                const trans = {
+                    id:          Date.now(),
+                    code:        newCode,
+                    date,
+                    projectCode: pCode,
+                    type,
+                    amount:      parseFloat(amount)
                 };
                 this.transactions.push(trans);
                 Storage.save('transactions', this.transactions);
-                console.log(`✅ 已添加新交易 ID=${newId}`, trans);
                 return trans;
             },
-            deleteTransaction(id) {
-                const targetId = Number(id);
-                this.transactions = this.transactions.filter(t => Number(t.id) !== targetId);
+            deleteTransaction(code) {
+                this.transactions = this.transactions.filter(t => t.code !== code);
                 Storage.save('transactions', this.transactions);
             },
             addExpenseType(type) { 
@@ -1570,10 +1914,10 @@
                     Storage.save('expenseTypes', this.expenseTypes); 
                 } else alert('至少保留一个费用类型');
             },
-            getProjectStats(pid) {
-                const p = this.projects.find(p => Number(p.id) === Number(pid)); 
+            getProjectStats(pCode) {
+                const p = this.projects.find(p => p.code === pCode || String(p.id) === String(pCode));
                 if(!p) return null;
-                const ts = this.transactions.filter(t => Number(t.projectId) === Number(pid));
+                const ts = this.transactions.filter(t => t.projectCode === p.code);
                 const income = ts.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
                 const expense = ts.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
                 const contractTotal = p.budget || 0;
@@ -1588,7 +1932,7 @@
                     profitMargin: contractTotal > 0 ? ((income - expense) / contractTotal * 100) : 0 
                 };
             },
-            getAllStats() { return this.projects.map(p => this.getProjectStats(p.id)); },
+            getAllStats() { return this.projects.map(p => this.getProjectStats(p.code)); },
             getOverallStats() {
                 const all = this.getAllStats();
                 return {
@@ -1608,90 +1952,153 @@
             },
             getReceivableAnalysis() {
                 const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 const sevenDaysLater = new Date(today);
                 sevenDaysLater.setDate(today.getDate() + 7);
-                let totalReceivable = 0, overdueAmount = 0, upcomingAmount = 0, overdueCount = 0, upcomingCount = 0, receivableItems = [];
+
+                let totalReceivable = 0, overdueAmount = 0, upcomingAmount = 0;
+                let overdueCount = 0, upcomingCount = 0;
+                const receivableItems = [];
+
                 this.projects.forEach(project => {
-                    const stats = this.getProjectStats(project.id);
-                    if (!stats) return;
-                    const pendingIncome = stats.pendingIncome;
-                    if (pendingIncome <= 0) return;
-                    totalReceivable += pendingIncome;
+                    const pCode = project.code;
+                    const allIncome = this.transactions
+                        .filter(t => t.projectCode === pCode && t.type === '收入')
+                        .sort((a, b) => new Date(a.date) - new Date(b.date));
+                    const totalIncome = allIncome.reduce((s, t) => s + t.amount, 0);
+
                     if (!project.milestones || project.milestones.length === 0) {
-                        receivableItems.push({ 
-                            projectId: project.id, 
-                            projectName: project.name, 
-                            dueDate: project.createdAt.split('T')[0], 
-                            originalAmount: project.budget, 
-                            receivedAmount: stats.income, 
-                            pendingAmount: pendingIncome, 
-                            note: '合同总额', 
-                            status: new Date(project.createdAt) < today ? 'overdue' : 'normal' 
+                        // 无节点项目：整体判断
+                        const pending = Math.max(0, (project.budget || 0) - totalIncome);
+                        if (pending <= 0) return;
+                        totalReceivable += pending;
+                        receivableItems.push({
+                            projectCode: project.code,
+                            projectName: project.name,
+                            dueDate: '—',
+                            originalAmount: project.budget || 0,
+                            receivedAmount: totalIncome,
+                            pendingAmount: pending,
+                            note: '无收款节点',
+                            status: 'normal'
                         });
-                        if (new Date(project.createdAt) < today) { overdueAmount += pendingIncome; overdueCount++; }
                         return;
                     }
+
                     const sortedMilestones = [...project.milestones].sort((a, b) => new Date(a.date) - new Date(b.date));
-                    const projectIncomes = this.transactions
-                        .filter(t => Number(t.projectId) === Number(project.id) && t.type === '收入')
-                        .sort((a, b) => new Date(a.date) - new Date(b.date));
-                    let incomeIndex = 0;
-                    sortedMilestones.forEach((milestone, index) => {
+
+                    // 核心算法：累积分配
+                    // 对于第 i 个节点：
+                    //   income_before_next = 所有日期 < 下一节点日期 的收入之和
+                    //   income_for_this    = income_before_next - 前面所有节点金额之和
+                    //   received           = min(max(0, income_for_this), 本节点金额)
+                    //   pending            = 本节点金额 - received
+                    let cumulativeMilestoneAmount = 0; // 前面已分配节点金额累计
+
+                    sortedMilestones.forEach((milestone, i) => {
                         const milestoneDate = new Date(milestone.date);
+                        milestoneDate.setHours(0, 0, 0, 0);
                         const milestoneAmount = milestone.amount;
-                        let receivedBeforeMilestone = 0;
-                        while (incomeIndex < projectIncomes.length) {
-                            const income = projectIncomes[incomeIndex];
-                            const incomeDate = new Date(income.date);
-                            const nextMilestoneDate = index < sortedMilestones.length - 1 ? new Date(sortedMilestones[index + 1].date) : null;
-                            if (!nextMilestoneDate || incomeDate < nextMilestoneDate) { 
-                                receivedBeforeMilestone += income.amount; 
-                                incomeIndex++; 
-                            } else break;
-                        }
-                        const receivedForMilestone = Math.min(receivedBeforeMilestone, milestoneAmount);
-                        const pendingForMilestone = milestoneAmount - receivedForMilestone;
-                        if (pendingForMilestone > 0) {
-                            let status = 'normal';
-                            if (milestoneDate < today && receivedBeforeMilestone < milestoneAmount) { 
-                                status = 'overdue'; 
-                                overdueAmount += pendingForMilestone; 
-                                overdueCount++; 
-                            } else if (milestoneDate <= sevenDaysLater && milestoneDate >= today) { 
-                                status = 'upcoming'; 
-                                upcomingAmount += pendingForMilestone; 
-                                upcomingCount++; 
-                            }
-                            receivableItems.push({
-                                projectId: project.id,
-                                projectName: project.name,
-                                dueDate: milestone.date,
-                                originalAmount: milestoneAmount,
-                                receivedAmount: receivedForMilestone,
-                                pendingAmount: pendingForMilestone,
-                                note: milestone.note || '',
-                                status
-                            });
+
+                        // 窗口截止：下一节点的前一天结束，最后一个节点无截止
+                        const nextMilestone = sortedMilestones[i + 1];
+                        let windowEnd;
+                        if (nextMilestone) {
+                            windowEnd = new Date(nextMilestone.date);
+                            windowEnd.setHours(0, 0, 0, 0);
+                            // 收款日期 < 下一节点日期（当天不算入当前节点）
                         } else {
-                            receivableItems.push({
-                                projectId: project.id,
-                                projectName: project.name,
-                                dueDate: milestone.date,
-                                originalAmount: milestoneAmount,
-                                receivedAmount: milestoneAmount,
-                                pendingAmount: 0,
-                                note: milestone.note || '',
-                                status: 'paid'
-                            });
+                            windowEnd = null; // 最后一个节点：所有收入都算
                         }
+
+                        // 窗口内收入总和
+                        const incomeInWindow = allIncome
+                            .filter(t => windowEnd === null || new Date(t.date) < windowEnd)
+                            .reduce((s, t) => s + t.amount, 0);
+
+                        // 本节点可分配收入 = 窗口收入 - 前面节点已分配金额
+                        const incomeForThis = Math.max(0, incomeInWindow - cumulativeMilestoneAmount);
+                        const received = Math.min(incomeForThis, milestoneAmount);
+                        const pending = milestoneAmount - received;
+
+                        // 累积前移（用节点金额而非实收，保证下一节点计算正确）
+                        cumulativeMilestoneAmount += milestoneAmount;
+
+                        // 判断状态
+                        let status;
+                        const datePassed = milestoneDate < today;
+
+                        if (pending <= 0) {
+                            status = 'paid'; // 结清
+                        } else if (datePassed) {
+                            if (received > 0) {
+                                status = 'partial'; // 未结清（部分到款）
+                            } else {
+                                status = 'overdue'; // 逾期（完全未到款）
+                                overdueAmount += pending;
+                                overdueCount++;
+                            }
+                        } else {
+                            // 节点未到
+                            if (milestoneDate <= sevenDaysLater) {
+                                status = 'upcoming'; // 即将到期
+                                upcomingAmount += pending;
+                                upcomingCount++;
+                            } else {
+                                status = 'normal'; // 正常
+                            }
+                        }
+
+                        if (pending > 0) totalReceivable += pending;
+
+                        receivableItems.push({
+                            projectCode: project.code,
+                            projectName: project.name,
+                            dueDate: milestone.date,
+                            originalAmount: milestoneAmount,
+                            receivedAmount: received,
+                            pendingAmount: pending,
+                            note: milestone.note || '',
+                            status
+                        });
                     });
                 });
-                receivableItems.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+                receivableItems.sort((a, b) => {
+                    if (a.dueDate === '—') return 1;
+                    if (b.dueDate === '—') return -1;
+                    return new Date(a.dueDate) - new Date(b.dueDate);
+                });
                 return { totalReceivable, overdueAmount, upcomingAmount, overdueCount, upcomingCount, items: receivableItems };
             }
         };
 
-        // ========== DOM 绑定 ==========
+        // ========== 旧数据迁移：补充 code 字段（云端加载后调用）==========
+        function runMigration() {
+            let changed = false;
+            const usedProjectCodes = new Set(AppState.projects.filter(p=>p.code).map(p=>p.code));
+            AppState.projects.forEach(p => {
+                if (!p.code) {
+                    p.code = makeUniqueCode('P', usedProjectCodes);
+                    usedProjectCodes.add(p.code);
+                    changed = true;
+                }
+            });
+            const usedTxCodes = new Set(AppState.transactions.filter(t=>t.code).map(t=>t.code));
+            AppState.transactions.forEach(t => {
+                if (!t.code) {
+                    t.code = makeUniqueCode('T', usedTxCodes);
+                    usedTxCodes.add(t.code);
+                    changed = true;
+                }
+                if (!t.projectCode && t.projectId !== undefined) {
+                    const proj = AppState.projects.find(p => Number(p.id) === Number(t.projectId));
+                    t.projectCode = proj ? proj.code : String(t.projectId);
+                    changed = true;
+                }
+            });
+            if (changed) saveAllData();
+        }
         const DOM = {
             totalProjects: document.getElementById('totalProjects'),
             totalContract: document.getElementById('totalContract'),
@@ -1759,7 +2166,28 @@
             selectedTagsArea: document.getElementById('selectedTagsArea'),
             timeFilterBtn: document.getElementById('timeFilterBtn'),
             timeDropdown: document.getElementById('timeDropdown'),
-            timeFilterLabel: document.getElementById('timeFilterLabel')
+            timeFilterLabel: document.getElementById('timeFilterLabel'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            userAvatar: document.getElementById('userAvatar'),
+            userEmail: document.getElementById('userEmail'),
+            // ===== 新增：备份/导入/批量删除 =====
+            backupBtn: document.getElementById('backupBtn'),
+            restoreBtn: document.getElementById('restoreBtn'),
+            restoreFileInput: document.getElementById('restoreFileInput'),
+            downloadTemplateBtn: document.getElementById('downloadTemplateBtn'),
+            batchImportBtn: document.getElementById('batchImportBtn'),
+            batchImportFileInput: document.getElementById('batchImportFileInput'),
+            batchDeleteBtn: document.getElementById('batchDeleteBtn'),
+            batchSelectBar: document.getElementById('batchSelectBar'),
+            selectedCount: document.getElementById('selectedCount'),
+            confirmBatchDeleteBtn: document.getElementById('confirmBatchDeleteBtn'),
+            cancelBatchDeleteBtn: document.getElementById('cancelBatchDeleteBtn'),
+            importPreviewModal: document.getElementById('importPreviewModal'),
+            closeImportPreviewModal: document.getElementById('closeImportPreviewModal'),
+            importSummary: document.getElementById('importSummary'),
+            importPreviewList: document.getElementById('importPreviewList'),
+            confirmImportBtn: document.getElementById('confirmImportBtn'),
+            cancelImportBtn: document.getElementById('cancelImportBtn')
         };
 
         let profitChart, profitMarginChart, costPieChart, agingChart, cashflowChart, progressChart, currentMilestones = [];
@@ -1839,13 +2267,254 @@
             DOM.transactionType.value = type;
         }
 
-        // ========== 项目下拉框 ==========
+        // ========== 项目下拉框（value = project.code）==========
         function fillProjectSelect() {
             DOM.transactionProject.innerHTML = '<option value="">请选择项目</option>' + 
-                AppState.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+                AppState.projects.map(p=>`<option value="${p.code}">${p.name}（${p.code}）</option>`).join('');
         }
 
-        // ========== 表格切换 ==========
+        // ========== 备份与恢复 ==========
+        function backupData() {
+            const data = { version: '2.0', exportTime: new Date().toISOString(), projects: AppState.projects, transactions: AppState.transactions, expenseTypes: AppState.expenseTypes };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `装修记账备份_${getTodayDate()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function restoreData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.projects) { alert('❌ 备份文件格式错误'); return; }
+                    if (!confirm(`恢复备份将覆盖当前数据（${data.projects.length}个项目，${data.transactions?.length||0}条记录）。是否继续？`)) return;
+                    AppState.projects = data.projects || [];
+                    AppState.transactions = data.transactions || [];
+                    AppState.expenseTypes = data.expenseTypes || ['材料费','人工费','其他费用'];
+                    saveAllData(); // 写入云端
+                    alert('✅ 数据恢复成功！页面即将刷新');
+                    location.reload();
+                } catch(err) { alert('❌ 备份文件解析失败：' + err.message); }
+            };
+            reader.readAsText(file);
+        }
+
+        // ========== Excel日期解析 ==========
+        function excelDateToJSDate(val) {
+            if (typeof val === 'string') {
+                val = val.trim();
+                if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+                if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(val)) {
+                    const parts = val.split('/');
+                    return `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+                }
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+            }
+            if (typeof val === 'number') {
+                const d = new Date((val - 25569) * 86400 * 1000);
+                return d.toISOString().split('T')[0];
+            }
+            return getTodayDate();
+        }
+
+        // ========== 模板下载 ==========
+        function downloadTemplateByTab() {
+            const activeTab = document.querySelector('.tab-btn.active').id;
+            let headers, sampleData, sheetName;
+            if (activeTab === 'projectsToggle') {
+                sheetName = '项目导入模板';
+                headers = ['项目名称','合同总额(元)','收款节点(格式:日期,金额,备注;多个用分号隔开)'];
+                sampleData = [['阳光花园12-302','150000','2025-04-01,50000,首付款;2025-06-01,50000,进度款;2025-08-01,50000,尾款']];
+            } else if (activeTab === 'transactionsToggle') {
+                sheetName = '收支导入模板';
+                headers = ['日期(YYYY-MM-DD)','项目名称','类型(收入/材料费/人工费等)','金额(元)'];
+                sampleData = [['2025-03-20','阳光花园12-302','材料费','3500'],['2025-03-21','阳光花园12-302','收入','50000']];
+            } else {
+                sheetName = '综合导入模板';
+                headers = ['项目名称','合同总额(元)','已收金额(元)','支出金额(元)'];
+                sampleData = [['阳光花园12-302','150000','50000','30000']];
+            }
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...sampleData]);
+            ws['!cols'] = headers.map(()=>({wch:20}));
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            XLSX.writeFile(wb, `装修记账_${sheetName}_${getTodayDate()}.xlsx`);
+        }
+
+        // ========== 批量导入（带预览）==========
+        let pendingImportData = null;
+
+        function batchImportByTab(file) {
+            const activeTab = document.querySelector('.tab-btn.active').id;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array', cellDates: false });
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
+                    if (!rows || rows.length < 2) { alert('❌ 文件无有效数据行'); return; }
+
+                    const successRows = [], errorRows = [];
+
+                    if (activeTab === 'projectsToggle') {
+                        for (let i = 1; i < rows.length; i++) {
+                            const row = rows[i];
+                            const name = String(row[0]||'').trim();
+                            const budget = parseFloat(row[1]);
+                            if (!name) continue;
+                            if (isNaN(budget) || budget < 0) { errorRows.push({ line: i+1, reason: `预算无效: "${row[1]}"`, preview: name }); continue; }
+                            let milestones = [];
+                            if (row[2] && String(row[2]).trim()) {
+                                String(row[2]).split(';').forEach(seg => {
+                                    const parts = seg.trim().split(',');
+                                    if (parts.length >= 2) {
+                                        const amt = parseFloat(parts[1]);
+                                        if (!isNaN(amt)) milestones.push({ date: excelDateToJSDate(parts[0].trim()), amount: amt, note: parts[2]||'' });
+                                    }
+                                });
+                            }
+                            successRows.push({ type: 'project', name, budget, milestones, preview: `项目: ${name} ¥${budget} (${milestones.length}个节点)` });
+                        }
+                    } else if (activeTab === 'transactionsToggle') {
+                        for (let i = 1; i < rows.length; i++) {
+                            const row = rows[i];
+                            if (!row[0] && !row[1]) continue;
+                            const date = excelDateToJSDate(row[0]);
+                            const projectName = String(row[1]||'').trim();
+                            const type = String(row[2]||'').trim() || '其他费用';
+                            const amount = parseFloat(row[3]);
+                            if (!projectName) { errorRows.push({ line: i+1, reason: '项目名称为空', preview: '' }); continue; }
+                            if (isNaN(amount) || amount <= 0) { errorRows.push({ line: i+1, reason: `金额无效: "${row[3]}"`, preview: projectName }); continue; }
+                            successRows.push({ type: 'transaction', date, projectName, txType: type, amount, preview: `${date} ${projectName} ${type} ¥${amount}` });
+                        }
+                    } else {
+                        for (let i = 1; i < rows.length; i++) {
+                            const row = rows[i];
+                            const name = String(row[0]||'').trim();
+                            if (!name) continue;
+                            const contract = parseFloat(row[1]);
+                            if (isNaN(contract) || contract < 0) { errorRows.push({ line: i+1, reason: `合同额无效: "${row[1]}"`, preview: name }); continue; }
+                            const income = parseFloat(row[2]) || 0;
+                            const expense = parseFloat(row[3]) || 0;
+                            successRows.push({ type: 'summary', name, contract, income, expense, preview: `项目: ${name} 合同¥${contract} 收入¥${income} 支出¥${expense}` });
+                        }
+                    }
+
+                    pendingImportData = { activeTab, successRows, errorRows };
+                    showImportPreview(successRows, errorRows);
+                } catch(err) { alert('❌ 文件解析失败：' + err.message); }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function showImportPreview(successRows, errorRows) {
+            DOM.importSummary.innerHTML = `<span style="color:#00d4aa;">✅ 可导入 <strong>${successRows.length}</strong> 条</span>&nbsp;&nbsp;<span style="color:#ff6b6b;">❌ 错误 <strong>${errorRows.length}</strong> 条</span>`;
+            let html = successRows.map(r=>`<div class="import-row success">✅ 第行 ${r.preview}</div>`).join('');
+            html += errorRows.map(r=>`<div class="import-row error">❌ 第${r.line}行：${r.reason}（${r.preview}）</div>`).join('');
+            DOM.importPreviewList.innerHTML = html || '<div style="color:#777;text-align:center;padding:20px;">无数据</div>';
+            DOM.importPreviewModal.classList.add('active');
+        }
+
+        function confirmImport() {
+            if (!pendingImportData) return;
+            const { activeTab, successRows } = pendingImportData;
+            let count = 0;
+            successRows.forEach(row => {
+                if (row.type === 'project') {
+                    AppState.addProject(null, row.name, row.budget, row.milestones);
+                    count++;
+                } else if (row.type === 'transaction') {
+                    let proj = AppState.projects.find(p=>p.name===row.projectName);
+                    if (!proj) proj = AppState.addProject(null, row.projectName, 0, []);
+                    AppState.addTransaction(null, row.date, proj.id, row.txType, row.amount);
+                    count++;
+                } else if (row.type === 'summary') {
+                    let proj = AppState.projects.find(p=>p.name===row.name);
+                    if (!proj) proj = AppState.addProject(null, row.name, row.contract, []);
+                    if (row.income > 0) AppState.addTransaction(null, getTodayDate(), proj.id, '收入', row.income);
+                    if (row.expense > 0) AppState.addTransaction(null, getTodayDate(), proj.id, '其他费用', row.expense);
+                    count++;
+                }
+            });
+            pendingImportData = null;
+            DOM.importPreviewModal.classList.remove('active');
+            alert(`✅ 成功导入 ${count} 条数据`);
+            refreshUI();
+            if (typeof FilterState !== 'undefined') { FilterState.renderDropdown(); FilterState.applyFilter(); }
+        }
+
+        // ========== 批量删除 ==========
+        let batchDeleteMode = false;
+        let selectedItems = new Set();
+
+        function getActiveTab() {
+            if (DOM.summaryToggle.classList.contains('active')) return 'summary';
+            if (DOM.projectsToggle.classList.contains('active')) return 'projects';
+            return 'transactions';
+        }
+
+        function toggleBatchDeleteMode() {
+            batchDeleteMode = !batchDeleteMode;
+            DOM.batchSelectBar.style.display = batchDeleteMode ? 'flex' : 'none';
+            DOM.batchDeleteBtn.classList.toggle('active-mode', batchDeleteMode);
+            selectedItems.clear();
+            updateSelectedCount();
+            refreshUI();
+            if (typeof FilterState !== 'undefined') FilterState.applyFilter();
+        }
+
+        function updateSelectedCount() {
+            DOM.selectedCount.textContent = selectedItems.size;
+        }
+
+        function confirmBatchDelete() {
+            if (selectedItems.size === 0) { alert('请先勾选要删除的项目'); return; }
+            if (!confirm(`确定删除选中的 ${selectedItems.size} 项？此操作不可恢复！`)) return;
+            const tab = getActiveTab();
+            if (tab === 'projects' || tab === 'summary') {
+                selectedItems.forEach(id => AppState.deleteProject(Number(id)));
+            } else {
+                selectedItems.forEach(id => AppState.deleteTransaction(Number(id)));
+            }
+            toggleBatchDeleteMode();
+        }
+
+        function bindBatchCheckboxes() {
+            const tab = getActiveTab();
+            const selectAllId = { summary: 'selectAllSummary', projects: 'selectAllProjects', transactions: 'selectAllTransactions' }[tab];
+            const selectAllEl = document.getElementById(selectAllId);
+
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    const id = e.target.dataset.id;
+                    if (e.target.checked) selectedItems.add(id);
+                    else selectedItems.delete(id);
+                    updateSelectedCount();
+                    if (selectAllEl) selectAllEl.checked = document.querySelectorAll('.row-checkbox').length > 0 && [...document.querySelectorAll('.row-checkbox')].every(c=>c.checked);
+                });
+            });
+
+            if (selectAllEl) {
+                selectAllEl.checked = false;
+                selectAllEl.onchange = (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.row-checkbox').forEach(cb => {
+                        cb.checked = e.target.checked;
+                        const id = cb.dataset.id;
+                        if (e.target.checked) selectedItems.add(id);
+                        else selectedItems.delete(id);
+                    });
+                    updateSelectedCount();
+                };
+            }
+        }
         function bindToggles() {
             DOM.summaryToggle.onclick = ()=>{
                 document.getElementById('summaryTable').style.display = 'table';
@@ -1882,6 +2551,18 @@
             };
         }
 
+        // ========== 状态文本/样式映射 ==========
+        function getStatusDisplay(status) {
+            const map = {
+                paid:     { cls: 'status-paid',     text: '结清' },
+                partial:  { cls: 'status-partial',  text: '未结清' },
+                overdue:  { cls: 'status-overdue',  text: '逾期' },
+                upcoming: { cls: 'status-upcoming', text: '即将到期' },
+                normal:   { cls: 'status-normal',   text: '正常' }
+            };
+            return map[status] || map.normal;
+        }
+
         // ========== 更新应收账款 ==========
         function updateReceivableSection() {
             const analysis = AppState.getReceivableAnalysis();
@@ -1896,13 +2577,11 @@
                 return;
             }
             DOM.receivableTableBody.innerHTML = analysis.items.map(item=>{
-                let statusClass='', statusText='';
-                if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
-                else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
-                else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
-                else { statusClass='status-normal'; statusText='正常'; }
-                const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
-                return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
+                const { cls, text } = getStatusDisplay(item.status);
+                const pendingCell = item.pendingAmount > 0
+                    ? `<span class="${item.status==='overdue'?'loss-cell':item.status==='partial'?'warning-cell':''}">${formatMoney(item.pendingAmount)}</span>`
+                    : '<span class="profit-cell">已结清</span>';
+                return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td>${pendingCell}</td><td><span class="status-badge ${cls}">${text}</span></td></tr>`;
             }).join('');
         }
 
@@ -1923,21 +2602,21 @@
             DOM.totalProfit.className = 'value ' + (ov.totalProfit>=0?'profit':'loss');
             const stats = AppState.getAllStats();
             if(stats.length) {
-                DOM.summaryBody.innerHTML = stats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
-            } else { DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; }
+                DOM.summaryBody.innerHTML = stats.map(s=>`<tr><td><span style="color:#00d4aa;font-size:11px;font-family:monospace;">${s.code}</span><br>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
+            } else { DOM.summaryBody.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; }
             if(AppState.projects.length) {
-                DOM.projectsBody.innerHTML = AppState.projects.map(p=>{ 
-                    const s = AppState.getProjectStats(p.id); 
-                    return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
+                DOM.projectsBody.innerHTML = AppState.projects.map(p=>{
+                    const s = AppState.getProjectStats(p.code);
+                    return `<tr><td></td><td><span style="color:#00d4aa;font-size:11px;font-family:monospace;">${p.code}</span><br>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" onclick="window.editProject('${p.code}')">编辑</button><button class="btn-delete" onclick="window.deleteProject('${p.code}')">删除</button></div></td></tr>`;
                 }).join('');
-            } else { DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; }
+            } else { DOM.projectsBody.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; }
             if(AppState.transactions.length) {
                 const sorted = [...AppState.transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
-                    const proj = AppState.projects.find(p=>p.id===t.projectId); 
-                    return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
+                DOM.transactionsBody.innerHTML = sorted.map(t=>{
+                    const proj = AppState.projects.find(p => p.code === t.projectCode);
+                    return `<tr><td></td><td><span style="color:#ffd93d;font-size:11px;font-family:monospace;">${t.code}</span><br>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" onclick="window.editTransaction('${t.code}')">编辑</button><button class="btn-delete" onclick="window.deleteTransaction('${t.code}')">删除</button></div></td></tr>`;
                 }).join('');
-            } else { DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; }
+            } else { DOM.transactionsBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; }
             updateReceivableSection();
             setTimeout(()=>{ updateCharts(); addProfitCornerLabel(); }, 50);
             fillProjectSelect();
@@ -1969,7 +2648,7 @@ function updateCharts() {
 
         stats = stats.map(stat => {
             const timeFilteredTransactions = AppState.transactions.filter(t =>
-                Number(t.projectId) === stat.id &&
+                t.projectCode === stat.code &&
                 new Date(t.date) >= start &&
                 new Date(t.date) <= end
             );
@@ -2097,7 +2776,7 @@ function updateCharts() {
     let filteredTransactions = [...AppState.transactions];
     if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
         const selectedIds = Array.from(FilterState.selectedProjectIds);
-        filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectId));
+        filteredTransactions = filteredTransactions.filter(t => selectedIds.includes(t.projectCode));
     }
     if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
         FilterState.timeRange.type !== 'all' &&
@@ -2445,7 +3124,7 @@ function updateCharts() {
         let cashTransactions = [...AppState.transactions];
         if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
             const selectedIds = Array.from(FilterState.selectedProjectIds);
-            cashTransactions = cashTransactions.filter(t => selectedIds.includes(t.projectId));
+            cashTransactions = cashTransactions.filter(t => selectedIds.includes(t.projectCode));
         }
         if (typeof FilterState !== 'undefined' && FilterState.timeRange &&
             FilterState.timeRange.type !== 'all' &&
@@ -2732,7 +3411,7 @@ function updateCharts() {
                     end.setHours(23, 59, 59, 999);
                     stats = stats.map(stat => {
                         const transactions = AppState.transactions.filter(t => 
-                            Number(t.projectId) === stat.id && 
+                            t.projectCode === stat.code && 
                             new Date(t.date) >= start && 
                             new Date(t.date) <= end
                         );
@@ -2754,45 +3433,50 @@ function updateCharts() {
             if(DOM.profitChartBox) DOM.profitChartBox.appendChild(label);
         }
 
-        // ========== 全局函数 ==========
-        window.editProject = (id) => { 
-            const p = AppState.projects.find(p=>p.id===id); if(!p) return;
-            DOM.projectId.value = p.id; 
-            DOM.projectName.value = p.name; 
-            DOM.projectBudget.value = p.budget; 
+        // ========== 全局函数（通过 code 精确定位，不依赖 id）==========
+        window.editProject = (code) => {
+            const p = AppState.projects.find(p => p.code === code);
+            if (!p) { console.warn('找不到项目 code=', code); return; }
+            DOM.projectId.value = p.code;           // 存 code，提交时用于判断新建/更新
+            DOM.projectName.value = p.name;
+            DOM.projectBudget.value = p.budget;
             currentMilestones = p.milestones ? JSON.parse(JSON.stringify(p.milestones)) : [];
             renderMilestoneList();
-            DOM.projectModalTitle.textContent = '✏️ 编辑项目'; 
+            DOM.projectModalTitle.textContent = '✏️ 编辑项目';
             DOM.projectSubmitBtn.textContent = '更新项目';
             DOM.projectModal.classList.add('active');
         };
-        window.deleteProject = (id) => { 
-            if(confirm('删除项目及所有收支？')){ 
-                AppState.deleteProject(id); 
-                refreshUI(); 
-                if (typeof FilterState !== 'undefined') { 
-                    FilterState.renderSelectedTags(); 
-                    FilterState.applyFilter(); 
-                } 
-            } 
+        window.deleteProject = (code) => {
+            const p = AppState.projects.find(p => p.code === code);
+            if (!p) return;
+            if (confirm(`删除项目「${p.name}」及其所有收支记录？`)) {
+                AppState.deleteProject(code);
+                refreshUI();
+                if (typeof FilterState !== 'undefined') {
+                    FilterState.renderSelectedTags();
+                    FilterState.applyFilter();
+                }
+            }
         };
-        window.editTransaction = (id) => {
-            const t = AppState.transactions.find(t=>t.id===id); if(!t) return;
-            DOM.transactionId.value = t.id; 
-            DOM.transactionDate.value = t.date; 
-            DOM.transactionProject.value = t.projectId;
-            DOM.transactionAmount.value = t.amount; 
+        window.editTransaction = (code) => {
+            const t = AppState.transactions.find(t => t.code === code);
+            if (!t) { console.warn('找不到收支记录 code=', code); return; }
+            fillProjectSelect();
+            DOM.transactionId.value = t.code;       // 存 code，提交时用于判断新建/更新
+            DOM.transactionDate.value = t.date;
+            DOM.transactionProject.value = t.projectCode;   // 与 fillProjectSelect option value 一致
+            DOM.transactionAmount.value = t.amount;
             setActiveCategory(t.type);
-            DOM.transactionModalTitle.textContent = '✏️ 编辑收支'; 
+            DOM.transactionModalTitle.textContent = '✏️ 编辑收支';
             DOM.transactionSubmitBtn.textContent = '更新记录';
             DOM.transactionModal.classList.add('active');
         };
-        window.deleteTransaction = (id) => { 
-            if(confirm('删除这笔记录？')){ 
-                AppState.deleteTransaction(id); 
-                refreshUI(); 
-                if (typeof FilterState !== 'undefined') FilterState.applyFilter(); 
-            } 
+        window.deleteTransaction = (code) => {
+            if (confirm('删除这笔记录？')) {
+                AppState.deleteTransaction(code);
+                refreshUI();
+                if (typeof FilterState !== 'undefined') FilterState.applyFilter();
+            }
         };
 
         // ========== 初始化日期 ==========
@@ -3058,7 +3742,7 @@ function updateCharts() {
                         if (kw) { 
                             const filtered = this.getFilteredProjects(kw); 
                             if (filtered.length > 0) { 
-                                this.toggleProject(filtered[0].id); 
+                                this.toggleProject(filtered[0].code); 
                                 this.renderDropdown(''); 
                                 searchInput.value = ''; 
                                 dropdown.classList.remove('active'); 
@@ -3079,60 +3763,60 @@ function updateCharts() {
                 if (projects.length === 0) { dropdown.innerHTML = '<div class="dropdown-empty">🔍 未找到相关项目</div>'; return; }
                 let html = `<div class="dropdown-actions"><button class="dropdown-action-btn" id="selectAllBtn">全选</button><button class="dropdown-action-btn" id="clearAllBtn">清除</button></div>`;
                 projects.forEach(p => {
-                    const isChecked = this.selectedProjectIds.has(p.id);
-                    html += `<div class="dropdown-item" data-project-id="${p.id}">
-                        <input type="checkbox" id="project_${p.id}" ${isChecked ? 'checked' : ''} data-project-id="${p.id}">
-                        <label for="project_${p.id}"><span>${p.name}</span><span class="project-budget-badge">${formatMoney(p.budget || 0)}</span></label>
+                    const isChecked = this.selectedProjectIds.has(p.code);
+                    html += `<div class="dropdown-item" data-project-code="${p.code}">
+                        <input type="checkbox" id="project_${p.code}" ${isChecked ? 'checked' : ''} data-project-code="${p.code}">
+                        <label for="project_${p.code}"><span>${p.name}<br><small style="color:#666;font-family:monospace;">${p.code}</small></span><span class="project-budget-badge">${formatMoney(p.budget || 0)}</span></label>
                     </div>`;
                 });
                 dropdown.innerHTML = html;
-                dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => { 
-                    cb.addEventListener('change', (e) => { 
-                        e.stopPropagation(); 
-                        const pid = parseInt(e.target.dataset.projectId); 
-                        this.toggleProject(pid, e.target.checked); 
-                    }); 
+                dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        e.stopPropagation();
+                        const pcode = e.target.dataset.projectCode;
+                        this.toggleProject(pcode, e.target.checked);
+                    });
                 });
-                dropdown.querySelectorAll('.dropdown-item').forEach(item => { 
-                    item.addEventListener('click', (e) => { 
-                        if (e.target.type !== 'checkbox') { 
-                            const cb = item.querySelector('input[type="checkbox"]'); 
-                            cb.checked = !cb.checked; 
-                            const pid = parseInt(item.dataset.projectId); 
-                            this.toggleProject(pid, cb.checked); 
-                        } 
-                    }); 
+                dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        if (e.target.type !== 'checkbox') {
+                            const cb = item.querySelector('input[type="checkbox"]');
+                            cb.checked = !cb.checked;
+                            const pcode = item.dataset.projectCode;
+                            this.toggleProject(pcode, cb.checked);
+                        }
+                    });
                 });
-                const selectAllBtn = document.getElementById('selectAllBtn'); 
-                if (selectAllBtn) { 
-                    selectAllBtn.addEventListener('click', (e) => { 
-                        e.stopPropagation(); 
-                        projects.forEach(p => this.selectedProjectIds.add(p.id)); 
-                        this.saveToStorage(); 
-                        this.renderDropdown(keyword); 
-                        this.renderSelectedTags(); 
-                        this.applyFilter(); 
-                    }); 
+                const selectAllBtn = document.getElementById('selectAllBtn');
+                if (selectAllBtn) {
+                    selectAllBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        projects.forEach(p => this.selectedProjectIds.add(p.code));
+                        this.saveToStorage();
+                        this.renderDropdown(keyword);
+                        this.renderSelectedTags();
+                        this.applyFilter();
+                    });
                 }
-                const clearAllBtn = document.getElementById('clearAllBtn'); 
-                if (clearAllBtn) { 
-                    clearAllBtn.addEventListener('click', (e) => { 
-                        e.stopPropagation(); 
-                        this.selectedProjectIds.clear(); 
-                        this.saveToStorage(); 
-                        this.renderDropdown(keyword); 
-                        this.renderSelectedTags(); 
-                        this.applyFilter(); 
-                    }); 
+                const clearAllBtn = document.getElementById('clearAllBtn');
+                if (clearAllBtn) {
+                    clearAllBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.selectedProjectIds.clear();
+                        this.saveToStorage();
+                        this.renderDropdown(keyword);
+                        this.renderSelectedTags();
+                        this.applyFilter();
+                    });
                 }
             },
-            toggleProject(projectId, checked) {
+            toggleProject(projectCode, checked) {
                 if (checked === undefined) {
-                    if (this.selectedProjectIds.has(projectId)) this.selectedProjectIds.delete(projectId);
-                    else this.selectedProjectIds.add(projectId);
-                } else { 
-                    if (checked) this.selectedProjectIds.add(projectId); 
-                    else this.selectedProjectIds.delete(projectId); 
+                    if (this.selectedProjectIds.has(projectCode)) this.selectedProjectIds.delete(projectCode);
+                    else this.selectedProjectIds.add(projectCode);
+                } else {
+                    if (checked) this.selectedProjectIds.add(projectCode);
+                    else this.selectedProjectIds.delete(projectCode);
                 }
                 this.saveToStorage();
                 this.renderSelectedTags();
@@ -3149,13 +3833,12 @@ function updateCharts() {
                     timeTag.innerHTML = `<i class="fas fa-calendar-alt"></i><span>${this.timeRange.label}</span><span class="remove-tag" onclick="FilterState.clearTimeRange()">&times;</span>`;
                     container.appendChild(timeTag);
                 }
-                this.selectedProjectIds.forEach(id => {
-                    const p = AppState.projects.find(p => p.id === id);
+                this.selectedProjectIds.forEach(code => {
+                    const p = AppState.projects.find(p => p.code === code);
                     if (p) {
                         const tag = document.createElement('span');
                         tag.className = 'selected-tag';
-                        tag.dataset.projectId = id;
-                        tag.innerHTML = `<span>${p.name}</span><span class="remove-tag" onclick="FilterState.toggleProject(${id}, false)">&times;</span>`;
+                        tag.innerHTML = `<span>${p.name}</span><span class="remove-tag" onclick="FilterState.toggleProject('${code}', false)">&times;</span>`;
                         container.appendChild(tag);
                     }
                 });
@@ -3298,7 +3981,8 @@ function updateCharts() {
 
             // 核心筛选应用
             applyFilter() {
-                const selectedIds = Array.from(this.selectedProjectIds);
+                // FilterState.selectedProjectIds 内部存的是项目的 code（迁移后）
+                const selectedCodes = Array.from(this.selectedProjectIds);
                 let startDate = null, endDate = null;
                 if (this.timeRange && this.timeRange.type !== 'all' && this.timeRange.startDate && this.timeRange.endDate) {
                     startDate = new Date(this.timeRange.startDate);
@@ -3307,12 +3991,12 @@ function updateCharts() {
                 }
 
                 let allStats = AppState.getAllStats();
-                if (selectedIds.length > 0) allStats = allStats.filter(s => selectedIds.includes(s.id));
-                
+                if (selectedCodes.length > 0) allStats = allStats.filter(s => selectedCodes.includes(s.code));
+
                 if (startDate && endDate) {
                     allStats = allStats.map(stat => {
-                        const timeFilteredTransactions = AppState.transactions.filter(t => 
-                            Number(t.projectId) === stat.id &&
+                        const timeFilteredTransactions = AppState.transactions.filter(t =>
+                            t.projectCode === stat.code &&
                             new Date(t.date) >= startDate &&
                             new Date(t.date) <= endDate
                         );
@@ -3329,6 +4013,9 @@ function updateCharts() {
                         };
                     });
                 }
+
+                // 便于下游直接用 selectedIds 变量名（复用渲染代码）
+                const selectedIds = selectedCodes;
 
                 // 仪表盘
                 const totalProjects = allStats.length;
@@ -3353,48 +4040,54 @@ function updateCharts() {
                 // 综合报表
                 if (DOM.summaryBody) {
                     if(allStats.length) {
-                        DOM.summaryBody.innerHTML = allStats.map(s=>`<tr><td>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`).join('');
-                    } else { 
-                        DOM.summaryBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>'; 
+                        DOM.summaryBody.innerHTML = allStats.map(s=>{
+                            const chk = batchDeleteMode ? `<td><input type="checkbox" class="batch-checkbox row-checkbox" data-id="${s.code}" ${selectedItems.has(s.code)?'checked':''}></td>` : '<td></td>';
+                            return `<tr>${chk}<td><span style="color:#00d4aa;font-size:11px;font-family:monospace;">${s.code}</span><br>${s.name}</td><td>${formatMoney(s.contractTotal||0)}</td><td>${formatMoney(s.income)}</td><td class="${(s.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s.pendingIncome||0)}</td><td>${formatMoney(s.expense)}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profit>=0?'':'-'}${formatMoney(Math.abs(s.profit))}</td><td class="${s.profit>=0?'profit-cell':'loss-cell'}">${s.profitMargin.toFixed(1)}%</td></tr>`;
+                        }).join('');
+                    } else {
+                        DOM.summaryBody.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-chart-line"></i><br>暂无项目</td></tr>';
                     }
                 }
 
                 // 项目列表
                 let projects = AppState.projects;
-                if (selectedIds.length > 0) projects = projects.filter(p => selectedIds.includes(p.id));
+                if (selectedIds.length > 0) projects = projects.filter(p => selectedIds.includes(p.code));
                 if (DOM.projectsBody) {
                     if(projects.length) {
-                        DOM.projectsBody.innerHTML = projects.map(p=>{ 
-                            const s = allStats.find(stat => stat.id === p.id) || AppState.getProjectStats(p.id);
-                            return `<tr><td>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${p.id}" onclick="window.editProject(${p.id})">编辑</button><button class="btn-delete" data-id="${p.id}" onclick="window.deleteProject(${p.id})">删除</button></div></td></tr>`;
+                        DOM.projectsBody.innerHTML = projects.map(p=>{
+                            const s = allStats.find(stat => stat.code === p.code) || AppState.getProjectStats(p.code);
+                            const chk = batchDeleteMode ? `<td><input type="checkbox" class="batch-checkbox row-checkbox" data-id="${p.code}" ${selectedItems.has(p.code)?'checked':''}></td>` : '<td></td>';
+                            return `<tr>${chk}<td><span style="color:#00d4aa;font-size:11px;font-family:monospace;">${p.code}</span><br>${p.name}</td><td>${formatMoney(p.budget||0)}</td><td>${p.milestones?p.milestones.length:0}个节点</td><td>${formatMoney(s?.income||0)}</td><td class="${(s?.pendingIncome||0)>0?'warning-cell':'profit-cell'}">${formatMoney(s?.pendingIncome||0)}</td><td>${new Date(p.createdAt).toLocaleDateString()}</td><td><div class="action-buttons"><button class="btn-edit" onclick="window.editProject('${p.code}')">编辑</button><button class="btn-delete" onclick="window.deleteProject('${p.code}')">删除</button></div></td></tr>`;
                         }).join('');
-                    } else { 
-                        DOM.projectsBody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>'; 
+                    } else {
+                        DOM.projectsBody.innerHTML = '<tr><td colspan="8" class="empty-state"><i class="fas fa-folder"></i><br>暂无项目</td></tr>';
                     }
                 }
 
                 // 收支记录
                 let transactions = AppState.transactions;
-                if (selectedIds.length > 0) transactions = transactions.filter(t => selectedIds.includes(t.projectId));
+                if (selectedIds.length > 0) transactions = transactions.filter(t => selectedIds.includes(t.projectCode));
                 if (startDate && endDate) {
                     transactions = transactions.filter(t => new Date(t.date) >= startDate && new Date(t.date) <= endDate);
                 }
                 if (DOM.transactionsBody) {
                     if(transactions.length) {
                         const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
-                        DOM.transactionsBody.innerHTML = sorted.map(t=>{ 
-                            const proj = AppState.projects.find(p=>p.id===t.projectId); 
-                            return `<tr><td>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" data-id="${t.id}" onclick="window.editTransaction(${t.id})">编辑</button><button class="btn-delete" data-id="${t.id}" onclick="window.deleteTransaction(${t.id})">删除</button></div></td></tr>`;
+                        DOM.transactionsBody.innerHTML = sorted.map(t=>{
+                            const proj = AppState.projects.find(p => p.code === t.projectCode);
+                            const chk = batchDeleteMode ? `<td><input type="checkbox" class="batch-checkbox row-checkbox" data-id="${t.code}" ${selectedItems.has(t.code)?'checked':''}></td>` : '<td></td>';
+                            return `<tr>${chk}<td><span style="color:#ffd93d;font-size:11px;font-family:monospace;">${t.code}</span><br>${t.date}</td><td>${proj?.name||'未知'}</td><td>${t.type}</td><td class="${t.type==='收入'?'profit-cell':'loss-cell'}">${t.type==='收入'?'+':'-'}${formatMoney(t.amount)}</td><td><div class="action-buttons"><button class="btn-edit" onclick="window.editTransaction('${t.code}')">编辑</button><button class="btn-delete" onclick="window.deleteTransaction('${t.code}')">删除</button></div></td></tr>`;
                         }).join('');
-                    } else { 
-                        DOM.transactionsBody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>'; 
+                    } else {
+                        DOM.transactionsBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-exchange-alt"></i><br>暂无收支</td></tr>';
                     }
                 }
+                if (batchDeleteMode) setTimeout(bindBatchCheckboxes, 0);
 
                 // 应收账款
                 const analysis = AppState.getReceivableAnalysis();
                 let filteredItems = analysis.items;
-                if (selectedIds.length > 0) filteredItems = filteredItems.filter(item => selectedIds.includes(item.projectId));
+                if (selectedIds.length > 0) filteredItems = filteredItems.filter(item => selectedIds.includes(item.projectCode));
                 const totalReceivable = filteredItems.reduce((s,i)=>s+i.pendingAmount,0);
                 const overdueAmount = filteredItems.filter(i=>i.status==='overdue').reduce((s,i)=>s+i.pendingAmount,0);
                 const upcomingAmount = filteredItems.filter(i=>i.status==='upcoming').reduce((s,i)=>s+i.pendingAmount,0);
@@ -3411,13 +4104,11 @@ function updateCharts() {
                         DOM.receivableTableBody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><br>暂无应收账款</td></tr>'; 
                     } else {
                         DOM.receivableTableBody.innerHTML = filteredItems.map(item=>{
-                            let statusClass='', statusText='';
-                            if(item.status==='overdue'){ statusClass='status-overdue'; statusText='逾期'; }
-                            else if(item.status==='upcoming'){ statusClass='status-upcoming'; statusText='即将到期'; }
-                            else if(item.status==='paid'){ statusClass='status-paid'; statusText='已结清'; }
-                            else { statusClass='status-normal'; statusText='正常'; }
-                            const amountDisplay = item.pendingAmount>0 ? formatMoney(item.pendingAmount) : '已结清';
-                            return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td class="${item.status==='overdue'?'overdue':(item.status==='upcoming'?'upcoming':'')}">${amountDisplay}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
+                            const { cls, text } = getStatusDisplay(item.status);
+                            const pendingCell = item.pendingAmount > 0
+                                ? `<span class="${item.status==='overdue'?'loss-cell':item.status==='partial'?'warning-cell':''}">${formatMoney(item.pendingAmount)}</span>`
+                                : '<span class="profit-cell">已结清</span>';
+                            return `<tr><td>${item.projectName}</td><td>${item.dueDate}</td><td>${formatMoney(item.originalAmount)}</td><td>${formatMoney(item.receivedAmount)}</td><td>${pendingCell}</td><td><span class="status-badge ${cls}">${text}</span></td></tr>`;
                         }).join('');
                     }
                 }
@@ -3442,6 +4133,7 @@ function updateCharts() {
                 const total = calculateMilestoneTotal();
                 const budget = parseFloat(DOM.projectBudget.value)||0;
                 if(budget>0 && Math.abs(total-budget)>0.01 && !confirm(`收款节点总额 ${formatMoney(total)} 与合同总额 ${formatMoney(budget)} 不符，是否继续保存？`)) return;
+                // DOM.projectId.value 存的是 code（编辑）或空（新建）
                 AppState.addProject(DOM.projectId.value||null, DOM.projectName.value, DOM.projectBudget.value, currentMilestones);
                 DOM.projectModal.classList.remove('active'); 
                 DOM.projectForm.reset(); 
@@ -3460,6 +4152,8 @@ function updateCharts() {
 
             DOM.transactionForm.onsubmit = (e) => {
                 e.preventDefault();
+                // DOM.transactionId.value 存的是 code（编辑）或空（新建）
+                // DOM.transactionProject.value 存的是项目的 code
                 AppState.addTransaction(DOM.transactionId.value||null, DOM.transactionDate.value, DOM.transactionProject.value, DOM.transactionType.value, DOM.transactionAmount.value);
                 DOM.transactionModal.classList.remove('active'); 
                 DOM.transactionForm.reset(); 
@@ -3637,7 +4331,7 @@ console.log('✅ 语音确认按钮事件已绑定');
                             const end = new Date(FilterState.timeRange.endDate);
                             end.setHours(23,59,59,999);
                             stats = stats.map(stat => {
-                                const transactions = AppState.transactions.filter(t => Number(t.projectId) === stat.id && new Date(t.date) >= start && new Date(t.date) <= end);
+                                const transactions = AppState.transactions.filter(t => t.projectCode === stat.code && new Date(t.date) >= start && new Date(t.date) <= end);
                                 const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
                                 const expense = transactions.filter(t => t.type !== '收入').reduce((s,t)=>s+t.amount,0);
                                 return { ...stat, income, expense, profit: income - expense, profitMargin: stat.contractTotal > 0 ? ((income - expense) / stat.contractTotal * 100) : 0, pendingIncome: Math.max(0, stat.contractTotal - income) };
@@ -3651,15 +4345,15 @@ console.log('✅ 语音确认按钮事件已绑定');
                     let projects = AppState.projects;
                     if (typeof FilterState !== 'undefined' && FilterState.selectedProjectIds.size > 0) {
                         const selectedIds = Array.from(FilterState.selectedProjectIds);
-                        projects = projects.filter(p => selectedIds.includes(p.id));
+                        projects = projects.filter(p => selectedIds.includes(p.code));
                     }
                     data = projects.map(p=>{ 
-                        let s = AppState.getProjectStats(p.id);
+                        let s = AppState.getProjectStats(p.code);
                         if (typeof FilterState !== 'undefined' && FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
                             const start = new Date(FilterState.timeRange.startDate);
                             const end = new Date(FilterState.timeRange.endDate);
                             end.setHours(23,59,59,999);
-                            const transactions = AppState.transactions.filter(t => Number(t.projectId) === p.id && new Date(t.date) >= start && new Date(t.date) <= end);
+                            const transactions = AppState.transactions.filter(t => t.projectCode === p.code && new Date(t.date) >= start && new Date(t.date) <= end);
                             const income = transactions.filter(t => t.type === '收入').reduce((s,t)=>s+t.amount,0);
                             s = { ...s, income, pendingIncome: Math.max(0, (p.budget||0) - income) };
                         }
@@ -3670,7 +4364,7 @@ console.log('✅ 语音确认按钮事件已绑定');
                     headers=['日期','项目','类型','金额'];
                     let transactions = AppState.transactions;
                     if (typeof FilterState !== 'undefined') {
-                        if (FilterState.selectedProjectIds.size > 0) transactions = transactions.filter(t => FilterState.selectedProjectIds.has(t.projectId));
+                        if (FilterState.selectedProjectIds.size > 0) transactions = transactions.filter(t => FilterState.selectedProjectIds.has(t.projectCode));
                         if (FilterState.timeRange && FilterState.timeRange.type !== 'all' && FilterState.timeRange.startDate && FilterState.timeRange.endDate) {
                             const start = new Date(FilterState.timeRange.startDate);
                             const end = new Date(FilterState.timeRange.endDate);
@@ -3680,7 +4374,7 @@ console.log('✅ 语音确认按钮事件已绑定');
                     }
                     const sorted = [...transactions].sort((a,b)=>b.date.localeCompare(a.date));
                     data = sorted.map(t=>{ 
-                        const p=AppState.projects.find(p=>p.id===t.projectId); 
+                        const p=AppState.projects.find(p=>p.code===t.projectCode); 
                         return [t.date, p?.name||'未知', t.type, t.type==='收入'?t.amount:-t.amount]; 
                     });
                 }
@@ -3694,13 +4388,197 @@ console.log('✅ 语音确认按钮事件已绑定');
             bindToggles();
             fillProjectSelect();
             refreshUI();
+
+            // ===== 备份 / 恢复 =====
+            DOM.backupBtn.addEventListener('click', backupData);
+            DOM.restoreBtn.addEventListener('click', () => DOM.restoreFileInput.click());
+            DOM.restoreFileInput.addEventListener('change', (e) => { if (e.target.files[0]) { restoreData(e.target.files[0]); e.target.value=''; } });
+
+            // ===== 模板下载 / 批量导入 =====
+            DOM.downloadTemplateBtn.addEventListener('click', downloadTemplateByTab);
+            DOM.batchImportBtn.addEventListener('click', () => DOM.batchImportFileInput.click());
+            DOM.batchImportFileInput.addEventListener('change', (e) => { if (e.target.files[0]) { batchImportByTab(e.target.files[0]); e.target.value=''; } });
+
+            // ===== 导入预览弹窗 =====
+            DOM.closeImportPreviewModal.addEventListener('click', () => { DOM.importPreviewModal.classList.remove('active'); pendingImportData = null; });
+            DOM.cancelImportBtn.addEventListener('click', () => { DOM.importPreviewModal.classList.remove('active'); pendingImportData = null; });
+            DOM.confirmImportBtn.addEventListener('click', confirmImport);
+
+            // ===== 批量删除 =====
+            DOM.batchDeleteBtn.addEventListener('click', toggleBatchDeleteMode);
+            DOM.confirmBatchDeleteBtn.addEventListener('click', confirmBatchDelete);
+            DOM.cancelBatchDeleteBtn.addEventListener('click', toggleBatchDeleteMode);
+
+            // 点击空白关闭导入预览
+            DOM.importPreviewModal.addEventListener('click', (e) => { if (e.target === DOM.importPreviewModal) { DOM.importPreviewModal.classList.remove('active'); pendingImportData = null; } });
             
             if (typeof FilterState !== 'undefined') {
                 setTimeout(() => { FilterState.init(); }, 100);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        // ====== 认证 + 启动入口 ======
+        async function startApp() {
+            initCloudBase();
+            try {
+                const loginState = await cbAuth.getLoginState();
+                if (loginState && loginState.isAnonymous === false) {
+                    // 已登录：加载数据 → 进入系统
+                    currentUser = loginState.user;
+                    await loadUserData();
+                    runMigration();
+                    showMainApp();
+                    document.addEventListener('DOMContentLoaded', () => {});
+                    initApp();
+                } else {
+                    // 未登录：展示登录页
+                    showAuthScreen();
+                }
+            } catch(e) {
+                console.error('[CloudBase] 检查登录状态失败:', e);
+                showAuthScreen();
+            }
+        }
+
+        function showMainApp() {
+            document.getElementById('globalLoading').classList.add('hidden');
+            document.getElementById('authScreen').classList.add('hidden');
+            // 更新用户信息栏
+            const email = currentUser.email || currentUser.uid || '';
+            const avatar = email ? email[0].toUpperCase() : '?';
+            const avatarEl = document.getElementById('userAvatar');
+            const emailEl  = document.getElementById('userEmail');
+            if (avatarEl) avatarEl.textContent = avatar;
+            if (emailEl)  emailEl.textContent  = email;
+        }
+
+        function showAuthScreen() {
+            document.getElementById('globalLoading').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            bindAuthEvents();
+        }
+
+        // 错误码 → 中文提示
+        function authErrMsg(e) {
+            const code = e.code || '';
+            if (code.includes('INVALID_EMAIL') || code.includes('invalid_email')) return '邮箱格式不正确';
+            if (code.includes('EMAIL_EXIST') || code.includes('email_exist')) return '该邮箱已注册，请直接登录';
+            if (code.includes('INVALID_PASSWORD') || code.includes('wrong_password') || code.includes('WRONG_PASSWORD')) return '密码错误，请重试';
+            if (code.includes('USER_NOT_FOUND') || code.includes('user_not_found')) return '用户不存在，请先注册';
+            if (code.includes('NETWORK') || code.includes('network')) return '网络异常，请检查连接后重试';
+            return e.message || '操作失败，请稍后重试';
+        }
+
+        function setAuthError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+        function clearAuthError() {
+            const el = document.getElementById('authError');
+            el.textContent = '';
+            el.classList.remove('show');
+        }
+        function setAuthBtnLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            btn.disabled = loading;
+            btn.textContent = loading ? '请稍候…' : (btnId === 'loginBtn' ? '登 录' : '注 册');
+        }
+
+        function bindAuthEvents() {
+            // Tab 切换
+            document.getElementById('tabLogin').onclick = () => {
+                document.getElementById('tabLogin').classList.add('active');
+                document.getElementById('tabRegister').classList.remove('active');
+                document.getElementById('loginForm').style.display = '';
+                document.getElementById('registerForm').style.display = 'none';
+                clearAuthError();
+            };
+            document.getElementById('tabRegister').onclick = () => {
+                document.getElementById('tabRegister').classList.add('active');
+                document.getElementById('tabLogin').classList.remove('active');
+                document.getElementById('registerForm').style.display = '';
+                document.getElementById('loginForm').style.display = 'none';
+                clearAuthError();
+            };
+
+            // 登录
+            document.getElementById('loginBtn').onclick = async () => {
+                clearAuthError();
+                const email    = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
+                setAuthBtnLoading('loginBtn', true);
+                try {
+                    await cbAuth.signInWithEmailAndPassword(email, password);
+                    const loginState = await cbAuth.getLoginState();
+                    currentUser = loginState.user;
+                    await loadUserData();
+                    runMigration();
+                    showMainApp();
+                    initApp();
+                } catch(e) {
+                    setAuthError(authErrMsg(e));
+                    setAuthBtnLoading('loginBtn', false);
+                }
+            };
+
+            // 注册
+            document.getElementById('registerBtn').onclick = async () => {
+                clearAuthError();
+                const email    = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirm  = document.getElementById('registerConfirm').value;
+                if (!email || !password) { setAuthError('请填写邮箱和密码'); return; }
+                if (password.length < 6)  { setAuthError('密码至少6位'); return; }
+                if (password !== confirm)  { setAuthError('两次密码不一致'); return; }
+                setAuthBtnLoading('registerBtn', true);
+                try {
+                    await cbAuth.signUpWithEmailAndPassword(email, password);
+                    await cbAuth.signInWithEmailAndPassword(email, password);
+                    const loginState = await cbAuth.getLoginState();
+                    currentUser = loginState.user;
+                    await loadUserData();
+                    showMainApp();
+                    initApp();
+                } catch(e) {
+                    setAuthError(authErrMsg(e));
+                    setAuthBtnLoading('registerBtn', false);
+                }
+            };
+
+            // 回车键提交
+            ['loginEmail','loginPassword'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', e => {
+                    if (e.key === 'Enter') document.getElementById('loginBtn').click();
+                });
+            });
+            ['registerEmail','registerPassword','registerConfirm'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', e => {
+                    if (e.key === 'Enter') document.getElementById('registerBtn').click();
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 退出登录
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.onclick = async () => {
+                    if (!confirm('确定退出登录？')) return;
+                    try {
+                        await cbAuth.signOut();
+                    } catch(e) {}
+                    currentUser = null;
+                    AppState.projects = [];
+                    AppState.transactions = [];
+                    AppState.expenseTypes = ['材料费','人工费','其他费用'];
+                    location.reload();
+                };
+            }
+            startApp();
+        });
     </script>
 </body>
 </html>
